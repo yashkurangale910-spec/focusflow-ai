@@ -2,10 +2,9 @@
 
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/)
 [![Node](https://img.shields.io/badge/Node-20-green?logo=node.js)](https://nodejs.org/)
-[![OpenAI](https://img.shields.io/badge/AI-OpenAI-orange?logo=openai)](https://openai.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**FocusFlow AI** is a premium, high-fidelity productivity ecosystem designed for the modern age. It combines cognitive science, AI assistance, and immersive 3D environments to help users achieve a state of "Flow" and maintain peak mental performance.
+**FocusFlow AI** is a premium, high-fidelity productivity ecosystem designed for the modern age. It combines cognitive science, neural assistance, and immersive 3D environments to help users achieve a state of "Flow" and maintain peak mental performance.
 
 > [!TIP]
 > **Built for Neurodiversity**: Specifically designed with ADHD and Autism-friendly UX patterns to minimize cognitive load and maximize engagement.
@@ -45,7 +44,7 @@
 | **3D Engine** | Three.js, React Three Fiber, Framer Motion |
 | **Backend** | Node.js, Express.js |
 | **Database** | MongoDB Atlas |
-| **Intelligence** | OpenAI API (GPT-4o-mini) |
+| **Intelligence** | Neural Cognitive API |
 | **Security** | JWT, bcrypt, Environment Secrets |
 
 ---
@@ -55,7 +54,7 @@
 ### 1. Prerequisite
 - Node.js installed
 - MongoDB Atlas account
-- OpenAI API Key
+- Neural Engine API Key
 
 ### 2. Clone the Repository
 ```bash
@@ -69,7 +68,7 @@ cd backend
 npm install
 # Create a .env file with:
 # MONGODB_URI=your_mongodb_connection_string
-# OPENAI_API_KEY=your_key
+# NEURAL_ENGINE_KEY=your_key
 # JWT_SECRET=random_secure_string
 npm run dev
 ```

@@ -13,7 +13,7 @@ const About = () => {
         {
             title: "The Technology",
             icon: Cpu,
-            content: "We leverage cutting-edge tools including React 19, Three.js for immersive 3D environments, and OpenAI's GPT-4o for real-time cognitive coaching and task deconstruction.",
+            content: "We leverage cutting-edge tools including React 19, Three.js for immersive 3D environments, and advanced neural processing for real-time cognitive coaching and task deconstruction.",
             color: "text-purple-400"
         },
         {
@@ -27,7 +27,7 @@ const About = () => {
     const stats = [
         { label: "Neural Rank", value: "Level 1", icon: Zap },
         { label: "System Status", value: "Online", icon: Globe },
-        { label: "AI Core", value: "GPT-4o", icon: Sparkles },
+        { label: "Neural Engine", value: "Active", icon: Sparkles },
         { label: "Frontend", value: "Vite 7", icon: Code }
     ];
 

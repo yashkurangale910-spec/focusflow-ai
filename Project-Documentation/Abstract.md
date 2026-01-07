@@ -9,7 +9,7 @@ Traditional task managers often increase cognitive load through "feature noise,"
 
 ## 3. The FocusFlow Solution
 - **Immersive HUD**: A Three.js based interface that minimizes distractions and provides real-time "system active" feedback.
-- **AI Neural Coach**: Integrated OpenAI GPT-mini logic to deconstruct complex tasks into manageable "flow blocks."
+- **AI Neural Coach**: Integrated neural logic to deconstruct complex tasks into manageable "flow blocks."
 - **Gamified Consistency**: A Neural Rank system that rewards consistency over sheer volume, protecting against burnout.
 - **Inclusive UX**: Intentional color theory, typography, and "Zero-Noise" layouts.
 
@@ -18,7 +18,7 @@ Traditional task managers often increase cognitive load through "feature noise,"
 - **Visuals**: React Three Fiber (Three.js), Lucide Icons.
 - **Backend**: Node.js, Express.js (REST API).
 - **Database**: MongoDB Atlas (Cloud Cluster).
-- **Intelligence**: OpenAI API (gpt-4o-mini).
+- **Intelligence**: Neural Cognitive Engine.
 
 ## 5. Key Achievements
 - Successful integration of 3D spatial UI within a standard React application.

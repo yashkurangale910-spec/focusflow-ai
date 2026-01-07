@@ -14,7 +14,7 @@
 - **Bcrypt.js**: Industry-standard password hashing.
 
 ## 🧠 Intelligence & Data
-- **OpenAI API**: Powering the "Neural Coach" for task deconstruction and focus tips.
+- **Neural Cognitive Engine API**: Powering the "Neural Coach" for task deconstruction and focus tips.
 - **Mongoose**: ODM for elegant data modeling in MongoDB.
 - **MongoDB Atlas**: Scalable, cloud-native NoSQL database.
 
