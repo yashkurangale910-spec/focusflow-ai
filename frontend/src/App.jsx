@@ -14,6 +14,7 @@ import Compete from './pages/Compete';
 import Settings from './pages/Settings';
 import SessionHistory from './pages/SessionHistory';
 import AdminDashboard from './pages/AdminDashboard';
+import About from './pages/About';
 import Auth from './pages/Auth';
 import AIChatbot from './components/AIChatbot';
 import ThemeSwitcher from './components/ThemeSwitcher';
@@ -87,6 +88,7 @@ const AppContent = () => {
           {activeTab === 'compete' && <Compete />}
           {activeTab === 'history' && <SessionHistory />}
           {activeTab === 'admin' && <AdminDashboard />}
+          {activeTab === 'about' && <About />}
           {activeTab === 'settings' && <Settings />}
         </div>
       </main>

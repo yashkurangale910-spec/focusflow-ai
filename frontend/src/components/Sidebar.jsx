@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Brain, Users, BarChart3, ListChecks, Settings, HelpCircle, Heart, Sparkles, Zap, Gamepad2, History, Shield } from 'lucide-react';
+import { LayoutDashboard, Brain, Users, BarChart3, ListChecks, Settings, HelpCircle, Heart, Sparkles, Zap, Gamepad2, History, Shield, Info } from 'lucide-react';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
@@ -14,6 +14,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         { id: 'compete', icon: Gamepad2, label: 'ADHD Tools' },
         { id: 'community', icon: Users, label: 'Community' },
         { id: 'admin', icon: Shield, label: 'Admin' },
+        { id: 'about', icon: Info, label: 'About' },
         { id: 'settings', icon: Settings, label: 'Settings' },
     ];
 
