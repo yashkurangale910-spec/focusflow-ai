@@ -1,0 +1,63 @@
+// Mobile responsiveness improvements in index.css
+@media (max-width: 768px) {
+
+    /* Hide sidebar on mobile, show as overlay */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Adjust main content padding */
+    main {
+        margin-left: 0 !important;
+    }
+
+    /* Stack cards vertically */
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Larger touch targets */
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Responsive font sizes */
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    /* Hide 3D scene on mobile for performance */
+    canvas {
+        display: none;
+    }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 769px) and (max-width: 1024px) {
+    main {
+        margin-left: 4rem !important;
+    }
+}
+
+/* Touch-friendly spacing */
+@media (hover: none) and (pointer: coarse) {
+    .glass-card {
+        padding: 1.5rem !important;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+        /* Prevents zoom on iOS */
+    }
+}
