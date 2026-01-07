@@ -90,7 +90,7 @@ const About = () => {
                 ))}
             </div>
 
-            {/* Project Credits/Academic Context */}
+            {/* Project Vision / Professional Context */}
             <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -98,16 +98,16 @@ const About = () => {
                 className="mt-16 p-10 rounded-3xl bg-gradient-to-br from-zinc-900 to-black border border-white/5 text-center relative overflow-hidden"
             >
                 <div className="relative z-10">
-                    <Heart className="text-red-500 mx-auto mb-6 animate-pulse" />
-                    <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-wider">6th Semester Major Project</h2>
+                    <Sparkles className="text-blue-500 mx-auto mb-6 animate-pulse" />
+                    <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-wider">The Flow Manifest</h2>
                     <p className="text-zinc-500 max-w-3xl mx-auto leading-loose text-lg font-mono">
-                        "FocusFlow AI demonstrates how modern web technologies can be harnessed
+                        "FocusFlow AI demonstrates how modern technology can be harnessed
                         to create inclusive software that doesn't just manage tasks, but supports human cognition."
                     </p>
                     <div className="mt-8 flex justify-center gap-4">
-                        <span className="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-mono text-zinc-400 border border-white/5">HCI Research</span>
-                        <span className="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-mono text-zinc-400 border border-white/5">AI Ethics</span>
-                        <span className="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-mono text-zinc-400 border border-white/5">Inclusive Design</span>
+                        <span className="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-mono text-zinc-400 border border-white/5">Cognitive Science</span>
+                        <span className="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-mono text-zinc-400 border border-white/5">Neural Optimization</span>
+                        <span className="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-mono text-zinc-400 border border-white/5">Immersive UX</span>
                     </div>
                 </div>
 

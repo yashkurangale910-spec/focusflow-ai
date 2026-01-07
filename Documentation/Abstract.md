@@ -25,5 +25,4 @@ Traditional task managers often increase cognitive load through "feature noise,"
 - Real-time performance analytics with zero-latency visual feedback.
 - Secure, cloud-synced authentication and data persistence.
 
-## 6. Conclusion
-FocusFlow AI demonstrates how modern web technologies can be harnessed to create inclusive software that doesn't just manage tasks, but supports human cognition.
+FocusFlow AI demonstrates how modern technology can be harnessed to create inclusive software that doesn't just manage tasks, but supports human cognition.

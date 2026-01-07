@@ -87,10 +87,5 @@ npm run dev
 
 ---
 
-## 📜 Academic Context
-This project was developed as a **6th Semester Major Project**, focusing on the intersection of human-computer interaction (HCI), artificial intelligence, and inclusive design for neurodivergent users.
-
----
-
 **Developed with ❤️ by [Your Name]**  
 *Neural Productivity for the Next Generation.*
