@@ -67,8 +67,8 @@ const SoundscapePlayer = () => {
                         key={sound.id}
                         onClick={() => setActiveSound(sound.id)}
                         className={`p-3 rounded-xl text-center transition-all flex flex-col items-center gap-2 border-2 ${activeSound === sound.id
-                                ? 'bg-accent/20 border-accent'
-                                : 'bg-white/5 border-white/10 hover:border-white/30'
+                            ? 'bg-accent/20 border-accent'
+                            : 'bg-white/5 border-white/10 hover:border-white/30'
                             }`}
                     >
                         <div className="text-2xl">{sound.emoji}</div>

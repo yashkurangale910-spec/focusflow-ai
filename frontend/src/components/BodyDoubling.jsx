@@ -71,8 +71,8 @@ const BodyDoubling = () => {
                                 whileHover={{ scale: 1.02 }}
                                 onClick={() => setMode(key)}
                                 className={`w-full p-4 rounded-xl text-left transition-all ${mode === key
-                                        ? 'bg-white/20 border-2'
-                                        : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
+                                    ? 'bg-white/20 border-2'
+                                    : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
                                     }`}
                                 style={{
                                     borderColor: mode === key ? modeData.color : 'transparent'
@@ -142,8 +142,8 @@ const BodyDoubling = () => {
                                 <div
                                     key={partner.id}
                                     className={`p-3 rounded-xl ${partner.status === 'focusing'
-                                            ? 'bg-green-500/20 border border-green-500/30'
-                                            : 'bg-yellow-500/20 border border-yellow-500/30'
+                                        ? 'bg-green-500/20 border border-green-500/30'
+                                        : 'bg-yellow-500/20 border border-yellow-500/30'
                                         }`}
                                 >
                                     <div className="flex items-center gap-2">
