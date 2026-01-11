@@ -12,10 +12,28 @@ export const useTasks = () => {
 };
 
 export const TaskProvider = ({ children }) => {
-    const [tasks, setTasks] = useState([]);
+    // Safe local storage parser
+    const getSavedTasks = () => {
+        try {
+            const saved = localStorage.getItem('focusflow_tasks');
+            if (!saved) return [];
+            const parsed = JSON.parse(saved);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            console.error('Local storage corruption detected, resetting tasks:', e);
+            return [];
+        }
+    };
+
+    const [tasks, setTasks] = useState(getSavedTasks);
     const [loading, setLoading] = useState(false);
     const { token, isAuthenticated } = useAuth();
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+    // Sync state with localStorage whenever tasks change
+    useEffect(() => {
+        localStorage.setItem('focusflow_tasks', JSON.stringify(tasks));
+    }, [tasks]);
 
     // Fetch tasks from backend
     useEffect(() => {
@@ -28,10 +46,12 @@ export const TaskProvider = ({ children }) => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    setTasks(data);
+                    if (data && Array.isArray(data)) {
+                        setTasks(data);
+                    }
                 }
             } catch (error) {
-                console.error('Failed to fetch tasks:', error);
+                console.warn('Backend unavailable, using local tasks:', error);
             } finally {
                 setLoading(false);
             }
@@ -41,6 +61,16 @@ export const TaskProvider = ({ children }) => {
     }, [isAuthenticated, token, API_URL]);
 
     const addTask = async (taskData) => {
+        console.log('Adding task:', taskData);
+        const tempId = Date.now().toString();
+        const newTask = { ...taskData, id: tempId, status: 'todo', createdAt: new Date() };
+
+        // Optimistic update
+        setTasks(prev => {
+            if (!Array.isArray(prev)) return [newTask];
+            return [...prev, newTask];
+        });
+
         try {
             const response = await fetch(`${API_URL}/tasks`, {
                 method: 'POST',
@@ -48,18 +78,27 @@ export const TaskProvider = ({ children }) => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(taskData)
+                body: JSON.stringify({ ...taskData, status: 'todo' })
             });
             if (response.ok) {
-                const newTask = await response.json();
-                setTasks(prev => [...prev, newTask]);
+                const savedTask = await response.json();
+                console.log('Task saved to backend:', savedTask);
+                // Ensure the saved task has a status for the UI, fallback to 'todo'
+                const finalTask = { ...savedTask, status: savedTask.status || 'todo' };
+                // Replace temp task with real one from server
+                setTasks(prev => prev.map(t => t.id === tempId ? finalTask : t));
+            } else {
+                console.error('Backend refused task creation:', response.status);
             }
         } catch (error) {
-            console.error('Failed to add task:', error);
+            console.error('Failed to sync added task with server:', error);
         }
     };
 
     const updateTask = async (id, updates) => {
+        // Optimistic update
+        setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+
         try {
             const response = await fetch(`${API_URL}/tasks/${id}`, {
                 method: 'PUT',
@@ -74,21 +113,24 @@ export const TaskProvider = ({ children }) => {
                 setTasks(prev => prev.map(t => t.id === id ? updatedTask : t));
             }
         } catch (error) {
-            console.error('Failed to update task:', error);
+            console.error('Failed to update task on server:', error);
         }
     };
 
     const deleteTask = async (id) => {
+        // Optimistic delete
+        setTasks(prev => prev.filter(t => t.id !== id));
+
         try {
             const response = await fetch(`${API_URL}/tasks/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (response.ok) {
-                setTasks(prev => prev.filter(t => t.id !== id));
+            if (!response.ok) {
+                console.error('Failed to delete task from server');
             }
         } catch (error) {
-            console.error('Failed to delete task:', error);
+            console.error('Failed to delete task on server:', error);
         }
     };
 
@@ -99,7 +141,8 @@ export const TaskProvider = ({ children }) => {
         ));
 
         try {
-            const response = await fetch(`${API_URL}/tasks/${taskId}/move`, {
+            // Using the generic PUT route since there is no specific /move route
+            const response = await fetch(`${API_URL}/tasks/${taskId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,23 +152,10 @@ export const TaskProvider = ({ children }) => {
             });
 
             if (!response.ok) {
-                // Revert if failed
-                const failedTask = tasks.find(t => t.id === taskId);
-                if (failedTask) {
-                    setTasks(prev => prev.map(t =>
-                        t.id === taskId ? failedTask : t
-                    ));
-                }
+                console.error('Failed to move task on server');
             }
         } catch (error) {
-            console.error('Failed to move task:', error);
-            // Revert on error as well
-            const failedTask = tasks.find(t => t.id === taskId);
-            if (failedTask) {
-                setTasks(prev => prev.map(t =>
-                    t.id === taskId ? failedTask : t
-                ));
-            }
+            console.error('Failed to move task on server:', error);
         }
     };
 

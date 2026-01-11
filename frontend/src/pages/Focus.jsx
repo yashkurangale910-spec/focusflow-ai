@@ -1,74 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw, Bell, BellOff, Volume2, VolumeX } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+    Play, Pause, RotateCcw, Volume2, VolumeX,
+    Brain, Zap, Coffee, Clock, Target, Plus, Minus, Settings
+} from 'lucide-react';
+import NeuralSoundscapes from '../components/NeuralSoundscapes';
+import BrowserSentinel from '../components/BrowserSentinel';
 
-const Focus = () => {
-    const [timeLeft, setTimeLeft] = useState(25 * 60);
-    const [isActive, setIsActive] = useState(false);
-    const [activeMode, setActiveMode] = useState('pomodoro');
-    const [soundEnabled, setSoundEnabled] = useState(true);
-    const [notifEnabled, setNotifEnabled] = useState(false);
-    const [customMinutes, setCustomMinutes] = useState(60);
-    const [showCustomModal, setShowCustomModal] = useState(false);
-    const [tempMinutes, setTempMinutes] = useState(60);
+const Focus = ({ activeTask }) => {
+    const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes default
+    const [isRunning, setIsRunning] = useState(false);
+    const [sessionType, setSessionType] = useState('focus'); // focus, short-break, long-break
+    const [completedSessions, setCompletedSessions] = useState(0);
+    const [customMinutes, setCustomMinutes] = useState(30);
+    const intervalRef = useRef(null);
 
-    const timerRef = useRef(null);
+    const sessionPresets = {
+        focus: { time: 25 * 60, label: 'Deep Focus', icon: Brain, color: 'purple' },
+        shortBreak: { time: 5 * 60, label: 'Short Break', icon: Coffee, color: 'emerald' },
+        longBreak: { time: 15 * 60, label: 'Long Break', icon: Zap, color: 'cyan' },
+        custom: { time: customMinutes * 60, label: `${customMinutes}m Custom`, icon: Settings, color: 'amber' },
+    };
 
-    const modes = [
-        { id: 'pomodoro', label: 'Pomodoro', duration: 25 * 60 },
-        { id: 'deep-focus', label: 'Deep Focus', duration: 45 * 60 },
-        { id: 'custom', label: 'Custom', duration: customMinutes * 60 },
-    ];
+    const adjustCustomTime = (delta) => {
+        const newTime = Math.max(1, Math.min(10000, customMinutes + delta));
+        setCustomMinutes(newTime);
+        if (sessionType === 'custom') {
+            setTimeLeft(newTime * 60);
+        }
+    };
 
     useEffect(() => {
-        if (isActive && timeLeft > 0) {
-            timerRef.current = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
+        if (isRunning && timeLeft > 0) {
+            intervalRef.current = setInterval(() => {
+                setTimeLeft(prev => prev - 1);
             }, 1000);
         } else if (timeLeft === 0) {
-            setIsActive(false);
-            clearInterval(timerRef.current);
-            if (soundEnabled) {
-                // Placeholder for sound play
-                console.log("Timer finished!");
-            }
-        } else {
-            clearInterval(timerRef.current);
+            handleSessionComplete();
         }
-        return () => clearInterval(timerRef.current);
-    }, [isActive, timeLeft, soundEnabled]);
+        return () => clearInterval(intervalRef.current);
+    }, [isRunning, timeLeft]);
 
-    const toggleTimer = () => setIsActive(!isActive);
-
-    const resetTimer = () => {
-        setIsActive(false);
-        const mode = modes.find(m => m.id === activeMode);
-        setTimeLeft(mode.duration);
-    };
-
-    const handleModeChange = (modeId) => {
-        if (modeId === 'custom') {
-            setTempMinutes(customMinutes);
-            setShowCustomModal(true);
-        } else {
-            setActiveMode(modeId);
-            setIsActive(false);
-            const mode = modes.find(m => m.id === modeId);
-            setTimeLeft(mode.duration);
-        }
-    };
-
-    const onConfirmCustom = () => {
-        setCustomMinutes(tempMinutes);
-        setActiveMode('custom');
-        setIsActive(false);
-        setTimeLeft(tempMinutes * 60);
-        setShowCustomModal(false);
-    };
-
-    const onCloseCustom = () => {
-        setShowCustomModal(false);
-        // If they were already in custom, stay there, otherwise stay in previous mode
+    const handleSessionComplete = () => {
+        setIsRunning(false);
+        setCompletedSessions(prev => prev + 1);
+        // Play notification sound or show alert
     };
 
     const formatTime = (seconds) => {
@@ -77,202 +53,186 @@ const Focus = () => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const progress = (timeLeft / modes.find(m => m.id === activeMode).duration) * 100;
+    const toggleTimer = () => setIsRunning(!isRunning);
+
+    const resetTimer = () => {
+        setIsRunning(false);
+        setTimeLeft(sessionPresets[sessionType].time);
+    };
+
+    const selectSession = (type) => {
+        setSessionType(type);
+        setTimeLeft(sessionPresets[type].time);
+        setIsRunning(false);
+    };
+
+    const progress = ((sessionPresets[sessionType].time - timeLeft) / sessionPresets[sessionType].time) * 100;
 
     return (
-        <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-12 py-10 animate-in fade-in zoom-in duration-700">
-            <div className="text-center space-y-4">
-                <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white">
-                    Focus. Work. <span style={{ color: 'var(--color-accent)' }}>Achieve.</span>
+        <div className="min-h-screen">
+            {/* Header */}
+            <div className="mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-4">
+                    <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-purple-400">Neural Focus Mode</span>
+                </div>
+                <h1 className="text-4xl font-black text-white mb-2">
+                    {activeTask ? activeTask.title : 'Focus Session'}
                 </h1>
-                <p className="text-zinc-500 max-w-md mx-auto">
-                    Optimized neural intervals for high-throughput cognitive performance.
+                <p className="text-slate-400">
+                    {activeTask ? activeTask.description : 'Enter deep focus mode to maximize productivity'}
                 </p>
             </div>
 
-            {/* Mode Switcher */}
-            <div className="flex p-1 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
-                {modes.map((mode) => (
-                    <button
-                        key={mode.id}
-                        onClick={() => handleModeChange(mode.id)}
-                        className={`px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeMode === mode.id
-                            ? 'bg-white shadow-[0_0_20px_rgba(255,255,255,0.2)] text-black'
-                            : 'text-zinc-500 hover:text-zinc-200'
-                            }`}
+            {/* Main Grid */}
+            <div className="grid grid-cols-12 gap-6">
+                {/* Timer Section */}
+                <div className="col-span-12 lg:col-span-7">
+                    <motion.div
+                        className="p-10 rounded-[2rem] bg-gradient-to-br from-slate-900/80 to-slate-900/40 border border-white/5 relative overflow-hidden"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                     >
-                        {mode.label}
-                    </button>
-                ))}
-            </div>
+                        {/* Background Glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[150px]" />
 
-            {/* Custom Duration Modal */}
-            <AnimatePresence>
-                {showCustomModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={onCloseCustom}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                        />
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative w-full max-w-sm glass-card border-white/10 p-8 rounded-3xl shadow-2xl overflow-hidden"
-                        >
-                            {/* Close Button */}
-                            <button
-                                onClick={onCloseCustom}
-                                className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white transition-colors"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                            </button>
+                        {/* Session Type Selector */}
+                        <div className="flex gap-3 mb-10 relative z-10">
+                            {Object.entries(sessionPresets).map(([key, preset]) => (
+                                <button
+                                    key={key}
+                                    onClick={() => selectSession(key)}
+                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${sessionType === key
+                                        ? `bg-${preset.color}-500/20 border border-${preset.color}-500/40 text-${preset.color}-400`
+                                        : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white'
+                                        }`}
+                                >
+                                    <preset.icon className="w-4 h-4" />
+                                    <span className="text-sm font-medium">{preset.label}</span>
+                                </button>
+                            ))}
+                        </div>
 
-                            <h3 className="text-xl font-bold text-center mb-6">Custom Duration (minutes)</h3>
-
-                            <div className="flex items-center justify-center gap-4 mb-8">
-                                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl p-4 group focus-within:border-accent/50 transition-colors">
+                        {/* Custom Time Adjuster - shows when Custom is selected */}
+                        {sessionType === 'custom' && (
+                            <div className="flex items-center justify-center gap-4 mb-8 relative z-10">
+                                <button
+                                    onClick={() => adjustCustomTime(-5)}
+                                    className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                                >
+                                    <Minus className="w-5 h-5" />
+                                </button>
+                                <div className="px-4 py-3 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center gap-2">
                                     <input
                                         type="number"
-                                        autoFocus
-                                        value={tempMinutes}
-                                        onChange={(e) => setTempMinutes(Math.min(Math.max(parseInt(e.target.value) || 0, 1), 999))}
-                                        className="w-20 bg-transparent border-none focus:ring-0 text-center text-3xl font-bold text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        value={customMinutes}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value) || 1;
+                                            const clamped = Math.max(1, Math.min(10000, val));
+                                            setCustomMinutes(clamped);
+                                            setTimeLeft(clamped * 60);
+                                        }}
+                                        className="w-20 bg-transparent text-2xl font-bold text-amber-400 text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        min="1"
+                                        max="10000"
                                     />
-                                    <div className="flex flex-col gap-1 pr-2">
-                                        <button onClick={() => setTempMinutes(m => Math.min(m + 1, 999))} className="text-zinc-500 hover:text-accent transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
-                                        </button>
-                                        <button onClick={() => setTempMinutes(m => Math.max(m - 1, 1))} className="text-zinc-500 hover:text-accent transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                                        </button>
-                                    </div>
+                                    <span className="text-amber-400/70">min</span>
                                 </div>
-
                                 <button
-                                    onClick={onConfirmCustom}
-                                    className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,209,255,0.4)]"
-                                    style={{ backgroundColor: 'var(--color-accent)' }}
+                                    onClick={() => adjustCustomTime(5)}
+                                    className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                                    <Plus className="w-5 h-5" />
                                 </button>
                             </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+                        )}
 
-            {/* Timer Display */}
-            <div className="relative group">
-                {/* Progress Ring Background */}
-                <div className="w-[320px] h-[320px] rounded-full border-4 border-white/5 absolute inset-0" />
+                        {/* Timer Display */}
+                        <div className="relative z-10 text-center mb-10">
+                            <div className="relative inline-block">
+                                {/* Progress Ring */}
+                                <svg className="w-72 h-72 transform -rotate-90">
+                                    <circle
+                                        cx="144" cy="144" r="130"
+                                        stroke="currentColor"
+                                        strokeWidth="8"
+                                        fill="none"
+                                        className="text-slate-800"
+                                    />
+                                    <circle
+                                        cx="144" cy="144" r="130"
+                                        stroke="url(#gradient)"
+                                        strokeWidth="8"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                        strokeDasharray={817}
+                                        strokeDashoffset={817 - (817 * progress) / 100}
+                                        className="transition-all duration-1000"
+                                    />
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#8b5cf6" />
+                                            <stop offset="100%" stopColor="#06b6d4" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
 
-                {/* Glow Effects */}
-                <div
-                    className="absolute inset-[-20px] rounded-full opacity-30 blur-3xl transition-opacity duration-500"
-                    style={{
-                        backgroundColor: 'var(--color-accent)',
-                        opacity: isActive ? 0.4 : 0.15
-                    }}
-                />
+                                {/* Time */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-7xl font-black text-white tracking-tight">
+                                        {formatTime(timeLeft)}
+                                    </span>
+                                    <span className="text-slate-500 text-sm mt-2">
+                                        {sessionPresets[sessionType].label}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                {/* The Timer Circle */}
-                <div className="w-[320px] h-[320px] rounded-full glass-card flex flex-col items-center justify-center relative z-10 border-white/10 shadow-2xl overflow-hidden">
-                    {/* Progress Indicator (SVG) */}
-                    <svg className="absolute inset-0 w-full h-full -rotate-90">
-                        <circle
-                            cx="160"
-                            cy="160"
-                            r="158"
-                            fill="transparent"
-                            stroke="var(--color-accent)"
-                            strokeWidth="4"
-                            strokeDasharray={1000}
-                            strokeDashoffset={1000 - (progress * 10)}
-                            className="transition-all duration-300 ease-linear opacity-50"
-                        />
-                    </svg>
+                        {/* Controls */}
+                        <div className="flex items-center justify-center gap-4 relative z-10">
+                            <button
+                                onClick={resetTimer}
+                                className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                            >
+                                <RotateCcw className="w-5 h-5" />
+                            </button>
 
-                    <motion.span
-                        key={timeLeft}
-                        initial={{ y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="text-7xl font-light tracking-tighter text-white tabular-nums"
-                    >
-                        {formatTime(timeLeft)}
-                    </motion.span>
+                            <button
+                                onClick={toggleTimer}
+                                className="w-20 h-20 rounded-3xl bg-gradient-to-r from-purple-600 to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 transition-all"
+                            >
+                                {isRunning ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
+                            </button>
 
-                    <div className="flex items-center gap-2 mt-4">
-                        <div
-                            className={`w-2 h-2 rounded-full animate-pulse`}
-                            style={{ backgroundColor: isActive ? 'var(--color-accent)' : '#ef4444' }}
-                        />
-                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">
-                            {isActive ? 'Neural Link Active' : 'Ready to focus'}
-                        </span>
-                    </div>
+                            <button
+                                onClick={() => selectSession(sessionType === 'focus' ? 'shortBreak' : 'focus')}
+                                className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                            >
+                                <Coffee className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Session Stats */}
+                        <div className="flex items-center justify-center gap-8 mt-10 pt-8 border-t border-white/5 relative z-10">
+                            <div className="text-center">
+                                <p className="text-3xl font-bold text-white">{completedSessions}</p>
+                                <p className="text-xs text-slate-500 uppercase tracking-wider">Sessions</p>
+                            </div>
+                            <div className="w-px h-10 bg-white/10" />
+                            <div className="text-center">
+                                <p className="text-3xl font-bold text-white">{Math.floor(completedSessions * 25 / 60)}h {(completedSessions * 25) % 60}m</p>
+                                <p className="text-xs text-slate-500 uppercase tracking-wider">Total Focus</p>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
-            </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-6">
-                <button
-                    onClick={resetTimer}
-                    className="p-4 rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
-                    title="Reset"
-                >
-                    <RotateCcw size={24} />
-                </button>
-
-                <button
-                    onClick={toggleTimer}
-                    className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
-                    style={{
-                        backgroundColor: isActive ? 'white' : 'var(--color-accent)',
-                        color: isActive ? 'black' : 'black'
-                    }}
-                >
-                    {isActive ? <Pause size={32} /> : <Play size={32} className="ml-1" />}
-                </button>
-
-                <button
-                    className="p-4 rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-all opacity-0 pointer-events-none"
-                >
-                    <RotateCcw size={24} />
-                </button>
-            </div>
-
-            {/* Bottom Toggles */}
-            <div className="flex gap-4">
-                <button
-                    onClick={() => setNotifEnabled(!notifEnabled)}
-                    className={`px-6 py-2 rounded-xl flex items-center gap-3 border transition-all ${notifEnabled
-                        ? 'bg-white/10 border-white/20 text-white'
-                        : 'bg-white/5 border-white/5 text-zinc-500'
-                        }`}
-                >
-                    {notifEnabled ? <Bell size={18} /> : <BellOff size={18} />}
-                    <span className="text-xs font-bold uppercase tracking-wider">
-                        {notifEnabled ? 'Notifications Enabled' : 'Notifications Disabled'}
-                    </span>
-                </button>
-
-                <button
-                    onClick={() => setSoundEnabled(!soundEnabled)}
-                    className={`px-6 py-2 rounded-xl flex items-center gap-3 border transition-all ${soundEnabled
-                        ? 'bg-accent/10 border-accent/20 text-accent'
-                        : 'bg-white/5 border-white/5 text-zinc-500'
-                        }`}
-                    style={soundEnabled ? { color: 'var(--color-accent)', borderColor: 'rgba(0,209,255,0.2)' } : {}}
-                >
-                    {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-                    <span className="text-xs font-bold uppercase tracking-wider">
-                        {soundEnabled ? 'Sound Enabled' : 'Sound Disabled'}
-                    </span>
-                </button>
+                {/* Right Column - Tools */}
+                <div className="col-span-12 lg:col-span-5 space-y-6">
+                    <NeuralSoundscapes />
+                    <BrowserSentinel />
+                </div>
             </div>
         </div>
     );

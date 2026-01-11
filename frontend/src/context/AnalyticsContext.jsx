@@ -145,12 +145,20 @@ export const AnalyticsProvider = ({ children }) => {
         return streak;
     };
 
+    const [mood, setMood] = useState('neutral');
+
+    const updateMood = (newMood) => {
+        setMood(newMood);
+    };
+
     const value = {
         sessions,
         addSession,
         getTotalStats,
         getWeeklyData,
         getMonthlyTrend,
+        mood,
+        updateMood
     };
 
     return (

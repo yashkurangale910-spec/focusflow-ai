@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertCircle, Calendar, Bell, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Clock, AlertCircle, Calendar, Bell, Zap, Activity, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const TimeBlindnessHelper = () => {
     const [currentTime, setCurrentTime] = useState(new Date());
     const [timeAnchors, setTimeAnchors] = useState([
-        { time: '09:00', label: 'Morning Start', passed: false },
-        { time: '12:00', label: 'Lunch Time', passed: false },
-        { time: '15:00', label: 'Afternoon Break', passed: false },
-        { time: '18:00', label: 'Evening Wind Down', passed: false },
+        { time: '09:00', label: 'Initial Sync', passed: false },
+        { time: '12:00', label: 'Mid-Day Calibration', passed: false },
+        { time: '15:00', label: 'Post-Peak Buffer', passed: false },
+        { time: '18:00', label: 'System Shutdown', passed: false },
     ]);
 
     const [upcomingEvents] = useState([
-        { time: '14:30', title: 'Team Meeting', in: '2h 15m' },
-        { time: '16:00', title: 'Deep Work Block', in: '3h 45m' },
+        { time: '14:30', title: 'Architecture Review', in: '2h 15m' },
+        { time: '16:00', title: 'Deep Work Protocol', in: '3h 45m' },
     ]);
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const TimeBlindnessHelper = () => {
         target.setHours(hours, minutes, 0);
 
         const diff = target - currentTime;
-        if (diff < 0) return 'Passed';
+        if (diff < 0) return 'Archived';
 
         const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
         const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -56,56 +56,72 @@ const TimeBlindnessHelper = () => {
     };
 
     return (
-        <div className="glass-card border-white/10 p-8 rounded-2xl">
-            <div className="flex items-center gap-3 mb-6">
-                <Clock size={28} className="text-blue-500" />
-                <div>
-                    <h2 className="text-2xl font-bold">Time Awareness Helper</h2>
-                    <p className="text-sm text-zinc-500">Combat time blindness with visual time tracking</p>
+        <div className="surface-raised p-8 rounded-[2.5rem] border-slate-800/80 group overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors" />
+
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                    <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                        <Clock size={20} className="text-blue-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-white uppercase tracking-tight">Temporal Alignment</h3>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Real-time chronometry system</p>
+                    </div>
+                </div>
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 cursor-help hover:text-white transition-colors">
+                    <Info size={14} />
                 </div>
             </div>
 
-            {/* Current Time - Large Display */}
-            <div className="text-center mb-8 p-6 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30">
-                <p className="text-sm text-zinc-400 mb-2">Right Now</p>
-                <p className="text-6xl font-black text-blue-400">
-                    {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                </p>
-                <p className="text-sm text-zinc-500 mt-2">
-                    {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                </p>
+            {/* Neural Chronometer */}
+            <div className="relative mb-10 text-center py-10 rounded-3xl bg-slate-950/50 border border-slate-800/50 shadow-inner group/clock">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-3">Universal Synchronizer</p>
+                <div className="text-7xl font-black font-display text-white tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                    {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                </div>
+                <div className="flex items-center justify-center gap-3 mt-4">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-[pulse_1s_infinite]" />
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                    </p>
+                </div>
             </div>
 
-            {/* Time Anchors */}
-            <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-                    <Zap size={16} className="text-yellow-500" />
-                    Time Anchors (Visual Checkpoints)
-                </h3>
+            {/* Anchor Manifest */}
+            <div className="space-y-3 mb-8">
+                <div className="flex items-center justify-between px-1 mb-2">
+                    <div className="flex items-center gap-2">
+                        <Zap size={12} className="text-amber-500" />
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">Sync Anchors</span>
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Sequential Manifest</span>
+                </div>
+
                 <div className="space-y-2">
                     {timeAnchors.map((anchor, index) => {
                         const timeUntil = getTimeUntil(anchor.time);
-                        const isPassed = timeUntil === 'Passed';
+                        const isPassed = timeUntil === 'Archived';
 
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className={`flex items-center justify-between p-3 rounded-xl ${isPassed ? 'bg-white/5 opacity-50' : 'bg-white/10'
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isPassed
+                                        ? 'bg-slate-950/20 border-slate-900 opacity-40'
+                                        : 'bg-slate-950/50 border-slate-800/80 hover:border-blue-500/30'
                                     }`}
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-3 h-3 rounded-full ${isPassed ? 'bg-zinc-600' : 'bg-blue-500 animate-pulse'
-                                        }`} />
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-2 h-2 rounded-full ${isPassed ? 'bg-slate-700' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'}`} />
                                     <div>
-                                        <p className="font-bold text-sm">{anchor.label}</p>
-                                        <p className="text-xs text-zinc-500">{anchor.time}</p>
+                                        <p className="text-[11px] font-black text-white uppercase tracking-tight">{anchor.label}</p>
+                                        <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{anchor.time}</p>
                                     </div>
                                 </div>
-                                <div className={`text-sm font-bold ${isPassed ? 'text-zinc-600' : 'text-blue-400'
-                                    }`}>
+                                <div className={`text-[10px] font-black uppercase tracking-widest ${isPassed ? 'text-slate-700' : 'text-blue-400'}`}>
                                     {timeUntil}
                                 </div>
                             </motion.div>
@@ -114,52 +130,54 @@ const TimeBlindnessHelper = () => {
                 </div>
             </div>
 
-            {/* Progress Bar to Next Anchor */}
-            <div className="mb-6">
-                <div className="flex justify-between text-xs text-zinc-500 mb-2">
-                    <span>Progress to Next Checkpoint</span>
-                    <span>{Math.round(getProgressToNextAnchor())}%</span>
+            {/* Flow Trajectory */}
+            <div className="mb-10 px-1">
+                <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">
+                    <span>Trajectory Completion</span>
+                    <span className="text-blue-400">{Math.round(getProgressToNextAnchor())}%</span>
                 </div>
-                <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-900 p-0.5">
                     <motion.div
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_10px_rgba(59,130,246,0.3)]"
                         initial={{ width: 0 }}
                         animate={{ width: `${getProgressToNextAnchor()}%` }}
-                        transition={{ duration: 0.5 }}
                     />
                 </div>
             </div>
 
-            {/* Upcoming Events */}
+            {/* Warning System */}
             {upcomingEvents.length > 0 && (
-                <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
-                    <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-                        <Bell size={16} className="text-yellow-500" />
-                        Coming Up Soon
-                    </h3>
-                    <div className="space-y-2">
+                <div className="p-5 rounded-3xl bg-blue-500/5 border border-blue-500/10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-full blur-2xl -mr-8 -mt-8" />
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <Activity size={12} className="text-blue-400" />
+                        </div>
+                        <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Upcoming Interruption</h4>
+                    </div>
+                    <div className="space-y-3">
                         {upcomingEvents.map((event, index) => (
-                            <div key={index} className="flex items-center justify-between text-sm">
-                                <div>
-                                    <p className="font-bold">{event.title}</p>
-                                    <p className="text-xs text-zinc-500">{event.time}</p>
+                            <div key={index} className="flex items-center justify-between">
+                                <div className="flex-1">
+                                    <p className="text-[11px] font-black text-slate-300 uppercase tracking-tight leading-none mb-1">{event.title}</p>
+                                    <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{event.time}</p>
                                 </div>
-                                <span className="text-yellow-400 font-bold">in {event.in}</span>
+                                <div className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] font-black text-blue-400 uppercase tracking-widest">
+                                    -{event.in}
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
 
-            {/* Quick Settings */}
-            <div className="mt-4 flex gap-2">
-                <button className="flex-1 py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all text-xs font-bold">
-                    <Calendar size={14} className="inline mr-1" />
-                    Add Anchor
+            {/* Control Hub */}
+            <div className="mt-8 grid grid-cols-2 gap-3">
+                <button className="h-11 rounded-xl bg-slate-950 border border-slate-800 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:border-slate-700 hover:text-white transition-all flex items-center justify-center gap-2">
+                    <Calendar size={14} /> Log Anchor
                 </button>
-                <button className="flex-1 py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all text-xs font-bold">
-                    <Bell size={14} className="inline mr-1" />
-                    Set Reminder
+                <button className="h-11 rounded-xl bg-slate-950 border border-slate-800 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:border-slate-700 hover:text-white transition-all flex items-center justify-center gap-2">
+                    <Bell size={14} /> Alert Protocol
                 </button>
             </div>
         </div>

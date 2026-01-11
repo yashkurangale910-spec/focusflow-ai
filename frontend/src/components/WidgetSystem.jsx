@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Layout, Plus, X, GripVertical } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Layout, Plus, X, GripVertical, Zap, Layers } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const WidgetSystem = () => {
     const [availableWidgets] = useState([
@@ -31,63 +31,86 @@ const WidgetSystem = () => {
     };
 
     return (
-        <div className="glass-card border-white/10 p-6 rounded-2xl">
-            <div className="flex items-center gap-3 mb-6">
-                <Layout size={24} className="text-accent" />
-                <h3 className="text-xl font-bold">Dashboard Widgets</h3>
-            </div>
-
-            {/* Active Widgets */}
-            <div className="mb-6">
-                <h4 className="text-sm font-bold text-zinc-400 mb-3">Active Widgets</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {activeWidgets.map((widget) => {
-                        const widgetData = availableWidgets.find(w => w.id === widget.id);
-                        return (
-                            <motion.div
-                                key={widget.id}
-                                layout
-                                className="relative p-4 rounded-xl bg-white/5 border border-white/10 hover:border-accent/50 transition-all cursor-move"
-                            >
-                                <button
-                                    onClick={() => removeWidget(widget.id)}
-                                    className="absolute top-2 right-2 p-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-all"
-                                >
-                                    <X size={12} className="text-red-400" />
-                                </button>
-                                <GripVertical size={16} className="absolute top-2 left-2 text-zinc-600" />
-                                <div className="text-center mt-4">
-                                    <div className="text-3xl mb-2">{widgetData?.icon}</div>
-                                    <p className="text-xs font-bold">{widgetData?.name}</p>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
+        <div className="surface-raised p-8 rounded-[2rem] border-slate-800/80 group">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                    <Layout size={20} className="text-indigo-400" />
+                </div>
+                <div>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-tight">System Widgets</h3>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dashboard Component Management</p>
                 </div>
             </div>
 
-            {/* Available Widgets */}
+            {/* Active Infrastructure */}
+            <div className="mb-8">
+                <div className="flex items-center gap-2 mb-4 px-1">
+                    <Layers size={12} className="text-slate-500" />
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Infrastructure</h4>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <AnimatePresence mode="popLayout">
+                        {activeWidgets.map((widget) => {
+                            const widgetData = availableWidgets.find(w => w.id === widget.id);
+                            return (
+                                <motion.div
+                                    key={widget.id}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    className="relative p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-indigo-500/30 transition-all cursor-move group/widget shadow-inner"
+                                >
+                                    <button
+                                        onClick={() => removeWidget(widget.id)}
+                                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-slate-900 border border-slate-800 opacity-0 group-hover/widget:opacity-100 transition-all hover:bg-rose-500/20 hover:text-rose-400 text-slate-500"
+                                    >
+                                        <X size={10} />
+                                    </button>
+                                    <div className="absolute top-2 left-2 p-1 text-slate-800 group-hover/widget:text-slate-600 transition-colors">
+                                        <GripVertical size={14} />
+                                    </div>
+                                    <div className="text-center mt-4">
+                                        <div className="text-3xl mb-3 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">{widgetData?.icon}</div>
+                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">{widgetData?.name}</p>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
+                </div>
+            </div>
+
+            {/* Component Repository */}
             <div>
-                <h4 className="text-sm font-bold text-zinc-400 mb-3">Add Widgets</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="flex items-center gap-2 mb-4 px-1">
+                    <Plus size={12} className="text-slate-500" />
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Component Repository</h4>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {availableWidgets
                         .filter(w => !activeWidgets.find(aw => aw.id === w.id))
                         .map((widget) => (
                             <button
                                 key={widget.id}
                                 onClick={() => addWidget(widget.id)}
-                                className="p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/50 transition-all text-center"
+                                className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 hover:border-indigo-500/30 hover:bg-slate-900 transition-all text-center group/add relative overflow-hidden"
                             >
-                                <div className="text-2xl mb-1">{widget.icon}</div>
-                                <p className="text-[10px] font-bold">{widget.name}</p>
-                                <Plus size={12} className="mx-auto mt-1 text-accent" />
+                                <div className="text-xl mb-1 group-hover/add:scale-110 transition-transform">{widget.icon}</div>
+                                <p className="text-[9px] font-black text-slate-500 group-hover:text-slate-300 transition-colors uppercase tracking-tighter">{widget.name}</p>
+                                <div className="absolute top-1 right-1 opacity-0 group-hover/add:opacity-100 transition-opacity">
+                                    <Plus size={10} className="text-indigo-400" />
+                                </div>
                             </button>
                         ))}
                 </div>
             </div>
 
-            <div className="mt-6 p-3 rounded-xl bg-accent/10 border border-accent/30 text-xs text-center">
-                💡 <strong>Drag & Drop:</strong> Rearrange widgets by dragging them
+            <div className="mt-8 p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex items-center gap-3">
+                <Zap size={14} className="text-indigo-400" />
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed text-center w-full">
+                    Modular interface architecture enabled
+                </p>
             </div>
         </div>
     );

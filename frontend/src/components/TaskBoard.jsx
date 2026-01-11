@@ -15,18 +15,36 @@ import {
 import { useTasks } from '../context/TaskContext';
 import TaskCard from './TaskCard';
 import TaskModal from './TaskModal';
-import { Plus } from 'lucide-react';
+import { Plus, ListTodo, Activity, CheckCircle2 } from 'lucide-react';
 
-const DroppableColumn = ({ column, children }) => {
+const DroppableColumn = ({ column, tasksCount, children }) => {
     const { setNodeRef } = useDroppable({
         id: column.id,
     });
 
+    const icons = {
+        todo: ListTodo,
+        'in-progress': Activity,
+        done: CheckCircle2
+    };
+    const Icon = icons[column.id];
+
     return (
         <div
             ref={setNodeRef}
-            className="glass-card border-white/10 p-6 rounded-2xl min-h-[500px]"
+            className="surface-flat p-6 rounded-2xl min-h-[600px] flex flex-col bg-slate-900/30"
         >
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                        <Icon size={16} className="text-indigo-400" />
+                    </div>
+                    <h3 className="text-sm font-bold text-white tracking-tight uppercase">{column.title}</h3>
+                </div>
+                <span className="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-bold text-slate-500 border border-slate-700/50">
+                    {tasksCount}
+                </span>
+            </div>
             {children}
         </div>
     );
@@ -38,14 +56,18 @@ const TaskBoard = ({ onStartFocus }) => {
     const [editingTask, setEditingTask] = useState(null);
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
         useSensor(KeyboardSensor)
     );
 
     const columns = [
-        { id: 'todo', title: 'To Do', status: 'todo' },
-        { id: 'in-progress', title: 'In Progress', status: 'in-progress' },
-        { id: 'done', title: 'Done', status: 'done' },
+        { id: 'todo', title: 'Pending', status: 'todo' },
+        { id: 'in-progress', title: 'Active', status: 'in-progress' },
+        { id: 'done', title: 'Complete', status: 'done' },
     ];
 
     const handleDragEnd = (event) => {
@@ -95,22 +117,19 @@ const TaskBoard = ({ onStartFocus }) => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-10 animate-soft-entry">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 className="text-3xl font-black">Task Board_</h2>
-                    <p className="text-zinc-500 text-sm mt-1">
-                        Organize your work, track progress, and stay focused.
-                    </p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-indigo-400 mb-1">Workflow Manager</p>
+                    <h2 className="text-3xl font-extrabold font-display">Priority <span className="text-slate-500 font-light italic">Board</span></h2>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(0,209,255,0.3)] hover:scale-105"
-                    style={{ backgroundColor: 'var(--color-accent)', color: '#000' }}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
                 >
-                    <Plus size={20} />
-                    <span>New Task</span>
+                    <Plus size={18} />
+                    <span>Create Task</span>
                 </button>
             </div>
 
@@ -120,33 +139,24 @@ const TaskBoard = ({ onStartFocus }) => {
                 collisionDetection={closestCorners}
                 onDragEnd={handleDragEnd}
             >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {columns.map((column) => {
                         const columnTasks = getTasksByStatus(column.status);
 
                         return (
-                            <DroppableColumn key={column.id} column={column}>
-                                {/* Column Header */}
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-bold">{column.title}</h3>
-                                    <span className="px-3 py-1 rounded-full bg-white/5 text-xs font-bold text-zinc-500">
-                                        {columnTasks.length}
-                                    </span>
-                                </div>
-
-                                {/* Drop Zone */}
+                            <DroppableColumn key={column.id} column={column} tasksCount={columnTasks.length}>
                                 <SortableContext
                                     id={column.id}
                                     items={columnTasks.map(t => t.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
                                     <div
-                                        className="space-y-3 min-h-[400px] p-2 rounded-xl border-2 border-dashed border-white/5 hover:border-white/10 transition-colors"
+                                        className="flex-1 space-y-4 rounded-xl transition-colors"
                                         data-column={column.id}
                                     >
                                         {columnTasks.length === 0 ? (
-                                            <div className="flex items-center justify-center h-full text-zinc-600 text-sm">
-                                                Drop tasks here
+                                            <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-slate-800/50 rounded-2xl text-slate-600 text-xs font-bold uppercase tracking-widest gap-2">
+                                                <span>No tasks present</span>
                                             </div>
                                         ) : (
                                             columnTasks.map((task) => (

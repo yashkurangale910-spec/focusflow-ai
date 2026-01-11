@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Video, Mic, MicOff, Eye, EyeOff, Clock } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Users, Video, Mic, MicOff, Eye, EyeOff, Clock, Activity, Zap, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const BodyDoubling = () => {
     const [isActive, setIsActive] = useState(false);
     const [sessionTime, setSessionTime] = useState(0);
     const [mode, setMode] = useState('silent'); // silent, ambient, social
     const [partners] = useState([
-        { id: 1, name: 'Alex', avatar: '👨‍💻', status: 'focusing', time: '1h 23m' },
-        { id: 2, name: 'Sarah', avatar: '👩‍🎨', status: 'focusing', time: '45m' },
-        { id: 3, name: 'Jordan', avatar: '🧑‍💼', status: 'break', time: '5m' },
+        { id: 1, name: 'Alex.node', avatar: '👨‍💻', status: 'focusing', time: '1h 23m' },
+        { id: 2, name: 'Sarah_v4', avatar: '👩‍🎨', status: 'focusing', time: '45m' },
+        { id: 3, name: 'Jordan.core', avatar: '🧑‍💼', status: 'break', time: '5m' },
     ]);
 
     useEffect(() => {
@@ -32,155 +32,185 @@ const BodyDoubling = () => {
     const modes = {
         silent: {
             icon: '🤫',
-            name: 'Silent Co-Working',
-            description: 'Just presence, no interaction',
-            color: '#3b82f6'
+            name: 'Silent Protocol',
+            description: 'Pure presence node synchronization',
+            color: 'blue'
         },
         ambient: {
             icon: '🎵',
-            name: 'Ambient Sounds',
-            description: 'Shared background sounds',
-            color: '#10b981'
+            name: 'Ambient Resonance',
+            description: 'Shared background neural frequencies',
+            color: 'emerald'
         },
         social: {
             icon: '💬',
-            name: 'Social Sessions',
-            description: 'Chat during breaks',
-            color: '#f59e0b'
+            name: 'Social Uplink',
+            description: 'Active interaction during buffers',
+            color: 'amber'
         }
     };
 
     return (
-        <div className="glass-card border-white/10 p-8 rounded-2xl">
-            <div className="flex items-center gap-3 mb-6">
-                <Users size={28} className="text-green-500" />
-                <div>
-                    <h2 className="text-2xl font-bold">Body Doubling</h2>
-                    <p className="text-sm text-zinc-500">Work alongside others for accountability</p>
+        <div className="surface-raised p-8 rounded-[2.5rem] border-slate-800/80 group relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-32 bg-emerald-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors" />
+
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                    <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <Users size={20} className="text-emerald-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-white uppercase tracking-tight">Sync Co-working Nodes</h3>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Collaborative focus architecture</p>
+                    </div>
                 </div>
+                {isActive && (
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Linked</span>
+                    </div>
+                )}
             </div>
 
-            {!isActive ? (
-                <>
-                    {/* Mode Selection */}
-                    <div className="space-y-3 mb-6">
-                        <h3 className="text-sm font-bold text-zinc-400">Choose Your Mode</h3>
-                        {Object.entries(modes).map(([key, modeData]) => (
-                            <motion.button
-                                key={key}
-                                whileHover={{ scale: 1.02 }}
-                                onClick={() => setMode(key)}
-                                className={`w-full p-4 rounded-xl text-left transition-all ${mode === key
-                                    ? 'bg-white/20 border-2'
-                                    : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
-                                    }`}
-                                style={{
-                                    borderColor: mode === key ? modeData.color : 'transparent'
-                                }}
-                            >
-                                <div className="flex items-center gap-3 mb-2">
-                                    <span className="text-3xl">{modeData.icon}</span>
-                                    <div>
-                                        <h4 className="font-bold">{modeData.name}</h4>
-                                        <p className="text-xs text-zinc-500">{modeData.description}</p>
-                                    </div>
-                                </div>
-                            </motion.button>
-                        ))}
-                    </div>
-
-                    {/* Active Partners */}
-                    <div className="mb-6">
-                        <h3 className="text-sm font-bold text-zinc-400 mb-3">
-                            Currently Focusing ({partners.filter(p => p.status === 'focusing').length})
-                        </h3>
-                        <div className="grid grid-cols-3 gap-2">
-                            {partners.map((partner) => (
-                                <div
-                                    key={partner.id}
-                                    className="p-3 rounded-xl bg-white/5 text-center"
-                                >
-                                    <div className="text-3xl mb-1">{partner.avatar}</div>
-                                    <p className="text-xs font-bold">{partner.name}</p>
-                                    <p className="text-[10px] text-zinc-500">{partner.time}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Start Button */}
-                    <button
-                        onClick={() => setIsActive(true)}
-                        className="w-full py-4 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-lg transition-all shadow-lg"
+            <AnimatePresence mode="wait">
+                {!isActive ? (
+                    <motion.div
+                        key="setup"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
                     >
-                        Start Body Doubling Session
-                    </button>
-
-                    <div className="mt-4 p-3 rounded-xl bg-green-500/10 border border-green-500/30 text-xs">
-                        💡 <strong>What is Body Doubling?</strong> Working alongside others (even virtually) helps ADHD brains stay focused and accountable.
-                    </div>
-                </>
-            ) : (
-                /* Active Session */
-                <div className="space-y-6">
-                    {/* Timer */}
-                    <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-green-500/20 to-blue-500/20 border border-green-500/30">
-                        <p className="text-sm text-zinc-400 mb-2">Session Time</p>
-                        <p className="text-5xl font-black text-green-400">
-                            {formatTime(sessionTime)}
-                        </p>
-                        <p className="text-sm text-zinc-500 mt-2">
-                            {modes[mode].name}
-                        </p>
-                    </div>
-
-                    {/* Partners Grid */}
-                    <div>
-                        <h3 className="text-sm font-bold mb-3">Working Together</h3>
-                        <div className="grid grid-cols-2 gap-3">
-                            {partners.map((partner) => (
-                                <div
-                                    key={partner.id}
-                                    className={`p-3 rounded-xl ${partner.status === 'focusing'
-                                        ? 'bg-green-500/20 border border-green-500/30'
-                                        : 'bg-yellow-500/20 border border-yellow-500/30'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-2xl">{partner.avatar}</span>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-bold">{partner.name}</p>
-                                            <p className="text-xs text-zinc-500">{partner.time}</p>
+                        {/* Mode Selection */}
+                        <div className="space-y-3 mb-8">
+                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Initialization Protocols</h4>
+                            <div className="space-y-2">
+                                {Object.entries(modes).map(([key, modeData]) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => setMode(key)}
+                                        className={`w-full p-4 rounded-2xl text-left transition-all border ${mode === key
+                                                ? `bg-${modeData.color}-500/10 border-${modeData.color}-500/30`
+                                                : 'bg-slate-950/40 border-slate-900 hover:border-slate-800'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-2xl">{modeData.icon}</div>
+                                            <div>
+                                                <h5 className="text-[11px] font-black text-white uppercase tracking-tight">{modeData.name}</h5>
+                                                <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{modeData.description}</p>
+                                            </div>
                                         </div>
-                                        <div className={`w-2 h-2 rounded-full ${partner.status === 'focusing' ? 'bg-green-500' : 'bg-yellow-500'
-                                            } animate-pulse`} />
-                                    </div>
-                                </div>
-                            ))}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Controls */}
-                    <div className="flex gap-3">
+                        {/* Active Nodes */}
+                        <div className="mb-8">
+                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1 mb-4">Available Nodes ({partners.length})</h4>
+                            <div className="grid grid-cols-3 gap-3">
+                                {partners.map((partner) => (
+                                    <div
+                                        key={partner.id}
+                                        className="p-4 rounded-2xl bg-slate-950/40 border border-slate-900 text-center group/partner"
+                                    >
+                                        <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">{partner.avatar}</div>
+                                        <p className="text-[10px] font-black text-white uppercase tracking-tight truncate">{partner.name.split('.')[0]}</p>
+                                        <div className="flex items-center justify-center gap-1 mt-1">
+                                            <Activity size={10} className="text-emerald-500" />
+                                            <p className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">{partner.time}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Start Button */}
                         <button
-                            onClick={() => setIsActive(false)}
-                            className="flex-1 py-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 font-bold transition-all"
+                            onClick={() => setIsActive(true)}
+                            className="w-full h-14 rounded-2xl bg-white text-black font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all flex items-center justify-center gap-2 shadow-xl"
                         >
-                            End Session
+                            Establish Neural Link <Zap size={16} />
                         </button>
-                        <button className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all">
-                            <Eye size={20} />
-                        </button>
-                        <button className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all">
-                            <Mic size={20} />
-                        </button>
-                    </div>
 
-                    <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-xs text-center">
-                        ✨ You're doing great! {partners.length} others are working with you
-                    </div>
-                </div>
-            )}
+                        <div className="mt-6 p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex items-center gap-3">
+                            <Shield size={16} className="text-indigo-400" />
+                            <p className="text-[9px] font-medium text-slate-400 leading-relaxed uppercase tracking-widest">
+                                <strong className="text-indigo-400">Node Presence:</strong> Instant accountability via synchronized peer monitoring.
+                            </p>
+                        </div>
+                    </motion.div>
+                ) : (
+                    /* Active Session */
+                    <motion.div
+                        key="active"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.02 }}
+                        className="space-y-8"
+                    >
+                        {/* High-Fi Timer */}
+                        <div className="relative text-center py-10 rounded-[2rem] bg-slate-950/50 border border-slate-800/50 shadow-inner overflow-hidden group/clock">
+                            <div className={`absolute inset-0 bg-${modes[mode].color}-500/5 blur-3xl`} />
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-3 relative z-10">Synchronization Active</p>
+                            <div className="text-6xl font-black font-display text-white tracking-widest tabular-nums relative z-10">
+                                {formatTime(sessionTime)}
+                            </div>
+                            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-4 relative z-10">
+                                {modes[mode].name}
+                            </p>
+                        </div>
+
+                        {/* Node Matrix Grid */}
+                        <div>
+                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1 mb-4">Live Peer Hub</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {partners.map((partner) => (
+                                    <div
+                                        key={partner.id}
+                                        className={`p-4 rounded-2xl border transition-all ${partner.status === 'focusing'
+                                                ? 'bg-emerald-500/5 border-emerald-500/20'
+                                                : 'bg-amber-500/5 border-amber-500/20'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-2xl">{partner.avatar}</div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[11px] font-black text-white uppercase tracking-tight truncate">{partner.name}</p>
+                                                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{partner.time} Active</p>
+                                            </div>
+                                            <div className={`w-2 h-2 rounded-full ${partner.status === 'focusing' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Strategic Controls */}
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setIsActive(false)}
+                                className="flex-[2] h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 font-black text-[9px] uppercase tracking-[0.2em] hover:bg-rose-500/20 transition-all"
+                            >
+                                Deactivate Link
+                            </button>
+                            <button className="h-12 w-12 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white transition-all flex items-center justify-center">
+                                <Eye size={18} />
+                            </button>
+                            <button className="h-12 w-12 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white transition-all flex items-center justify-center">
+                                <Mic size={18} />
+                            </button>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex items-center gap-3">
+                            <Activity size={14} className="text-indigo-400" />
+                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                                Collective momentum maintaining at <span className="text-emerald-400">94.2%</span> efficiency.
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

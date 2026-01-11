@@ -11,20 +11,19 @@ const Navbar = () => {
     const currentLevel = Math.floor(stats.totalHours / 10) + 1;
 
     return (
-        <header className="h-20 border-b border-white/5 backdrop-blur-xl sticky top-0 z-40 px-6 sm:px-10 flex items-center justify-between" style={{ backgroundColor: 'rgba(10,10,11,0.5)' }}>
+        <header className="h-20 border-b border-slate-800/50 backdrop-blur-xl sticky top-0 z-40 px-6 sm:px-10 flex items-center justify-between bg-[#020617]/50">
             <div className="flex-1 max-w-xl">
                 <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search className="h-4 w-4 text-zinc-500 transition-colors" />
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Search className="h-4 w-4 text-slate-500 transition-colors group-focus-within:text-indigo-400" />
                     </div>
                     <input
                         type="text"
-                        className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-12 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 transition-all"
-                        placeholder="Search cognitive deconstruction..."
-                        style={{ focusRingColor: '#00d1ff' }}
+                        className="block w-full bg-slate-900/50 border border-slate-800 rounded-xl py-2.5 pl-11 pr-12 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium"
+                        placeholder="Search workspace..."
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <div className="flex items-center gap-1 text-[10px] uppercase font-bold text-zinc-600 bg-white/5 px-2 py-1 rounded-md border border-white/10">
+                        <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-slate-600 bg-slate-800/50 px-2 py-1 rounded-md border border-slate-700">
                             <Command size={10} />
                             <span>K</span>
                         </div>
@@ -32,23 +31,35 @@ const Navbar = () => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-6 ml-6">
-                <StreakDisplay variant="compact" />
+            <div className="flex items-center gap-6 ml-10">
+                <div className="hidden lg:flex items-center gap-4">
+                    <StreakDisplay variant="compact" />
+                    <div className="h-4 w-[1px] bg-slate-800" />
+                </div>
 
-                <button className="relative text-zinc-400 hover:text-white transition-colors">
-                    <Bell size={20} />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full shadow-[0_0_5px_rgba(0,209,255,0.8)]" style={{ backgroundColor: 'var(--color-accent)' }} />
-                </button>
+                <div className="flex items-center gap-5">
+                    <button className="relative text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-lg">
+                        <Bell size={20} />
+                        <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full border-2 border-[#020617] bg-indigo-500" />
+                    </button>
 
-                <div className="h-8 w-[1px] bg-white/10" />
-
-                <div className="flex items-center gap-3 cursor-pointer group">
-                    <div className="text-right hidden sm:block">
-                        <p className="text-sm font-semibold text-zinc-200 group-hover:text-accent transition-colors">{user?.name || 'User'}</p>
-                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Neural Rank: {currentLevel}</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full border-2 border-white/10 p-[2px] group-hover:border-accent/40 transition-all">
-                        <div className="w-full h-full rounded-full" style={{ background: 'linear-gradient(to bottom right, #00d1ff, #9333ea)' }} />
+                    <div className="flex items-center gap-4 cursor-pointer group pl-2">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-sm font-bold text-slate-200 group-hover:text-indigo-400 transition-colors">{user?.name || 'User'}</p>
+                            <div className="flex items-center justify-end gap-1.5 mt-0.5">
+                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Level {currentLevel}</span>
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50" />
+                            </div>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 p-[1px] shadow-lg shadow-indigo-500/10 group-hover:scale-105 transition-transform">
+                            <div className="w-full h-full rounded-xl bg-slate-900 flex items-center justify-center overflow-hidden">
+                                {user?.avatar ? (
+                                    <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-indigo-400 font-bold text-xs">{user?.name?.charAt(0) || 'U'}</span>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

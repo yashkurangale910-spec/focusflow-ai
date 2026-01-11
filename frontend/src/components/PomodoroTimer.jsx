@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Coffee, Brain, Settings } from 'lucide-react';
+import { Play, Pause, RotateCcw, Coffee, Brain, Settings2, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { notifySessionComplete, notifyBreakTime } from '../services/notificationService';
 
@@ -59,7 +59,6 @@ const PomodoroTimer = ({ onSessionComplete }) => {
                 });
             }
 
-            // Auto-switch to break
             const nextMode = newSessionCount % settings.sessionsUntilLongBreak === 0
                 ? 'longBreak'
                 : 'shortBreak';
@@ -71,7 +70,6 @@ const PomodoroTimer = ({ onSessionComplete }) => {
 
             notifyBreakTime();
         } else {
-            // Break completed
             setMode('work');
             if (settings.autoStartWork) {
                 setTimeout(() => setIsRunning(true), 1000);
@@ -95,156 +93,168 @@ const PomodoroTimer = ({ onSessionComplete }) => {
     };
 
     const progress = ((durations[mode] - timeLeft) / durations[mode]) * 100;
+    const strokeDashoffset = 565 - (565 * progress) / 100;
 
     const modeConfig = {
-        work: { icon: Brain, color: '#00d1ff', label: 'Focus Time' },
-        shortBreak: { icon: Coffee, color: '#10b981', label: 'Short Break' },
-        longBreak: { icon: Coffee, color: '#f59e0b', label: 'Long Break' },
+        work: { icon: Brain, color: '#6366f1', label: 'Initial Focus', accent: 'indigo' },
+        shortBreak: { icon: Coffee, color: '#10b981', label: 'Brief Respite', accent: 'emerald' },
+        longBreak: { icon: Coffee, color: '#f59e0b', label: 'Extended Break', accent: 'amber' },
     };
 
-    const ModeIcon = modeConfig[mode].icon;
+    const currentMode = modeConfig[mode];
+    const ModeIcon = currentMode.icon;
 
     return (
-        <div className="glass-card border-white/10 p-8 rounded-3xl">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+        <div className="surface-raised p-8 rounded-[2rem] relative overflow-hidden group">
+            {/* Header Area */}
+            <div className="flex items-center justify-between mb-10 relative z-10">
                 <div className="flex items-center gap-3">
-                    <ModeIcon size={28} style={{ color: modeConfig[mode].color }} />
-                    <h2 className="text-2xl font-bold">{modeConfig[mode].label}</h2>
+                    <div className={`p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 transition-colors`}>
+                        <ModeIcon size={20} style={{ color: currentMode.color }} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Current State</p>
+                        <h2 className="text-sm font-bold text-white uppercase tracking-tight">{currentMode.label}</h2>
+                    </div>
                 </div>
                 <button
                     onClick={() => setShowSettings(!showSettings)}
-                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all"
+                    className="p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-slate-400 hover:text-white transition-all shadow-sm"
                 >
-                    <Settings size={20} />
+                    <Settings2 size={18} />
                 </button>
             </div>
 
-            {/* Settings Panel */}
+            {/* Expansion Settings */}
             <AnimatePresence>
                 {showSettings && (
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mb-6 p-4 rounded-xl bg-white/5 space-y-3"
+                        className="mb-8 p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4"
                     >
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <label className="text-xs text-zinc-500 uppercase">Work (min)</label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Focus (m)</label>
                                 <input
                                     type="number"
                                     value={settings.workDuration}
-                                    onChange={(e) => setSettings({ ...settings, workDuration: parseInt(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 mt-1"
+                                    onChange={(e) => setSettings({ ...settings, workDuration: parseInt(e.target.value) || 1 })}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-medium text-white focus:outline-none focus:border-indigo-500 transition-colors"
                                 />
                             </div>
-                            <div>
-                                <label className="text-xs text-zinc-500 uppercase">Short Break (min)</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Rest (m)</label>
                                 <input
                                     type="number"
                                     value={settings.shortBreakDuration}
-                                    onChange={(e) => setSettings({ ...settings, shortBreakDuration: parseInt(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 mt-1"
+                                    onChange={(e) => setSettings({ ...settings, shortBreakDuration: parseInt(e.target.value) || 1 })}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-medium text-white focus:outline-none focus:border-indigo-500 transition-colors"
                                 />
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                checked={settings.autoStartBreaks}
-                                onChange={(e) => setSettings({ ...settings, autoStartBreaks: e.target.checked })}
-                                className="rounded"
-                            />
-                            <label className="text-sm">Auto-start breaks</label>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Timer Display */}
-            <div className="relative mb-8">
-                <svg className="w-full h-64" viewBox="0 0 200 200">
-                    {/* Background circle */}
+            {/* Radial Clock */}
+            <div className="relative flex items-center justify-center mb-12">
+                <svg className="w-64 h-64 -rotate-90">
                     <circle
-                        cx="100"
-                        cy="100"
+                        cx="128"
+                        cy="128"
                         r="90"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.1)"
-                        strokeWidth="8"
+                        fill="transparent"
+                        stroke="rgba(30, 41, 59, 0.4)"
+                        strokeWidth="1.5"
                     />
-                    {/* Progress circle */}
-                    <circle
-                        cx="100"
-                        cy="100"
+                    <motion.circle
+                        cx="128"
+                        cy="128"
                         r="90"
-                        fill="none"
-                        stroke={modeConfig[mode].color}
-                        strokeWidth="8"
+                        fill="transparent"
+                        stroke={currentMode.color}
+                        strokeWidth="3"
                         strokeLinecap="round"
-                        strokeDasharray={`${2 * Math.PI * 90}`}
-                        strokeDashoffset={`${2 * Math.PI * 90 * (1 - progress / 100)}`}
-                        transform="rotate(-90 100 100)"
-                        style={{ transition: 'stroke-dashoffset 1s linear' }}
+                        strokeDasharray="565"
+                        animate={{ strokeDashoffset: strokeDashoffset }}
+                        transition={{ duration: 1, ease: "linear" }}
+                        className="shadow-xl"
                     />
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                        <p className="text-6xl font-black" style={{ color: modeConfig[mode].color }}>
-                            {formatTime(timeLeft)}
-                        </p>
-                        <p className="text-sm text-zinc-500 mt-2">
-                            Session {sessionsCompleted + 1}
-                        </p>
+
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <motion.span
+                        key={timeLeft}
+                        initial={{ opacity: 0.8, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-6xl font-thin font-display text-white tabular-nums tracking-tighter"
+                    >
+                        {formatTime(timeLeft)}
+                    </motion.span>
+                    <div className="flex items-center gap-2 mt-2">
+                        <CheckCircle2 size={12} className="text-slate-600" />
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Interval {sessionsCompleted + 1}</span>
                     </div>
                 </div>
+
+                {/* Glow Backdrop */}
+                <div
+                    className="absolute inset-0 rounded-full blur-[60px] opacity-20 -z-10 transition-colors duration-1000"
+                    style={{ backgroundColor: currentMode.color }}
+                />
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center justify-center gap-4">
-                <button
-                    onClick={toggleTimer}
-                    className="px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg active:scale-95"
-                    style={{
-                        backgroundColor: modeConfig[mode].color,
-                        color: mode === 'work' ? '#000' : '#fff',
-                    }}
-                >
-                    {isRunning ? (
-                        <><Pause size={20} className="inline mr-2" />Pause</>
-                    ) : (
-                        <><Play size={20} className="inline mr-2" />Start</>
-                    )}
-                </button>
-                <button
-                    onClick={resetTimer}
-                    className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all"
-                >
-                    <RotateCcw size={20} />
-                </button>
-            </div>
-
-            {/* Mode Switcher */}
-            <div className="grid grid-cols-3 gap-2 mt-6">
-                {Object.keys(modeConfig).map((m) => (
+            {/* Interaction Dock */}
+            <div className="flex flex-col gap-6">
+                <div className="flex items-center justify-center gap-4">
                     <button
-                        key={m}
-                        onClick={() => {
-                            setMode(m);
-                            setIsRunning(false);
-                        }}
-                        className={`py-2 px-3 rounded-lg text-sm font-bold transition-all ${mode === m
-                                ? 'bg-white/20 border-2'
-                                : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
-                            }`}
+                        onClick={toggleTimer}
+                        className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all shadow-xl active:scale-[0.98]"
                         style={{
-                            borderColor: mode === m ? modeConfig[m].color : 'transparent',
+                            backgroundColor: currentMode.color,
+                            color: mode === 'work' ? '#fff' : '#000',
+                            boxShadow: `0 10px 30px ${currentMode.color}20`
                         }}
                     >
-                        {modeConfig[m].label}
+                        {isRunning ? (
+                            <><Pause size={16} fill="currentColor" />Halt Session</>
+                        ) : (
+                            <><Play size={16} fill="currentColor" />Initialize Session</>
+                        )}
                     </button>
-                ))}
+                    <button
+                        onClick={resetTimer}
+                        className="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-500 hover:text-white transition-all shadow-sm"
+                    >
+                        <RotateCcw size={20} />
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                    {Object.keys(modeConfig).map((m) => {
+                        const mCfg = modeConfig[m];
+                        return (
+                            <button
+                                key={m}
+                                onClick={() => {
+                                    setMode(m);
+                                    setIsRunning(false);
+                                }}
+                                className={`py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest border transition-all ${mode === m
+                                        ? 'bg-slate-900 text-white'
+                                        : 'bg-transparent border-transparent text-slate-600 hover:text-slate-400'
+                                    }`}
+                                style={{
+                                    borderColor: mode === m ? mCfg.color : 'transparent',
+                                }}
+                            >
+                                {mCfg.label.split(' ')[0]}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

@@ -16,11 +16,10 @@ import SessionHistory from './pages/SessionHistory';
 import AdminDashboard from './pages/AdminDashboard';
 import About from './pages/About';
 import Auth from './pages/Auth';
+import ZenithPath from './pages/ZenithPath';
 import AIChatbot from './components/AIChatbot';
 import ThemeSwitcher from './components/ThemeSwitcher';
-import SoundscapePlayer from './components/SoundscapePlayer';
 import DataManager from './components/DataManager';
-import WellnessBreak from './components/WellnessBreak';
 import Gamification from './components/Gamification';
 import SessionTemplates from './components/SessionTemplates';
 import { TaskProvider } from './context/TaskContext';
@@ -32,21 +31,16 @@ import './styles/mobile.css';
 
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('home');
-  const { isAuthenticated } = useAuth();
+  const [focusTask, setFocusTask] = useState(null);
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen text-white bg-zinc-950 font-outfit relative">
-        <Scene3D />
-        <div className="relative z-10 flex flex-col justify-center items-center min-h-screen p-6">
-          <Auth />
-        </div>
-      </div>
-    );
-  }
+  const handleStartFocus = (task) => {
+    setFocusTask(task);
+    setActiveTab('focus');
+  };
 
   return (
-    <div className="min-h-screen text-white transition-colors duration-300" style={{ backgroundColor: 'var(--color-background)' }}>
+    <div className="min-h-screen text-white transition-colors duration-300 relative selection:bg-cyan-500/30 selection:text-cyan-200" style={{ backgroundColor: 'var(--color-background)' }}>
+      <div className="noise-overlay" />
       <Scene3D />
 
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -54,10 +48,10 @@ const AppContent = () => {
       <main className="lg:ml-64 min-h-screen transition-all duration-300 relative z-10">
         <Navbar />
 
-        <div className="p-6 sm:p-10 max-w-7xl mx-auto">
+        <div className="p-6 sm:p-10 max-w-7xl mx-auto animate-soft-entry">
           {activeTab === 'home' && (
             <div className="space-y-8">
-              <Home />
+              <Home onNavigate={setActiveTab} />
               <SessionTemplates />
               <Gamification />
             </div>
@@ -71,21 +65,14 @@ const AppContent = () => {
               </div>
             </div>
           )}
-          {activeTab === 'tasks' && <Tasks />}
+          {activeTab === 'tasks' && <Tasks onStartFocus={handleStartFocus} />}
           {activeTab === 'productivity' && <Productivity />}
-          {activeTab === 'focus' && (
-            <div className="space-y-8">
-              <Focus />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <SoundscapePlayer />
-                <WellnessBreak />
-              </div>
-            </div>
-          )}
+          {activeTab === 'focus' && <Focus activeTask={focusTask} />}
           {activeTab === 'community' && <Community />}
           {activeTab === 'wellness' && <Wellness />}
           {activeTab === 'social' && <Social />}
           {activeTab === 'compete' && <Compete />}
+          {activeTab === 'zenith' && <ZenithPath />}
           {activeTab === 'history' && <SessionHistory />}
           {activeTab === 'admin' && <AdminDashboard />}
           {activeTab === 'about' && <About />}

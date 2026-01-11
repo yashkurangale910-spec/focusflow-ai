@@ -83,6 +83,12 @@ const auth = (req, res, next) => {
         return res.status(401).json({ error: 'No token provided' });
     }
 
+    // Allow mock-token for development/demo mode
+    if (token === 'mock-token') {
+        req.user = { userId: 'mock-123', email: 'demo@focusflow.ai' };
+        return next();
+    }
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;

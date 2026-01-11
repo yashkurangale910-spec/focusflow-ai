@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Smile, Meh, Frown, TrendingUp, Calendar } from 'lucide-react';
+import { Smile, Meh, Frown, TrendingUp, Calendar, Zap, Heart, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAnalytics } from '../context/AnalyticsContext';
 
 const MoodTracker = () => {
+    const { updateMood } = useAnalytics();
     const [todayMood, setTodayMood] = useState(null);
     const [moodHistory, setMoodHistory] = useState([
         { date: '2026-01-06', mood: 'good', energy: 8 },
@@ -12,15 +13,15 @@ const MoodTracker = () => {
     ]);
 
     const moods = [
-        { id: 'great', icon: '😊', label: 'Great', color: '#10b981' },
-        { id: 'good', icon: '🙂', label: 'Good', color: '#00d1ff' },
-        { id: 'neutral', icon: '😐', label: 'Okay', color: '#f59e0b' },
-        { id: 'bad', icon: '😔', label: 'Low', color: '#ef4444' },
+        { id: 'great', icon: '😊', label: 'Great', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+        { id: 'good', icon: '🙂', label: 'Good', color: '#6366f1', bg: 'rgba(99, 102, 241, 0.1)' },
+        { id: 'neutral', icon: '😐', label: 'Okay', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+        { id: 'bad', icon: '😔', label: 'Low', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
     ];
 
     const handleMoodSelect = (moodId) => {
         setTodayMood(moodId);
-        // In real app, save to backend
+        updateMood(moodId);
     };
 
     const getMoodStats = () => {
@@ -39,77 +40,90 @@ const MoodTracker = () => {
     return (
         <div className="space-y-6">
             {/* Today's Mood */}
-            <div className="glass-card border-white/10 p-6 rounded-2xl">
-                <h3 className="text-lg font-bold mb-4">How are you feeling today?</h3>
+            <div className="surface-flat p-6 rounded-2xl">
+                <div className="flex items-center gap-2 mb-6">
+                    <Heart size={16} className="text-rose-500" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-tight">Emotional State</h3>
+                </div>
 
                 <div className="grid grid-cols-4 gap-3">
                     {moods.map((mood) => (
                         <motion.button
                             key={mood.id}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={() => handleMoodSelect(mood.id)}
-                            className={`p-4 rounded-xl text-center transition-all ${todayMood === mood.id
-                                    ? 'bg-white/20 border-2'
-                                    : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
+                            className={`p-4 rounded-xl text-center transition-all duration-300 border ${todayMood === mood.id
+                                ? 'bg-slate-900 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+                                : 'bg-slate-900/30 border-slate-800 hover:border-slate-700 hover:bg-slate-900/50'
                                 }`}
-                            style={{
-                                borderColor: todayMood === mood.id ? mood.color : 'transparent',
-                            }}
                         >
-                            <div className="text-4xl mb-2">{mood.icon}</div>
-                            <div className="text-xs font-bold">{mood.label}</div>
+                            <div className="text-3xl mb-3 filter drop-shadow-md">{mood.icon}</div>
+                            <div className={`text-[10px] font-bold uppercase tracking-wider ${todayMood === mood.id ? 'text-indigo-400' : 'text-slate-500'}`}>
+                                {mood.label}
+                            </div>
                         </motion.button>
                     ))}
                 </div>
             </div>
 
             {/* Mood Insights */}
-            <div className="glass-card border-white/10 p-6 rounded-2xl">
-                <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp size={20} className="text-accent" />
-                    <h3 className="font-bold">This Week's Insights</h3>
+            <div className="surface-flat p-6 rounded-2xl group">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                        <TrendingUp size={16} className="text-indigo-400" />
+                        <h3 className="text-sm font-bold text-white uppercase tracking-tight">Resilience Metrics</h3>
+                    </div>
                 </div>
 
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5">
-                        <span className="text-sm">Average Energy</span>
-                        <span className="font-bold text-accent">{stats.avgEnergy}/10</span>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800/50">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Zap size={12} className="text-amber-500" />
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Avg Energy</span>
+                        </div>
+                        <p className="text-2xl font-bold font-display text-white">{stats.avgEnergy}<span className="text-xs text-slate-600 ml-1">/10</span></p>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5">
-                        <span className="text-sm">Most Common Mood</span>
-                        <span className="font-bold">
+                    <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800/50">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Activity size={12} className="text-emerald-500" />
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dominant</span>
+                        </div>
+                        <p className="text-lg font-bold font-display text-white uppercase">
                             {Object.keys(stats.moodCounts).reduce((a, b) =>
                                 stats.moodCounts[a] > stats.moodCounts[b] ? a : b
                             )}
-                        </span>
+                        </p>
                     </div>
                 </div>
             </div>
 
             {/* Mood History */}
-            <div className="glass-card border-white/10 p-6 rounded-2xl">
-                <div className="flex items-center gap-3 mb-4">
-                    <Calendar size={20} className="text-purple-500" />
-                    <h3 className="font-bold">Recent Moods</h3>
+            <div className="surface-flat p-6 rounded-2xl">
+                <div className="flex items-center gap-2 mb-6">
+                    <Calendar size={16} className="text-slate-500" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-tight">Timeline</h3>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {moodHistory.slice(0, 5).map((entry, index) => {
                         const moodData = moods.find(m => m.id === entry.mood);
                         return (
                             <div
                                 key={index}
-                                className="flex items-center justify-between p-3 rounded-lg bg-white/5"
+                                className="flex items-center justify-between p-4 rounded-xl bg-slate-900/30 border border-slate-800/50 hover:bg-slate-900/50 transition-colors group"
                             >
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl">{moodData?.icon}</span>
-                                    <span className="text-sm text-zinc-400">{entry.date}</span>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-2xl filter drop-shadow-sm group-hover:scale-110 transition-transform">{moodData?.icon}</span>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest leading-none mb-1">{entry.date}</p>
+                                        <p className="text-xs font-bold text-slate-300 uppercase leading-none">{moodData?.label}</p>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs text-zinc-500">Energy:</span>
-                                    <span className="font-bold">{entry.energy}/10</span>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mb-1">Energy</span>
+                                    <span className="text-xs font-bold text-white">{entry.energy}/10</span>
                                 </div>
                             </div>
                         );

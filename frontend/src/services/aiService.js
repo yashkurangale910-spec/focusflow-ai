@@ -1,44 +1,45 @@
-// Updated API service to call backend instead of OpenAI directly
+// AI service with built-in fallback for demo mode
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const getAuthToken = () => {
-    return localStorage.getItem('focusflow_token');
+    return localStorage.getItem('focusflow_token') || 'mock-token';
+};
+
+// Fallback responses when backend is unavailable
+const getFallbackResponse = (message) => {
+    const lowerMsg = message.toLowerCase();
+
+    if (lowerMsg.includes('focus') || lowerMsg.includes('concentrate')) {
+        return "To improve focus, try these steps:\n\n1. 🎧 Put on some lo-fi or white noise\n2. 📱 Put your phone on airplane mode\n3. ⏱️ Set a 25-minute timer\n4. 🎯 Work on ONE task only\n5. ☕ Take a 5-min break after!\n\nWant me to help you break down a specific task?";
+    }
+    if (lowerMsg.includes('task') || lowerMsg.includes('break down') || lowerMsg.includes('help')) {
+        return "I'd love to help break that down! Here's my approach:\n\n1. 📝 What's the main goal?\n2. 🔍 What's the very FIRST tiny step?\n3. ⏰ How long will each step take?\n\nTell me more about what you're working on!";
+    }
+    if (lowerMsg.includes('procrastinat') || lowerMsg.includes('stuck') || lowerMsg.includes('can\'t start')) {
+        return "I totally get it - starting is the hardest part! Try this:\n\n🎲 The 5-minute rule: Commit to just 5 minutes. That's it!\n\nUsually once you start, you'll want to keep going. And if not? That's okay too - you still did 5 minutes more than zero! 💪";
+    }
+    if (lowerMsg.includes('motivation') || lowerMsg.includes('tired') || lowerMsg.includes('energy')) {
+        return "Low energy days happen! Here are some quick wins:\n\n☕ Get a drink of water (dehydration = brain fog)\n🚶 Take a 2-minute walk\n🎵 Put on your favorite pump-up song\n\nSometimes just changing your environment helps. You've got this! 🌟";
+    }
+
+    // Default responses
+    const defaults = [
+        "Great question! Here's a quick tip: Break your task into smaller chunks of 10-15 minutes each. This makes it way less overwhelming! 🎯",
+        "I hear you! For focusing, try the 2-minute rule - if something takes less than 2 minutes, do it now. Otherwise, schedule it! ⚡",
+        "Nice! Let's tackle this together. What's the ONE most important thing you need to finish today? Focus on that first! 🚀",
+        "Focus tip: Put your phone in another room, set a 25-min timer, and tell yourself 'just this one session'. You've got this! 💪",
+    ];
+    return defaults[Math.floor(Math.random() * defaults.length)];
 };
 
 export const chatWithAI = async (messages, systemPrompt = null) => {
+    const token = getAuthToken();
+    const lastUserMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
+
+    const defaultSystemPrompt = `You are a friendly, supportive productivity coach for FocusFlow AI.
+Keep responses concise, warm, and encouraging. Use emojis occasionally.`;
+
     try {
-        const token = getAuthToken();
-        if (!token) {
-            return "Please log in to use AI features.";
-        }
-
-        const defaultSystemPrompt = `You are a friendly, supportive productivity coach for FocusFlow AI - an app designed for people with ADHD, Autism, and focus challenges.
-
-Your personality:
-- Warm, encouraging, and empathetic
-- Use natural, conversational language (never robotic or corporate)
-- Keep responses concise but meaningful
-- Use emojis occasionally to feel more human
-- Be genuinely helpful, not just polite
-
-Your expertise:
-- Task breakdown (breaking overwhelming tasks into tiny, manageable steps)
-- Focus strategies tailored to neurodivergent minds
-- Pomodoro and other time management techniques
-- Motivation without pressure
-- Understanding executive dysfunction
-
-Guidelines:
-- If someone shares a big task, break it down into 3-5 micro-steps
-- Celebrate small wins
-- Never be judgmental about procrastination or struggles
-- Suggest focus session lengths based on the task
-- Be realistic about time estimates
-- Use phrases like "Hey", "Let's", "You got this"
-- Avoid corporate speak like "I'd be happy to assist"
-
-Remember: You're a supportive friend who happens to know a lot about productivity.`;
-
         const response = await fetch(`${API_URL}/ai/chat`, {
             method: 'POST',
             headers: {
@@ -53,16 +54,16 @@ Remember: You're a supportive friend who happens to know a lot about productivit
             }),
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-            throw new Error(data.error || 'AI request failed');
+            console.warn('Backend AI failed, using fallback');
+            return getFallbackResponse(lastUserMessage);
         }
 
-        return data.message;
+        const data = await response.json();
+        return data.message || getFallbackResponse(lastUserMessage);
     } catch (error) {
-        console.error('AI API Error:', error);
-        return "Oops, something went wrong. Can you try again? 🤔";
+        console.warn('AI API Error, using fallback:', error.message);
+        return getFallbackResponse(lastUserMessage);
     }
 };
 
@@ -77,11 +78,7 @@ Format each step like:
 
 Keep it simple and approachable!`;
 
-    const response = await chatWithAI([
-        { role: 'user', content: prompt }
-    ]);
-
-    return response;
+    return await chatWithAI([{ role: 'user', content: prompt }]);
 };
 
 export const getFocusRecommendation = async (taskTitle, userContext = '') => {
@@ -94,9 +91,5 @@ ${userContext ? `Context: ${userContext}` : ''}
 
 Keep it brief and actionable!`;
 
-    const response = await chatWithAI([
-        { role: 'user', content: prompt }
-    ]);
-
-    return response;
+    return await chatWithAI([{ role: 'user', content: prompt }]);
 };

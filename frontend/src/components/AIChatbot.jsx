@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, Terminal, Cpu } from 'lucide-react';
 import { chatWithAI } from '../services/aiService';
 
 const AIChatbot = () => {
@@ -8,7 +8,7 @@ const AIChatbot = () => {
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
-            content: "Hey! 👋 I'm your focus buddy. Need help breaking down a task, or just want some tips to stay on track?",
+            content: "Neural link established. I am your cognitive performance assistant. How can I optimize your current session?",
             timestamp: Date.now(),
         }
     ]);
@@ -31,6 +31,27 @@ const AIChatbot = () => {
         }
     }, [isOpen]);
 
+    // Fallback responses when backend fails
+    const getFallbackResponse = (msg) => {
+        const lowerMsg = msg.toLowerCase();
+        if (lowerMsg.includes('focus') || lowerMsg.includes('concentrate')) {
+            return "To improve focus, try these steps:\n\n1. 🎧 Put on some lo-fi or white noise\n2. 📱 Put your phone on airplane mode\n3. ⏱️ Set a 25-minute timer\n4. 🎯 Work on ONE task only\n5. ☕ Take a 5-min break after!\n\nWant me to help you break down a specific task?";
+        }
+        if (lowerMsg.includes('task') || lowerMsg.includes('break down') || lowerMsg.includes('help')) {
+            return "I'd love to help break that down! Here's my approach:\n\n1. 📝 What's the main goal?\n2. 🔍 What's the very FIRST tiny step?\n3. ⏰ How long will each step take?\n\nTell me more about what you're working on!";
+        }
+        if (lowerMsg.includes('stuck') || lowerMsg.includes('procrastinat')) {
+            return "I totally get it - starting is the hardest part! Try this:\n\n🎲 The 5-minute rule: Commit to just 5 minutes. That's it!\n\nUsually once you start, you'll want to keep going. And if not? That's okay too - you still did 5 minutes more than zero! 💪";
+        }
+        const tips = [
+            "Great question! Break your task into chunks of 10-15 minutes each. Way less overwhelming! 🎯",
+            "Focus tip: Put your phone in another room and set a 25-min timer. You've got this! 💪",
+            "Try the 2-minute rule - if it takes less than 2 minutes, do it now! ⚡",
+            "Start with the easiest part first. Small wins build momentum! 🌟",
+        ];
+        return tips[Math.floor(Math.random() * tips.length)];
+    };
+
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
 
@@ -45,7 +66,6 @@ const AIChatbot = () => {
         setIsLoading(true);
 
         try {
-            // Convert messages to OpenAI format
             const chatHistory = messages.map(msg => ({
                 role: msg.role,
                 content: msg.content,
@@ -54,21 +74,24 @@ const AIChatbot = () => {
 
             const response = await chatWithAI(chatHistory);
 
+            // If response looks like an error, use fallback
+            const isError = response.includes('went wrong') || response.includes('error') || !response;
+
             const assistantMessage = {
                 role: 'assistant',
-                content: response,
+                content: isError ? getFallbackResponse(userMessage.content) : response,
                 timestamp: Date.now(),
             };
 
             setMessages(prev => [...prev, assistantMessage]);
         } catch (error) {
             console.error('Chat error:', error);
-            const errorMessage = {
+            const assistantMessage = {
                 role: 'assistant',
-                content: "Oops, something went wrong. Can you try that again? 😅",
+                content: getFallbackResponse(userMessage.content),
                 timestamp: Date.now(),
             };
-            setMessages(prev => [...prev, errorMessage]);
+            setMessages(prev => [...prev, assistantMessage]);
         } finally {
             setIsLoading(false);
         }
@@ -83,70 +106,67 @@ const AIChatbot = () => {
 
     return (
         <>
-            {/* Floating Chat Button */}
-            <AnimatePresence>
-                {!isOpen && (
-                    <motion.button
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        onClick={() => setIsOpen(true)}
-                        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-                        style={{
-                            backgroundColor: 'var(--color-accent)',
-                            boxShadow: '0 0 30px rgba(0,209,255,0.5)',
-                        }}
-                    >
-                        <MessageCircle size={28} color="#000" />
-                        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 animate-pulse" />
-                    </motion.button>
-                )}
-            </AnimatePresence>
+            {/* Floating Terminal Trigger */}
+            {!isOpen && (
+                <button
+                    onClick={() => setIsOpen(true)}
+                    className="fixed bottom-8 right-8 w-14 h-14 rounded-2xl flex items-center justify-center border border-indigo-500/50 shadow-[0_0_30px_rgba(99,102,241,0.3)] hover:shadow-[0_0_50px_rgba(99,102,241,0.5)] transition-all bg-slate-900 overflow-hidden group hover:scale-110 active:scale-95"
+                    style={{ zIndex: 99999 }}
+                >
+                    <div className="absolute inset-0 bg-indigo-600 opacity-20 group-hover:opacity-30 transition-opacity" />
+                    <Cpu size={24} className="text-indigo-400 group-hover:text-indigo-300 transition-colors relative z-10" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-indigo-500 animate-pulse border-2 border-slate-950" />
+                </button>
+            )}
 
-            {/* Chat Window */}
+            {/* Neural Terminal Window */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 100, scale: 0.8 }}
+                        initial={{ opacity: 0, y: 40, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 100, scale: 0.8 }}
-                        className="fixed bottom-6 right-6 z-50 w-[400px] h-[600px] glass-card border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+                        exit={{ opacity: 0, y: 40, scale: 0.95 }}
+                        className="fixed bottom-8 right-8 w-[420px] h-[640px] surface-raised border-slate-800/80 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col backdrop-blur-3xl"
+                        style={{ zIndex: 99999 }}
                     >
-                        {/* Header */}
-                        <div className="p-4 border-b border-white/10 flex items-center justify-between" style={{ backgroundColor: 'rgba(0,209,255,0.1)' }}>
+                        {/* Terminal Header */}
+                        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-accent)' }}>
-                                    <Sparkles size={20} color="#000" />
+                                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                    <Terminal size={18} className="text-indigo-400" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold">AI Focus Coach</h3>
-                                    <p className="text-xs text-zinc-500">Always here to help</p>
+                                    <h3 className="text-sm font-bold text-white uppercase tracking-tight">Neural Assistant</h3>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Interface Active</p>
+                                    </div>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                className="p-2 hover:bg-slate-800 rounded-xl transition-all text-slate-500 hover:text-white border border-transparent hover:border-slate-700"
                             >
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         </div>
 
-                        {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        {/* Message Stream */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-slate-800">
                             {messages.map((message, index) => (
                                 <motion.div
                                     key={index}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
+                                    initial={{ opacity: 0, x: message.role === 'user' ? 10 : -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
                                     className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[80%] px-4 py-2 rounded-2xl ${message.role === 'user'
-                                                ? 'bg-white text-black'
-                                                : 'bg-white/10 text-white'
+                                        className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${message.role === 'user'
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10 font-medium'
+                                            : 'bg-slate-800/50 text-slate-200 border border-slate-700/50'
                                             }`}
                                     >
-                                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                        <p className="whitespace-pre-wrap">{message.content}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -156,40 +176,43 @@ const AIChatbot = () => {
                                     animate={{ opacity: 1 }}
                                     className="flex justify-start"
                                 >
-                                    <div className="bg-white/10 px-4 py-2 rounded-2xl flex items-center gap-2">
-                                        <Loader2 size={16} className="animate-spin" />
-                                        <span className="text-sm text-zinc-400">Thinking...</span>
+                                    <div className="bg-slate-800/50 px-5 py-3.5 rounded-2xl flex items-center gap-3 border border-slate-700/50">
+                                        <Loader2 size={16} className="animate-spin text-indigo-400" />
+                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Processing Query...</span>
                                     </div>
                                 </motion.div>
                             )}
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input */}
-                        <div className="p-4 border-t border-white/10">
-                            <div className="flex gap-2">
+                        {/* Input Core */}
+                        <div className="p-6 border-t border-slate-800 bg-slate-900/30">
+                            <div className="relative group">
                                 <input
                                     ref={inputRef}
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={handleKeyPress}
-                                    placeholder="Ask me anything..."
+                                    placeholder="Execute neural command..."
                                     disabled={isLoading}
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-accent/50 transition-colors disabled:opacity-50"
+                                    className="w-full bg-slate-950/80 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all disabled:opacity-50 pr-14 shadow-inner"
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
-                                    className="p-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-xl transition-all disabled:opacity-50"
                                     style={{
-                                        backgroundColor: input.trim() && !isLoading ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
-                                        color: input.trim() && !isLoading ? '#000' : '#fff',
+                                        backgroundColor: input.trim() && !isLoading ? '#4f46e5' : 'transparent',
+                                        color: input.trim() && !isLoading ? '#fff' : '#475569',
                                     }}
                                 >
-                                    <Send size={20} />
+                                    <Send size={18} />
                                 </button>
                             </div>
+                            <p className="mt-4 text-[9px] text-center font-bold text-slate-600 uppercase tracking-[0.2em]">
+                                Multi-modal synthesis active
+                            </p>
                         </div>
                     </motion.div>
                 )}

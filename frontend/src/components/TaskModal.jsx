@@ -11,6 +11,8 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
         estimatedTime: 25,
     });
 
+    const [error, setError] = useState('');
+
     useEffect(() => {
         if (task) {
             setFormData({
@@ -29,11 +31,17 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
                 estimatedTime: 25,
             });
         }
+        setError('');
     }, [task, isOpen]);
 
-    const handleSubmit = (e) => {
+    const handleSaveClick = (e) => {
         e.preventDefault();
-        if (!formData.title.trim()) return;
+        e.stopPropagation();
+
+        if (!formData.title.trim()) {
+            setError('Task title is required');
+            return;
+        }
 
         onSave(formData);
         onClose();
@@ -42,7 +50,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -54,7 +62,8 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-lg glass-card border-white/10 p-8 rounded-3xl shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                        className="relative w-full max-w-lg glass-card border-white/10 p-8 rounded-3xl shadow-2xl surface-raised"
                     >
                         {/* Close Button */}
                         <button
@@ -64,11 +73,11 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
                             <X size={20} />
                         </button>
 
-                        <h2 className="text-2xl font-bold mb-6">
-                            {task ? 'Edit Task' : 'Create New Task'}
+                        <h2 className="text-2xl font-bold mb-6 font-display">
+                            {task ? 'Edit Task' : 'New Directive'}
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-4">
                             {/* Title */}
                             <div>
                                 <label className="block text-sm font-bold text-zinc-400 mb-2">
@@ -77,12 +86,15 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
                                 <input
                                     type="text"
                                     value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-accent/50 transition-colors"
+                                    onChange={(e) => {
+                                        setFormData({ ...formData, title: e.target.value });
+                                        if (error) setError('');
+                                    }}
+                                    className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none transition-colors ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-accent/50'}`}
                                     placeholder="Enter task title..."
                                     autoFocus
-                                    required
                                 />
+                                {error && <p className="text-red-400 text-xs mt-1 font-bold">{error}</p>}
                             </div>
 
                             {/* Description */}
@@ -155,14 +167,15 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null }) => {
                                     Cancel
                                 </button>
                                 <button
-                                    type="submit"
-                                    className="flex-1 px-6 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(0,209,255,0.3)]"
+                                    type="button"
+                                    onClick={handleSaveClick}
+                                    className="flex-1 px-6 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(0,209,255,0.3)] hover:scale-[1.02] active:scale-[0.98]"
                                     style={{ backgroundColor: 'var(--color-accent)', color: '#000' }}
                                 >
-                                    {task ? 'Update' : 'Create'} Task
+                                    {task ? 'Update' : 'Initialize'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </motion.div>
                 </div>
             )}

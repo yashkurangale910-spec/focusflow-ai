@@ -16,6 +16,7 @@ router.post('/', auth, (req, res) => {
     const task = {
         id: Date.now().toString(),
         userId: req.user.userId,
+        status: 'todo', // Default status
         ...req.body,
         createdAt: new Date()
     };
