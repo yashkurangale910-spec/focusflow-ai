@@ -119,15 +119,28 @@ Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
 
 ## 🗺️ Roadmap
 
+### ✅ Completed
 - [x] Core focus timer with multiple protocols
 - [x] AI-powered daily planner
 - [x] 3D immersive home environment
 - [x] Gamification system with Neural Rank
+- [x] Habit tracking and productivity heatmaps
+
+### 🚀 In Progress
+- [ ] **Study Together Mode** - Collaborate with friends in real-time
+  - [ ] Video access for virtual co-working sessions
+  - [ ] Integrated chat for study groups
+  - [ ] Shared focus timers and break synchronization
+  - [ ] Virtual study rooms with whiteboard
+
+### 📋 Planned Features
 - [ ] Mobile app (React Native)
 - [ ] Browser extension for distraction blocking
-- [ ] Team collaboration features
-- [ ] Advanced analytics dashboard
+- [ ] Advanced team collaboration dashboard
+- [ ] Advanced analytics and insights
 - [ ] Voice-controlled interface
+- [ ] Calendar integration (Google, Outlook)
+- [ ] Spotify/Music integration for focus playlists
 
 ---
 
