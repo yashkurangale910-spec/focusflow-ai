@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { TrendingUp, Flame, Clock, Target, Zap, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Skeleton from '../components/Skeleton';
 
 const Insights = () => {
     const { getWeeklyData, getTotalStats, getMonthlyTrend } = useAnalytics();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading delay for skeleton demo
+        const timer = setTimeout(() => setIsLoading(false), 1500);
+        return () => clearTimeout(timer);
+    }, []);
 
     const weeklyData = getWeeklyData();
     const stats = getTotalStats();
@@ -66,7 +74,7 @@ const Insights = () => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {statCards.map((stat, index) => (
+                {(isLoading ? Array(4).fill({}) : statCards).map((stat, index) => (
                     <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
@@ -74,26 +82,38 @@ const Insights = () => {
                         transition={{ delay: index * 0.1 }}
                         className="surface-raised p-6 rounded-2xl group relative overflow-hidden"
                     >
-                        <div className="flex items-center justify-between mb-4">
-                            <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 group-hover:bg-indigo-500/10 group-hover:border-indigo-500/20"
-                                style={{ backgroundColor: `${stat.color}10`, borderColor: `${stat.color}30` }}
-                            >
-                                <stat.icon size={18} style={{ color: stat.color }} />
+                        {isLoading ? (
+                            <div className="space-y-4">
+                                <Skeleton className="w-10 h-10 rounded-xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-8 w-24" />
+                                    <Skeleton className="h-3 w-32" />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-1">
-                            <p className="text-3xl font-bold font-display text-white">
-                                {stat.value}
-                                <span className="text-xs text-slate-500 font-medium ml-1.5 uppercase tracking-widest">{stat.unit}</span>
-                            </p>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.15em]">
-                                {stat.label}
-                            </p>
-                        </div>
-                        <div className="absolute right-0 bottom-0 opacity-[0.03] scale-150 rotate-12 -mr-4 -mb-4">
-                            <stat.icon size={120} />
-                        </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div
+                                        className="w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 group-hover:bg-indigo-500/10 group-hover:border-indigo-500/20"
+                                        style={{ backgroundColor: `${stat.color}10`, borderColor: `${stat.color}30` }}
+                                    >
+                                        <stat.icon size={18} style={{ color: stat.color }} />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-3xl font-bold font-display text-white">
+                                        {stat.value}
+                                        <span className="text-xs text-slate-500 font-medium ml-1.5 uppercase tracking-widest">{stat.unit}</span>
+                                    </p>
+                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.15em]">
+                                        {stat.label}
+                                    </p>
+                                </div>
+                                <div className="absolute right-0 bottom-0 opacity-[0.03] scale-150 rotate-12 -mr-4 -mb-4">
+                                    <stat.icon size={120} />
+                                </div>
+                            </>
+                        )}
                     </motion.div>
                 ))}
             </div>
@@ -112,32 +132,36 @@ const Insights = () => {
                     </div>
 
                     <div className="h-[250px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={weeklyData}>
-                                <defs>
-                                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#6366f1" stopOpacity={1} />
-                                        <stop offset="100%" stopColor="#4f46e5" stopOpacity={0.8} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                                <XAxis
-                                    dataKey="day"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
-                                    dy={10}
-                                />
-                                <YAxis hide />
-                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-                                <Bar
-                                    dataKey="minutes"
-                                    fill="url(#barGradient)"
-                                    radius={[4, 4, 4, 4]}
-                                    barSize={20}
-                                />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {isLoading ? (
+                            <Skeleton className="w-full h-full rounded-2xl" />
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={weeklyData}>
+                                    <defs>
+                                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stopColor="#6366f1" stopOpacity={1} />
+                                            <stop offset="100%" stopColor="#4f46e5" stopOpacity={0.8} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
+                                    <XAxis
+                                        dataKey="day"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
+                                        dy={10}
+                                    />
+                                    <YAxis hide />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                                    <Bar
+                                        dataKey="minutes"
+                                        fill="url(#barGradient)"
+                                        radius={[4, 4, 4, 4]}
+                                        barSize={20}
+                                    />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
 
                     {/* Day Pills */}
@@ -172,36 +196,40 @@ const Insights = () => {
                     </div>
 
                     <div className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={monthlyTrend}>
-                                <defs>
-                                    <linearGradient id="colorMinutes" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15} />
-                                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                                <XAxis
-                                    dataKey="date"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#64748b', fontSize: 9, fontWeight: 700 }}
-                                    tickFormatter={(value) => new Date(value).getDate()}
-                                    dy={10}
-                                />
-                                <YAxis hide />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Area
-                                    type="monotone"
-                                    dataKey="minutes"
-                                    stroke="#6366f1"
-                                    strokeWidth={3}
-                                    fillOpacity={1}
-                                    fill="url(#colorMinutes)"
-                                    animationDuration={1500}
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        {isLoading ? (
+                            <Skeleton className="w-full h-full rounded-2xl" />
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={monthlyTrend}>
+                                    <defs>
+                                        <linearGradient id="colorMinutes" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15} />
+                                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
+                                    <XAxis
+                                        dataKey="date"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#64748b', fontSize: 9, fontWeight: 700 }}
+                                        tickFormatter={(value) => new Date(value).getDate()}
+                                        dy={10}
+                                    />
+                                    <YAxis hide />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="minutes"
+                                        stroke="#6366f1"
+                                        strokeWidth={3}
+                                        fillOpacity={1}
+                                        fill="url(#colorMinutes)"
+                                        animationDuration={1500}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
             </div>

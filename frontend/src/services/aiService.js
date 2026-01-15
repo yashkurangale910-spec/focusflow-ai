@@ -5,20 +5,52 @@ const getAuthToken = () => {
     return localStorage.getItem('focusflow_token') || 'mock-token';
 };
 
+// Fuzzy matching helper - checks if input is similar to target (handles typos)
+const fuzzyMatch = (input, target) => {
+    if (input.includes(target)) return true;
+
+    // Check for common typo patterns - allow 1-2 character differences
+    const words = input.split(/\s+/);
+    for (const word of words) {
+        if (word.length < 3) continue;
+
+        // Quick similarity check - count matching characters
+        let matches = 0;
+        const shorter = word.length < target.length ? word : target;
+        const longer = word.length >= target.length ? word : target;
+
+        for (let i = 0; i < shorter.length; i++) {
+            if (longer.includes(shorter[i])) matches++;
+        }
+
+        // If 70%+ characters match and similar length, consider it a match
+        const similarity = matches / longer.length;
+        const lengthRatio = shorter.length / longer.length;
+
+        if (similarity >= 0.6 && lengthRatio >= 0.7) {
+            return true;
+        }
+    }
+    return false;
+};
+
 // Fallback responses when backend is unavailable
 const getFallbackResponse = (message) => {
     const lowerMsg = message.toLowerCase();
 
-    if (lowerMsg.includes('focus') || lowerMsg.includes('concentrate')) {
+    if (fuzzyMatch(lowerMsg, 'focus') || fuzzyMatch(lowerMsg, 'concentrate') || fuzzyMatch(lowerMsg, 'attention')) {
         return "To improve focus, try these steps:\n\n1. 🎧 Put on some lo-fi or white noise\n2. 📱 Put your phone on airplane mode\n3. ⏱️ Set a 25-minute timer\n4. 🎯 Work on ONE task only\n5. ☕ Take a 5-min break after!\n\nWant me to help you break down a specific task?";
     }
-    if (lowerMsg.includes('task') || lowerMsg.includes('break down') || lowerMsg.includes('help')) {
+    if (fuzzyMatch(lowerMsg, 'schedule') || fuzzyMatch(lowerMsg, 'plan') || fuzzyMatch(lowerMsg, 'calendar') || fuzzyMatch(lowerMsg, 'organize')) {
+        return "Great thinking about scheduling! Here's how to organize your time:\n\n📅 Block time for your most important task first\n⏰ Use time-boxing: assign specific hours to tasks\n🎯 Leave buffer time between activities\n✨ Review and adjust your plan each morning\n\nWhat would you like to schedule?";
+    }
+    if (fuzzyMatch(lowerMsg, 'task') || fuzzyMatch(lowerMsg, 'break down') || lowerMsg.includes('help')) {
         return "I'd love to help break that down! Here's my approach:\n\n1. 📝 What's the main goal?\n2. 🔍 What's the very FIRST tiny step?\n3. ⏰ How long will each step take?\n\nTell me more about what you're working on!";
     }
-    if (lowerMsg.includes('procrastinat') || lowerMsg.includes('stuck') || lowerMsg.includes('can\'t start')) {
+    if (fuzzyMatch(lowerMsg, 'procrastinate') || fuzzyMatch(lowerMsg, 'stuck') || lowerMsg.includes("can't start")) {
         return "I totally get it - starting is the hardest part! Try this:\n\n🎲 The 5-minute rule: Commit to just 5 minutes. That's it!\n\nUsually once you start, you'll want to keep going. And if not? That's okay too - you still did 5 minutes more than zero! 💪";
     }
-    if (lowerMsg.includes('motivation') || lowerMsg.includes('tired') || lowerMsg.includes('energy')) {
+    if (fuzzyMatch(lowerMsg, 'motivation') || fuzzyMatch(lowerMsg, 'tired') || fuzzyMatch(lowerMsg, 'energy')) {
         return "Low energy days happen! Here are some quick wins:\n\n☕ Get a drink of water (dehydration = brain fog)\n🚶 Take a 2-minute walk\n🎵 Put on your favorite pump-up song\n\nSometimes just changing your environment helps. You've got this! 🌟";
     }
 

@@ -258,6 +258,20 @@ select:focus {
   }
 }
 
+@keyframes clockPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(0.995);
+  }
+}
+
 .animate-soft-entry {
   animation: soft-fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

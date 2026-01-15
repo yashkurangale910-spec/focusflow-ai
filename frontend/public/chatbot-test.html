@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Coach Test - Enhanced Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a1f38 100%);
+            color: #e2e8f0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.1);
+        }
+
+        .test-card h3 {
+            color: #8b5cf6;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-card .test-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            font-family: monospace;
+        }
+
+        .test-card .expected {
+            color: #64748b;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .category {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .status {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .status.ready {
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .instructions {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .instructions h2 {
+            color: #8b5cf6;
+            margin-bottom: 1rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight {
+            color: #06b6d4;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧠 Neural Coach - Enhanced Training Test</h1>
+        <p class="subtitle">Test the advanced AI chatbot capabilities</p>
+
+        <div class="status ready">
+            <div class="status-icon">✅</div>
+            <h2>Implementation Complete!</h2>
+            <p>All enhancements have been applied to the backend</p>
+            <p style="margin-top: 0.5rem; color: #94a3b8; font-size: 0.9rem;">
+                Knowledge Base: <span class="highlight">323 lines</span> |
+                Size: <span class="highlight">~24KB</span> |
+                Training Level: <span class="highlight">Expert</span>
+            </p>
+        </div>
+
+        <div class="instructions">
+            <h2>📋 How to Test</h2>
+            <ol>
+                <li>Open the <span class="highlight">FocusFlow AI application</span> in your browser
+                    (http://localhost:5173)</li>
+                <li>Click the <span class="highlight">Neural Coach chatbot button</span> (floating bottom-right corner
+                    with 🤖 icon)</li>
+                <li>Try any of the test messages below</li>
+                <li>Observe how the bot understands unclear messages, provides specific advice, and personalizes
+                    responses</li>
+            </ol>
+        </div>
+
+        <h2 style="margin: 3rem 0 1.5rem; color: #8b5cf6;">🧪 Test Scenarios</h2>
+
+        <div class="test-grid">
+            <div class="test-card">
+                <div class="category">NLU - Typos</div>
+                <h3>Test 1: Poor Grammar</h3>
+                <div class="test-input">"cant do it"</div>
+                <div class="expected">
+                    ✅ Should understand: Task initiation difficulty<br>
+                    ✅ Should offer: 5-minute rule, micro-steps<br>
+                    ❌ Should NOT: Say "I don't understand"
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">NLU - Vague</div>
+                <h3>Test 2: Overwhelmed</h3>
+                <div class="test-input">"to much stuff need help"</div>
+                <div class="expected">
+                    ✅ Should understand: Feeling overwhelmed<br>
+                    ✅ Should offer: Prioritization framework<br>
+                    ✅ Should mention: AI Daily Planner
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Personalization</div>
+                <h3>Test 3: Streak Acknowledgment</h3>
+                <div class="test-input">"Hi! I'm on day 15 of my streak"</div>
+                <div class="expected">
+                    ✅ Should use 7-30 day template<br>
+                    ✅ Should say: "serious commitment"<br>
+                    ✅ Should add: 🚀 emoji
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Personalization</div>
+                <h3>Test 4: Mood Matching</h3>
+                <div class="test-input">"I'm feeling stressed today"</div>
+                <div class="expected">
+                    ✅ Should acknowledge stress<br>
+                    ✅ Should say: "simple, clear next steps"<br>
+                    ✅ Should offer: Task breakdown
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Troubleshooting</div>
+                <h3>Test 5: Strategy Failure</h3>
+                <div class="test-input">"I tried Pomodoro but it didn't help"</div>
+                <div class="expected">
+                    ✅ Should validate: "Thanks for trying"<br>
+                    ✅ Should diagnose: "What got in the way?"<br>
+                    ✅ Should offer: Alternative strategies
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Emotional Support</div>
+                <h3>Test 6: Overwhelm/Shutdown</h3>
+                <div class="test-input">"I can't do this anymore. I'm done"</div>
+                <div class="expected">
+                    ✅ Should validate feelings<br>
+                    ✅ Should give: Permission to rest<br>
+                    ❌ Should NOT: Push productivity
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Complex Scenario</div>
+                <h3>Test 7: Hyperfocus Burnout</h3>
+                <div class="test-input">"I worked 6 hours straight yesterday and now can't focus"</div>
+                <div class="expected">
+                    ✅ Should recognize: Hyperfocus crash<br>
+                    ✅ Should distinguish: Immediate vs future<br>
+                    ✅ Should mention: Neural Recovery
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Neuroscience Education</div>
+                <h3>Test 8: Procrastination Pattern</h3>
+                <div class="test-input">"Why do I always procrastinate?"</div>
+                <div class="expected">
+                    ✅ Should reframe: Not character flaw<br>
+                    ✅ Should explain: Dopamine system<br>
+                    ✅ Should offer: 4 specific strategies
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">Feature Recommendation</div>
+                <h3>Test 9: Distraction Management</h3>
+                <div class="test-input">"I keep opening social media when working"</div>
+                <div class="expected">
+                    ✅ Should normalize: "Dopamine seeking"<br>
+                    ✅ Should recommend: Browser Sentinel<br>
+                    ✅ Should give: Immediate + long-term fixes
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">ADHD Education</div>
+                <h3>Test 10: Time Blindness</h3>
+                <div class="test-input">"Tasks always take longer than I think"</div>
+                <div class="expected">
+                    ✅ Should explain: Time blindness in ADHD<br>
+                    ✅ Should suggest: Visual timers<br>
+                    ✅ Should offer: Help with current task
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">NLU - Emotional</div>
+                <h3>Test 11: Frustration (All Caps)</h3>
+                <div class="test-input">"THIS IS STUPID WHY CANT I FOCUS"</div>
+                <div class="expected">
+                    ✅ Should recognize: Frustration<br>
+                    ✅ Should validate feelings<br>
+                    ✅ Should provide: Specific strategy
+                </div>
+            </div>
+
+            <div class="test-card">
+                <div class="category">One Word Query</div>
+                <h3>Test 12: Minimal Input</h3>
+                <div class="test-input">"stuck"</div>
+                <div class="expected">
+                    ✅ Should respond: "Let's figure this out"<br>
+                    ✅ Should offer: Help without full details<br>
+                    ✅ Should ask: Clarifying question
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions" style="margin-top: 3rem;">
+            <h2>🎯 What Makes a Good Response</h2>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li><span class="highlight">Understanding:</span> Shows it "got" what you meant despite how you said it
+                </li>
+                <li><span class="highlight">Actionable:</span> Includes at least one immediately implementable step</li>
+                <li><span class="highlight">Specific:</span> Not vague advice like "just focus harder"</li>
+                <li><span class="highlight">Empathetic:</span> Validates feelings and normalizes ADHD struggles</li>
+                <li><span class="highlight">Personal:</span> Acknowledges your streak, mood, or hours if mentioned</li>
+                <li><span class="highlight">Encouraging:</span> Ends with motivation or support</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

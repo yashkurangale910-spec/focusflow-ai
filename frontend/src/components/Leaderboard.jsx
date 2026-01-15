@@ -61,13 +61,13 @@ const Leaderboard = () => {
             {/* Top 3 Elite Nodes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 relative z-10">
                 {leaderboardData.slice(0, 3).map((user, index) => {
-                    const order = index === 0 ? 1 : index === 1 ? 0 : 2; // Selection logic remains
+                    const order = index === 0 ? 1 : index === 1 ? 0 : 2;
                     const colors = {
-                        1: 'amber', // Gold
-                        2: 'slate', // Silver
-                        3: 'orange', // Bronze
+                        1: { border: 'hover:border-amber-500/30', bg: 'bg-amber-500', text: 'text-amber-400/70', glow: 'from-amber-500/5' },
+                        2: { border: 'hover:border-slate-400/30', bg: 'bg-slate-400', text: 'text-slate-400/70', glow: 'from-slate-400/5' },
+                        3: { border: 'hover:border-orange-500/30', bg: 'bg-orange-500', text: 'text-orange-400/70', glow: 'from-orange-500/5' },
                     };
-                    const color = colors[user.rank];
+                    const config = colors[user.rank];
 
                     return (
                         <motion.div
@@ -75,19 +75,19 @@ const Leaderboard = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: order * 0.1 }}
-                            className={`relative p-6 rounded-[2rem] bg-slate-950/40 border border-slate-900 flex flex-col items-center group/node hover:border-${color}-500/30 transition-all ${order === 1 ? 'md:-mt-4' : ''}`}
+                            className={`relative p-6 rounded-[2rem] bg-slate-950/40 border border-slate-900 flex flex-col items-center group/node transition-all ${config.border} ${order === 1 ? 'md:-mt-4' : ''}`}
                         >
-                            <div className={`absolute inset-0 bg-gradient-to-br from-${color}-500/5 to-transparent opacity-0 group-hover/node:opacity-100 transition-opacity`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${config.glow} to-transparent opacity-0 group-hover/node:opacity-100 transition-opacity`} />
 
                             <div className="relative mb-4">
                                 <div className="text-5xl group-hover:scale-110 transition-transform">{user.avatar}</div>
-                                <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-${color}-500 border-2 border-slate-950 flex items-center justify-center text-[10px] font-black text-white shadow-lg`}>
+                                <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full ${config.bg} border-2 border-slate-950 flex items-center justify-center text-[10px] font-black text-white shadow-lg`}>
                                     #{user.rank}
                                 </div>
                             </div>
 
                             <h3 className="text-xs font-black text-white uppercase tracking-tight text-center">{user.name}</h3>
-                            <p className={`text-[8px] font-black text-${color}-400/70 uppercase tracking-widest mt-1 mb-4`}>{user.level}</p>
+                            <p className={`text-[8px] font-black ${config.text} uppercase tracking-widest mt-1 mb-4`}>{user.level}</p>
 
                             <div className="grid grid-cols-2 gap-4 w-full pt-4 border-t border-slate-900">
                                 <div className="text-center border-r border-slate-900">

@@ -79,8 +79,8 @@ const NeuralSoundscapes = () => {
                         key={playlist.id}
                         onClick={() => setActivePlaylist(playlist.id)}
                         className={`p-3 rounded-xl border text-center transition-all ${activePlaylist === playlist.id
-                                ? `bg-gradient-to-br ${playlist.color} border-white/20 shadow-lg`
-                                : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+                            ? `bg-gradient-to-br ${playlist.color} border-white/20 shadow-lg`
+                            : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
                             }`}
                     >
                         <p className={`text-[10px] font-bold uppercase tracking-tight ${activePlaylist === playlist.id ? 'text-white' : 'text-slate-400'
@@ -100,7 +100,6 @@ const NeuralSoundscapes = () => {
                     height="352"
                     frameBorder="0"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
                     style={{ borderRadius: '12px' }}
                 />
             </div>

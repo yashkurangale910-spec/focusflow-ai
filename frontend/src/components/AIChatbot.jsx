@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Loader2, Terminal, Cpu } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, Terminal, Cpu, Sparkles } from 'lucide-react';
 import { chatWithAI } from '../services/aiService';
+import { useAnalytics } from '../context/AnalyticsContext';
+import { useAuth } from '../context/AuthContext';
 
 const AIChatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,8 +16,19 @@ const AIChatbot = () => {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('Processing Query...');
+    const { getTotalStats, mood } = useAnalytics();
+    const { user } = useAuth();
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+
+    const loaderMessages = [
+        "Synthesizing neural pathways...",
+        "Analyzing temporal performance...",
+        "Optimizing cognitive load...",
+        "Accessing FocusFlow database...",
+        "Modulating feedback loops..."
+    ];
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,11 +44,33 @@ const AIChatbot = () => {
         }
     }, [isOpen]);
 
+    useEffect(() => {
+        let interval;
+        if (isLoading) {
+            let i = 0;
+            interval = setInterval(() => {
+                setLoadingMessage(loaderMessages[i % loaderMessages.length]);
+                i++;
+            }, 2000);
+        }
+        return () => clearInterval(interval);
+    }, [isLoading]);
+
     // Fallback responses when backend fails
     const getFallbackResponse = (msg) => {
         const lowerMsg = msg.toLowerCase();
+
+        // Handle continuation/follow-up words
+        if (lowerMsg === 'then' || lowerMsg === 'next' || lowerMsg === 'and then' || lowerMsg === 'what next' || lowerMsg === 'after that') {
+            return "Here's the next step:\n\n⏱️ Set a timer for 25 minutes and work on JUST that one task. When it goes off, take a 5-minute break.\n\nDuring the break, move around, drink water, look away from the screen. Then you can do another round!\n\nShould we try this now?";
+        }
+
+        if (lowerMsg === 'more' || lowerMsg === 'tell me more' || lowerMsg === 'what else' || lowerMsg === 'continue') {
+            return "Here are more tips:\n\n💪 Make it visible: Keep your task list where you can see it\n🎵 Use background sounds: Try Neural Soundscapes in FocusFlow\n🤝 Body doubling: Work alongside someone (virtual or in-person)\n🎯 One thing at a time: Multitasking kills focus\n\nWhich of these sounds most helpful?";
+        }
+
         if (lowerMsg.includes('focus') || lowerMsg.includes('concentrate')) {
-            return "To improve focus, try these steps:\n\n1. 🎧 Put on some lo-fi or white noise\n2. 📱 Put your phone on airplane mode\n3. ⏱️ Set a 25-minute timer\n4. 🎯 Work on ONE task only\n5. ☕ Take a 5-min break after!\n\nWant me to help you break down a specific task?";
+            return "To improve focus, try these steps:\n\n1. 🎧 Put on some lo-fi or white noise\n2. 📱 Put your phone on airplane mode\n3. ⏱️ Set a 25-minute timer\n4. 🎯 Work on ONE task only\n5. ☕ Take a 5-min break after!\n\nWant me to walk you through more steps?";
         }
         if (lowerMsg.includes('task') || lowerMsg.includes('break down') || lowerMsg.includes('help')) {
             return "I'd love to help break that down! Here's my approach:\n\n1. 📝 What's the main goal?\n2. 🔍 What's the very FIRST tiny step?\n3. ⏰ How long will each step take?\n\nTell me more about what you're working on!";
@@ -66,10 +101,16 @@ const AIChatbot = () => {
         setIsLoading(true);
 
         try {
+            const stats = getTotalStats();
+            const context = `Context: User ${user?.name || 'Unknown'} is currently in a ${mood} mood with a ${stats.currentStreak}-day streak and ${stats.totalHours.toFixed(1)} total focus hours.`;
+
             const chatHistory = messages.map(msg => ({
                 role: msg.role,
                 content: msg.content,
             }));
+
+            // Inject context as a hidden message for the AI
+            chatHistory.unshift({ role: 'user', content: context });
             chatHistory.push({ role: 'user', content: userMessage.content });
 
             const response = await chatWithAI(chatHistory);
@@ -176,9 +217,12 @@ const AIChatbot = () => {
                                     animate={{ opacity: 1 }}
                                     className="flex justify-start"
                                 >
-                                    <div className="bg-slate-800/50 px-5 py-3.5 rounded-2xl flex items-center gap-3 border border-slate-700/50">
-                                        <Loader2 size={16} className="animate-spin text-indigo-400" />
-                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Processing Query...</span>
+                                    <div className="bg-slate-800/50 px-5 py-3.5 rounded-2xl flex items-center gap-3 border border-slate-700/50 shadow-lg shadow-indigo-500/5">
+                                        <div className="relative">
+                                            <Loader2 size={16} className="animate-spin text-indigo-400" />
+                                            <div className="absolute inset-0 bg-indigo-400/20 blur-sm rounded-full animate-pulse" />
+                                        </div>
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{loadingMessage}</span>
                                     </div>
                                 </motion.div>
                             )}

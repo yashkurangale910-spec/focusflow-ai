@@ -78,8 +78,21 @@ const TimeBlindnessHelper = () => {
             <div className="relative mb-10 text-center py-10 rounded-3xl bg-slate-950/50 border border-slate-800/50 shadow-inner group/clock">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-3">Universal Synchronizer</p>
-                <div className="text-7xl font-black font-display text-white tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                <div className="text-7xl font-black font-display text-white tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(59,130,246,0.2)] animate-[clockPulse_2s_infinite]">
                     {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                </div>
+                {/* Visual Hour Progress */}
+                <div className="mt-4 px-12">
+                    <div className="flex items-center justify-between text-[8px] font-bold text-slate-600 uppercase tracking-[0.2em] mb-1.5 px-1">
+                        <span>Cycle Start</span>
+                        <span className="text-blue-500/80">Segment {currentTime.getMinutes()}m</span>
+                    </div>
+                    <div className="h-1 bg-slate-900 rounded-full overflow-hidden border border-slate-800/50 p-[1px]">
+                        <motion.div
+                            className="h-full bg-blue-500/40 rounded-full"
+                            style={{ width: `${(currentTime.getMinutes() / 60) * 100}%` }}
+                        />
+                    </div>
                 </div>
                 <div className="flex items-center justify-center gap-3 mt-4">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-[pulse_1s_infinite]" />
@@ -110,8 +123,8 @@ const TimeBlindnessHelper = () => {
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isPassed
-                                        ? 'bg-slate-950/20 border-slate-900 opacity-40'
-                                        : 'bg-slate-950/50 border-slate-800/80 hover:border-blue-500/30'
+                                    ? 'bg-slate-950/20 border-slate-900 opacity-40'
+                                    : 'bg-slate-950/50 border-slate-800/80 hover:border-blue-500/30'
                                     }`}
                             >
                                 <div className="flex items-center gap-4">

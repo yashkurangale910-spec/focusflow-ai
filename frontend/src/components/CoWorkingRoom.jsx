@@ -6,6 +6,7 @@ const CoWorkingRoom = () => {
     const [isInRoom, setIsInRoom] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [isVideoOff, setIsVideoOff] = useState(true);
+    const [messageInput, setMessageInput] = useState('');
     const [participants, setParticipants] = useState([
         { id: 1, name: 'Sarah.vortex', avatar: '👩‍💻', status: 'focusing', timer: '24:15' },
         { id: 2, name: 'Alex.node', avatar: '👨‍💼', status: 'break', timer: '05:00' },
@@ -25,6 +26,20 @@ const CoWorkingRoom = () => {
         setIsInRoom(false);
     };
 
+    const handleSendMessage = () => {
+        if (!messageInput.trim()) return;
+
+        const newMessage = {
+            id: Date.now(),
+            user: 'You (Node_0x1)',
+            text: messageInput,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+        };
+
+        setMessages(prev => [...prev, newMessage]);
+        setMessageInput('');
+    };
+
     if (!isInRoom) {
         return (
             <div className="surface-raised p-10 rounded-[2.5rem] border-slate-800/80 group relative overflow-hidden">
@@ -41,15 +56,15 @@ const CoWorkingRoom = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                         {[
-                            { title: 'Zenith Protocol', activeTitle: '5 active nodes', desc: 'Silent execution zone. No uplink required.', color: 'indigo' },
-                            { title: 'Collective Sync', activeTitle: '12 active nodes', desc: 'Active collaboration. Collaborative neural link.', color: 'emerald' },
+                            { title: 'Zenith Protocol', activeTitle: '5 active nodes', desc: 'Silent execution zone. No uplink required.', color: 'indigo', dot: 'bg-indigo-500', text: 'text-indigo-400', border: 'border-indigo-500/20', bg: 'bg-indigo-500/10' },
+                            { title: 'Collective Sync', activeTitle: '12 active nodes', desc: 'Active collaboration. Collaborative neural link.', color: 'emerald', dot: 'bg-emerald-500', text: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
                         ].map((room, i) => (
                             <div key={i} className="p-6 rounded-3xl bg-slate-950/40 border border-slate-900 group/room hover:border-indigo-500/30 transition-all shadow-inner">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-sm font-black text-white uppercase tracking-tight">{room.title}</h3>
-                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-${room.color}-500/10 border border-${room.color}-500/20`}>
-                                        <div className={`w-1 h-1 rounded-full bg-${room.color}-500 animate-pulse`} />
-                                        <span className={`text-[10px] font-black text-${room.color}-400 uppercase tracking-widest`}>{room.activeTitle}</span>
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${room.bg} border ${room.border}`}>
+                                        <div className={`w-1 h-1 rounded-full ${room.dot} animate-pulse`} />
+                                        <span className={`text-[10px] font-black ${room.text} uppercase tracking-widest`}>{room.activeTitle}</span>
                                     </div>
                                 </div>
                                 <p className="text-[11px] font-medium text-slate-500 mb-6 leading-relaxed">{room.desc}</p>
@@ -106,8 +121,8 @@ const CoWorkingRoom = () => {
                         <p className="text-[11px] font-black text-white uppercase tracking-tight relative z-10">{participant.name}</p>
 
                         <div className={`absolute top-3 right-3 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border ${participant.status === 'focusing'
-                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                                : 'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                            : 'bg-amber-500/10 border-amber-500/20 text-amber-500'
                             }`}>
                             {participant.timer}
                         </div>
@@ -120,8 +135,8 @@ const CoWorkingRoom = () => {
                 <button
                     onClick={() => setIsMuted(!isMuted)}
                     className={`h-14 w-14 rounded-2xl flex items-center justify-center border transition-all shadow-xl ${isMuted
-                            ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
-                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
                         }`}
                 >
                     {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
@@ -129,8 +144,8 @@ const CoWorkingRoom = () => {
                 <button
                     onClick={() => setIsVideoOff(!isVideoOff)}
                     className={`h-14 w-14 rounded-2xl flex items-center justify-center border transition-all shadow-xl ${isVideoOff
-                            ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
-                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
                         }`}
                 >
                     {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
@@ -162,10 +177,17 @@ const CoWorkingRoom = () => {
                 <div className="flex gap-2 p-1 rounded-2xl bg-slate-950 border border-slate-800 focus-within:border-indigo-500/30 transition-all">
                     <input
                         type="text"
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Transmit message..."
                         className="flex-1 bg-transparent px-4 py-3 text-[11px] font-medium text-white placeholder-slate-700 focus:outline-none"
                     />
-                    <button className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:bg-indigo-400 transition-all">
+                    <button
+                        onClick={handleSendMessage}
+                        disabled={!messageInput.trim()}
+                        className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:bg-indigo-400 transition-all disabled:opacity-20"
+                    >
                         <Send size={16} />
                     </button>
                 </div>

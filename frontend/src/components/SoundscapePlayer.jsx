@@ -1,30 +1,37 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { Volume2, VolumeX, Play, Pause, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SoundscapePlayer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [volume, setVolume] = useState(0.5);
     const [activeSound, setActiveSound] = useState('rain');
 
     const audioRef = useRef(new Audio());
 
     const soundscapes = [
-        { id: 'rain', name: 'Rain', emoji: '🌧️', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' }, // Placeholder URLs
-        { id: 'forest', name: 'Forest', emoji: '🌲', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-        { id: 'cafe', name: 'Café', emoji: '☕', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
-        { id: 'ocean', name: 'Ocean', emoji: '🌊', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
-        { id: 'white-noise', name: 'White Noise', emoji: '📻', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
+        { id: 'rain', name: 'Rain', emoji: '🌧️', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_f5bd351c24.mp3?filename=soft-rain-ambient-111154.mp3' },
+        { id: 'forest', name: 'Forest', emoji: '🌲', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_24922e92c1.mp3?filename=forest-at-day-ambient-13536.mp3' },
+        { id: 'cafe', name: 'Café', emoji: '☕', url: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_2774a9193b.mp3?filename=coffee-shop-ambience-8344.mp3' },
+        { id: 'ocean', name: 'Ocean', emoji: '🌊', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_55a299d7a2.mp3?filename=ocean-waves-ambient-110098.mp3' },
+        { id: 'white-noise', name: 'White Noise', emoji: '📻', url: 'https://cdn.pixabay.com/download/audio/2021/11/25/audio_2193fdf6e6.mp3?filename=white-noise-8117.mp3' },
     ];
 
     useEffect(() => {
         const sound = soundscapes.find(s => s.id === activeSound);
         if (sound) {
+            setIsLoading(true);
             audioRef.current.src = sound.url;
             audioRef.current.loop = true;
-            if (isPlaying) {
-                audioRef.current.play().catch(e => console.error("Playback failed:", e));
-            }
+            audioRef.current.preload = 'auto';
+
+            audioRef.current.oncanplaythrough = () => {
+                setIsLoading(false);
+                if (isPlaying) {
+                    audioRef.current.play().catch(e => console.error("Playback failed:", e));
+                }
+            };
         }
     }, [activeSound]);
 
@@ -50,13 +57,14 @@ const SoundscapePlayer = () => {
                 </div>
                 <button
                     onClick={togglePlay}
-                    className="p-3 rounded-xl transition-all shadow-lg active:scale-95"
+                    disabled={isLoading}
+                    className="p-3 rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50"
                     style={{
                         backgroundColor: isPlaying ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
                         color: isPlaying ? '#000' : '#fff',
                     }}
                 >
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                    {isLoading ? <Loader2 size={20} className="animate-spin" /> : isPlaying ? <Pause size={20} /> : <Play size={20} />}
                 </button>
             </div>
 

@@ -21,6 +21,7 @@ const Navbar = () => {
                         type="text"
                         className="block w-full bg-slate-900/50 border border-slate-800 rounded-xl py-2.5 pl-11 pr-12 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium"
                         placeholder="Search workspace..."
+                        aria-label="Search focused workspace"
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-slate-600 bg-slate-800/50 px-2 py-1 rounded-md border border-slate-700">
@@ -38,9 +39,12 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex items-center gap-5">
-                    <button className="relative text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-lg">
+                    <button
+                        className="relative text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-lg"
+                        aria-label="View notifications"
+                    >
                         <Bell size={20} />
-                        <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full border-2 border-[#020617] bg-indigo-500" />
+                        <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full border-2 border-[#020617] bg-indigo-500" aria-hidden="true" />
                     </button>
 
                     <div className="flex items-center gap-4 cursor-pointer group pl-2">

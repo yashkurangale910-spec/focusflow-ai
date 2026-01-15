@@ -1,5 +1,6 @@
-import { Smile, Meh, Frown, TrendingUp, Calendar, Zap, Heart, Activity } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { Smile, Meh, Frown, TrendingUp, Calendar, Zap, Heart, Activity, Play, Brain, Target, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAnalytics } from '../context/AnalyticsContext';
 
 const MoodTracker = () => {
@@ -35,6 +36,41 @@ const MoodTracker = () => {
         return { moodCounts, avgEnergy: avgEnergy.toFixed(1) };
     };
 
+    const getRecommendedProtocol = (moodId) => {
+        const protocols = {
+            great: {
+                name: 'Deep Work Protocol',
+                desc: 'Maximum cognitive load capacity. Ideal for complex architecture or deep coding sessions.',
+                icon: Target,
+                color: '#10b981',
+                bg: 'rgba(16, 185, 129, 0.1)'
+            },
+            good: {
+                name: 'Creative Synthesis',
+                desc: 'Fluid mental state. Best for brainstorming, UI design, and lateral thinking.',
+                icon: Brain,
+                color: '#6366f1',
+                bg: 'rgba(99, 102, 241, 0.1)'
+            },
+            neutral: {
+                name: 'Rapid Re-Alignment',
+                desc: 'Stabilization required. 5-minute cognitive reset to sharpen focus.',
+                icon: Zap,
+                color: '#f59e0b',
+                bg: 'rgba(245, 158, 11, 0.1)'
+            },
+            bad: {
+                name: 'Neural Recovery',
+                desc: 'High mental fatigue detected. Guided restoration using Theta wave modulation.',
+                icon: Shield,
+                color: '#ef4444',
+                bg: 'rgba(239, 68, 68, 0.1)'
+            }
+        };
+        return protocols[moodId] || null;
+    };
+
+    const recommendation = todayMood ? getRecommendedProtocol(todayMood) : null;
     const stats = getMoodStats();
 
     return (
@@ -66,6 +102,42 @@ const MoodTracker = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Recommended Protocol */}
+            <AnimatePresence>
+                {recommendation && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <div className="surface-raised p-6 rounded-2xl border-indigo-500/30 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 opacity-10 group-hover:opacity-20 transition-opacity" style={{ color: recommendation.color }}>
+                                <recommendation.icon size={128} className="translate-x-8 -translate-y-8" />
+                            </div>
+
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2 rounded-lg" style={{ backgroundColor: recommendation.bg, color: recommendation.color }}>
+                                        <recommendation.icon size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Recommended Protocol</p>
+                                        <h4 className="text-lg font-bold text-white uppercase tracking-tight">{recommendation.name}</h4>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-slate-400 font-medium leading-relaxed mb-6 max-w-md">
+                                    {recommendation.desc}
+                                </p>
+                                <button className="w-full py-3 rounded-xl bg-white text-slate-950 text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-indigo-400 hover:text-white transition-all shadow-xl shadow-white/5">
+                                    <Play size={12} fill="currentColor" /> Initialize Protocol
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Mood Insights */}
             <div className="surface-flat p-6 rounded-2xl group">
