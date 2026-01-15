@@ -58,7 +58,7 @@
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/focusflow-ai.git
+git clone https://github.com/yashkurangale910-spec/focusflow-ai.git
 cd focusflow-ai
 ```
 
@@ -87,5 +87,5 @@ npm run dev
 
 ---
 
-**Developed with ❤️ by [Your Name]**  
+**Developed with ❤️ by Yash Kurangale**  
 *Neural Productivity for the Next Generation.*
