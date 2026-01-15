@@ -2,9 +2,20 @@
 
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/)
 [![Node](https://img.shields.io/badge/Node-20-green?logo=node.js)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)](https://www.mongodb.com/)
+[![Three.js](https://img.shields.io/badge/Three.js-r160-black?logo=three.js)](https://threejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
 **FocusFlow AI** is a premium, high-fidelity productivity ecosystem designed for the modern age. It combines cognitive science, neural assistance, and immersive 3D environments to help users achieve a state of "Flow" and maintain peak mental performance.
+
+## 📸 Visual Showcase
+
+> *🎬 Demo screenshots and GIF coming soon! This section will showcase:*
+> - Immersive 3D Home Environment
+> - Neural Focus Timer in action
+> - Gamification Dashboard
+> - AI Daily Planner interface
 
 > [!TIP]
 > **Built for Neurodiversity**: Specifically designed with ADHD and Autism-friendly UX patterns to minimize cognitive load and maximize engagement.
@@ -84,6 +95,61 @@ npm run dev
 
 ## 🔒 Security Note
 **DO NOT** commit your `.env` file. This project includes a `.gitignore` pre-configured to exclude sensitive credentials. Always use environment variables for deployment.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether it's:
+- 🐛 Reporting bugs
+- 💡 Suggesting new features  
+- 📝 Improving documentation
+- 💻 Submitting code changes
+
+Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
+
+### Quick Contribution Steps:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 🗺️ Roadmap
+
+- [x] Core focus timer with multiple protocols
+- [x] AI-powered daily planner
+- [x] 3D immersive home environment
+- [x] Gamification system with Neural Rank
+- [ ] Mobile app (React Native)
+- [ ] Browser extension for distraction blocking
+- [ ] Team collaboration features
+- [ ] Advanced analytics dashboard
+- [ ] Voice-controlled interface
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📬 Contact
+
+**Yash Kurangale**
+- GitHub: [@yashkurangale910-spec](https://github.com/yashkurangale910-spec)
+- Email: yashkurangale910@gmail.com
+
+---
+
+## 🙏 Acknowledgments
+
+- Inspired by cognitive science research and flow state theory
+- Built with amazing open-source technologies
+- Thanks to all contributors who help make FocusFlow AI better!
 
 ---
 
