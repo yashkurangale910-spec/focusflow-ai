@@ -5,6 +5,7 @@ import CalendarIntegration from '../components/CalendarIntegration';
 import BackgroundCustomizer from '../components/BackgroundCustomizer';
 import WidgetSystem from '../components/WidgetSystem';
 import PWASettings from '../components/PWASettings';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import { motion } from 'framer-motion';
 
 const Settings = () => {
@@ -61,6 +62,7 @@ const Settings = () => {
                             <h2 className="text-sm font-bold text-white uppercase tracking-widest">Environment Tuning</h2>
                         </div>
                         <div className="space-y-6">
+                            <ThemeSwitcher />
                             <BackgroundCustomizer />
                             <WidgetSystem />
                         </div>

@@ -18,7 +18,6 @@ import About from './pages/About';
 import Auth from './pages/Auth';
 import ZenithPath from './pages/ZenithPath';
 import AIChatbot from './components/AIChatbot';
-import ThemeSwitcher from './components/ThemeSwitcher';
 import DataManager from './components/DataManager';
 import Gamification from './components/Gamification';
 import SessionTemplates from './components/SessionTemplates';
@@ -59,10 +58,7 @@ const AppContent = () => {
           {activeTab === 'insights' && (
             <div className="space-y-8">
               <Insights />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ThemeSwitcher />
-                <DataManager />
-              </div>
+              <DataManager />
             </div>
           )}
           {activeTab === 'tasks' && <Tasks onStartFocus={handleStartFocus} />}

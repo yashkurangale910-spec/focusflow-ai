@@ -85,11 +85,11 @@ const Focus = ({ activeTask }) => {
             </div>
 
             {/* Main Grid */}
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                 {/* Timer Section */}
-                <div className="col-span-12 lg:col-span-7">
+                <div className="col-span-1 xl:col-span-8">
                     <motion.div
-                        className="p-10 rounded-[2rem] bg-gradient-to-br from-slate-900/80 to-slate-900/40 border border-white/5 relative overflow-hidden"
+                        className="p-6 md:p-10 rounded-[2rem] bg-gradient-to-br from-slate-900/80 to-slate-900/40 border border-white/5 relative overflow-hidden"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
@@ -97,18 +97,18 @@ const Focus = ({ activeTask }) => {
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[150px]" />
 
                         {/* Session Type Selector */}
-                        <div className="flex gap-3 mb-10 relative z-10">
+                        <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 relative z-10">
                             {Object.entries(sessionPresets).map(([key, preset]) => (
                                 <button
                                     key={key}
                                     onClick={() => selectSession(key)}
-                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${sessionType === key
+                                    className={`flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-xl transition-all ${sessionType === key
                                         ? `bg-${preset.color}-500/20 border border-${preset.color}-500/40 text-${preset.color}-400`
                                         : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white'
                                         }`}
                                 >
                                     <preset.icon className="w-4 h-4" />
-                                    <span className="text-sm font-medium">{preset.label}</span>
+                                    <span className="text-xs md:text-sm font-medium">{preset.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -229,7 +229,7 @@ const Focus = ({ activeTask }) => {
                 </div>
 
                 {/* Right Column - Tools */}
-                <div className="col-span-12 lg:col-span-5 space-y-6">
+                <div className="col-span-1 xl:col-span-4 space-y-6">
                     <NeuralSoundscapes />
                     <BrowserSentinel />
                 </div>
