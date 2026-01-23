@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 const StreakDisplay = ({ variant = 'compact' }) => {
     const [streakData, setStreakData] = useState({ currentStreak: 0, longestStreak: 0 });
+    const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
 
     useEffect(() => {
@@ -14,9 +15,20 @@ const StreakDisplay = ({ variant = 'compact' }) => {
     const fetchStreakData = async () => {
         try {
             const token = localStorage.getItem('token');
+            if (!token) {
+                // No token, use default values
+                setStreakData({ currentStreak: 0, longestStreak: 0 });
+                return;
+            }
+
             const response = await fetch('http://localhost:5000/api/auth/me', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
             const userData = await response.json();
             setStreakData({
                 currentStreak: userData.currentStreak || 0,
@@ -24,6 +36,10 @@ const StreakDisplay = ({ variant = 'compact' }) => {
             });
         } catch (error) {
             console.error('Failed to fetch streak:', error);
+            // Gracefully fallback to default values
+            setStreakData({ currentStreak: 0, longestStreak: 0 });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -39,6 +55,28 @@ const StreakDisplay = ({ variant = 'compact' }) => {
                     <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Day Streak</p>
                 </div>
             </motion.div>
+        );
+    }
+
+    if (variant === 'home') {
+        return (
+            <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-900/30 to-slate-900/60 border border-amber-500/20 h-full group hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300">
+                <div className="flex items-center gap-4">
+                    <motion.div
+                        className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 group-hover:shadow-amber-500/50 transition-all duration-300"
+                        whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <Flame className="w-8 h-8 text-white" />
+                    </motion.div>
+                    <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-1">Current Streak</p>
+                        <h3 className="text-4xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-amber-400 group-hover:to-orange-400 transition-all duration-300">
+                            {streakData.currentStreak}<span className="text-lg text-slate-500 font-normal ml-1">days</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
         );
     }
 

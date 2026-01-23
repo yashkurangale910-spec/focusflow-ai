@@ -147,17 +147,28 @@ const AIChatbot = () => {
 
     return (
         <>
-            {/* Floating Terminal Trigger */}
+            {/* Floating Terminal Trigger - Enhanced */}
             {!isOpen && (
-                <button
+                <motion.button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-8 right-8 w-14 h-14 rounded-2xl flex items-center justify-center border border-indigo-500/50 shadow-[0_0_30px_rgba(99,102,241,0.3)] hover:shadow-[0_0_50px_rgba(99,102,241,0.5)] transition-all bg-slate-900 overflow-hidden group hover:scale-110 active:scale-95"
+                    className="fixed bottom-8 right-8 w-16 h-16 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-2xl shadow-purple-500/20 transition-all bg-gradient-to-br from-slate-900 to-slate-950 overflow-hidden group z-50"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     style={{ zIndex: 99999 }}
                 >
-                    <div className="absolute inset-0 bg-indigo-600 opacity-20 group-hover:opacity-30 transition-opacity" />
-                    <Cpu size={24} className="text-indigo-400 group-hover:text-indigo-300 transition-colors relative z-10" />
-                    <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-indigo-500 animate-pulse border-2 border-slate-950" />
-                </button>
+                    {/* Rotating glow ring */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-cyan-600 to-purple-600 rounded-2xl opacity-60 group-hover:opacity-100 blur-lg transition-opacity animate-spin-slow" />
+
+                    {/* Inner background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-cyan-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Icon */}
+                    <Cpu size={28} className="text-cyan-400 group-hover:text-cyan-300 transition-all duration-300 relative z-10 group-hover:rotate-12" />
+
+                    {/* Active indicator */}
+                    <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 animate-pulse border-2 border-slate-950 shadow-lg shadow-purple-500/50" />
+                    <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-purple-500 animate-ping opacity-75" />
+                </motion.button>
             )}
 
             {/* Neural Terminal Window */}
@@ -170,25 +181,34 @@ const AIChatbot = () => {
                         className="fixed bottom-8 right-8 w-[420px] h-[640px] surface-raised border-slate-800/80 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col backdrop-blur-3xl"
                         style={{ zIndex: 99999 }}
                     >
-                        {/* Terminal Header */}
-                        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                                    <Terminal size={18} className="text-indigo-400" />
+                        {/* Terminal Header - Enhanced */}
+                        <div className="p-5 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-slate-900/80 to-slate-900/50 backdrop-blur-xl relative">
+                            {/* Ambient glow */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+
+                            <div className="flex items-center gap-3 relative z-10">
+                                <div className="relative">
+                                    {/* Icon glow */}
+                                    <div className="absolute inset-0 bg-purple-500/20 rounded-xl blur-md" />
+                                    <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/30 flex items-center justify-center">
+                                        <Terminal size={18} className="text-purple-400" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-white uppercase tracking-tight">Neural Assistant</h3>
-                                    <div className="flex items-center gap-1.5">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Interface Active</p>
+                                    <h3 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 uppercase tracking-tight">Neural Assistant</h3>
+                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 animate-pulse shadow-sm shadow-emerald-400/30" style={{ animationDelay: '0.2s' }} />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/40 animate-pulse shadow-sm shadow-emerald-400/20" style={{ animationDelay: '0.4s' }} />
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Online</p>
                                     </div>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 hover:bg-slate-800 rounded-xl transition-all text-slate-500 hover:text-white border border-transparent hover:border-slate-700"
+                                className="relative z-10 p-2 hover:bg-white/5 rounded-xl transition-all text-slate-500 hover:text-white border border-transparent hover:border-white/10 group"
                             >
-                                <X size={18} />
+                                <X size={18} className="group-hover:rotate-90 transition-transform duration-300" />
                             </button>
                         </div>
 
@@ -229,9 +249,15 @@ const AIChatbot = () => {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input Core */}
-                        <div className="p-6 border-t border-slate-800 bg-slate-900/30">
+                        {/* Input Core - Enhanced */}
+                        <div className="p-6 border-t border-white/5 bg-gradient-to-t from-slate-900/80 to-slate-900/50 backdrop-blur-xl relative">
+                            {/* Ambient glow */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-purple-500/5 via-transparent to-transparent pointer-events-none" />
+
                             <div className="relative group">
+                                {/* Glow on focus */}
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300" />
+
                                 <input
                                     ref={inputRef}
                                     type="text"
@@ -240,22 +266,23 @@ const AIChatbot = () => {
                                     onKeyPress={handleKeyPress}
                                     placeholder="Execute neural command..."
                                     disabled={isLoading}
-                                    className="w-full bg-slate-950/80 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all disabled:opacity-50 pr-14 shadow-inner"
+                                    className="relative w-full bg-slate-950/80 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:bg-slate-950 focus:border-purple-500/30 transition-all disabled:opacity-50 pr-14 shadow-inner"
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-xl transition-all disabled:opacity-50"
-                                    style={{
-                                        backgroundColor: input.trim() && !isLoading ? '#4f46e5' : 'transparent',
-                                        color: input.trim() && !isLoading ? '#fff' : '#475569',
-                                    }}
+                                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-xl transition-all duration-300 disabled:opacity-50 group/send ${input.trim() && !isLoading
+                                            ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/50'
+                                            : 'bg-transparent'
+                                        }`}
                                 >
-                                    <Send size={18} />
+                                    <Send size={18} className={input.trim() && !isLoading ? 'text-white group-hover/send:translate-x-0.5 transition-transform' : 'text-slate-600'} />
                                 </button>
                             </div>
-                            <p className="mt-4 text-[9px] text-center font-bold text-slate-600 uppercase tracking-[0.2em]">
+                            <p className="mt-4 text-[9px] text-center font-bold text-slate-600 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                                <Sparkles size={10} className="animate-pulse text-purple-500/50" />
                                 Multi-modal synthesis active
+                                <Sparkles size={10} className="animate-pulse text-cyan-500/50" style={{ animationDelay: '0.5s' }} />
                             </p>
                         </div>
                     </motion.div>

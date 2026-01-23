@@ -38,7 +38,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     const Section = ({ title, items }) => (
         <div className="mb-8">
             {title && (
-                <h3 className="px-6 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-900/40 dark:text-slate-600">
+                <h3 className="px-6 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 flex items-center gap-2">
+                    <div className="w-3 h-[1px] bg-gradient-to-r from-slate-700 to-transparent" />
                     {title}
                 </h3>
             )}
@@ -49,25 +50,49 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${isActive
                                 ? 'text-white'
                                 : 'text-slate-500 hover:text-slate-200'
                                 }`}
                         >
-                            {/* Active Backdrop - Subtle Glass */}
+                            {/* Active Backdrop - Enhanced Glassmorphism */}
                             {isActive && (
-                                <div className="absolute inset-0 bg-white/5 border border-white/5 rounded-xl shadow-lg backdrop-blur-sm" />
+                                <>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-transparent rounded-xl" />
+                                    <div className="absolute inset-0 bg-white/5 border border-white/10 rounded-xl shadow-lg shadow-purple-500/10 backdrop-blur-sm" />
+                                </>
                             )}
 
-                            {/* Active Glow Indicator */}
-                            {isActive && (
-                                <div className="absolute left-2 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+                            {/* Hover State */}
+                            {!isActive && (
+                                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 rounded-xl transition-all duration-300" />
                             )}
 
-                            <item.icon className={`w-4 h-4 transition-all duration-300 relative z-10 ${isActive ? 'text-cyan-400 translate-x-2' : 'group-hover:text-cyan-200'}`} />
-                            <span className={`text-sm font-medium hidden lg:block transition-all duration-300 relative z-10 ${isActive ? 'translate-x-2' : ''}`}>
+                            {/* Active Glow Indicator - Enhanced */}
+                            {isActive && (
+                                <>
+                                    <div className="absolute left-0 w-1 h-8 bg-gradient-to-b from-purple-500 via-cyan-400 to-purple-500 rounded-r-full shadow-lg shadow-cyan-500/50" />
+                                    <div className="absolute left-2 w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-[0_0_12px_rgba(34,211,238,0.8)] animate-pulse" />
+                                </>
+                            )}
+
+                            <item.icon className={`w-4 h-4 transition-all duration-300 relative z-10 ${isActive
+                                ? 'text-cyan-400 translate-x-2 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]'
+                                : 'group-hover:text-purple-300 group-hover:translate-x-1 group-hover:scale-110'
+                                }`} />
+                            <span className={`text-sm font-medium hidden lg:block transition-all duration-300 relative z-10 ${isActive
+                                ? 'translate-x-2 font-semibold'
+                                : 'group-hover:translate-x-0.5'
+                                }`}>
                                 {item.label}
                             </span>
+
+                            {/* Shimmer effect on hover */}
+                            {!isActive && (
+                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
+                                </div>
+                            )}
                         </button>
                     );
                 })}
@@ -76,24 +101,45 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     );
 
     return (
-        <aside className="w-20 lg:w-64 h-screen fixed left-0 top-0 border-r border-white/5 flex flex-col justify-between py-6 transition-all duration-300 z-50 bg-[#02040a]">
-            {/* Ambient Glow */}
-            <div className="absolute top-0 left-0 w-full h-64 bg-indigo-500/10 blur-[100px] pointer-events-none" />
+        <aside className="w-20 lg:w-64 h-screen fixed left-0 top-0 border-r border-white/5 flex flex-col justify-between py-6 transition-all duration-300 z-50 bg-[#02040a] overflow-hidden">
+            {/* Cosmic aurora background */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/4 left-1/2 w-full h-64 bg-gradient-to-r from-purple-600/10 via-cyan-600/10 to-purple-600/10 blur-3xl aurora-wave" />
+                <div className="absolute bottom-1/4 left-1/2 w-full h-64 bg-gradient-to-r from-cyan-600/10 via-purple-600/10 to-cyan-600/10 blur-3xl aurora-wave" style={{ animationDelay: '4s' }} />
+            </div>
+
+            {/* Subtle starfield */}
+            <div className="absolute inset-0 opacity-30">
+                {[...Array(30)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-px h-px bg-white rounded-full animate-pulse"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${2 + Math.random() * 2}s`
+                        }}
+                    />
+                ))}
+            </div>
 
             <div className="overflow-y-auto custom-scrollbar relative z-10">
-                {/* New Geometric Logo */}
+                {/* Enhanced Geometric Logo */}
                 <div className="px-6 mb-12 flex items-center gap-4">
                     <div className="relative w-10 h-10 flex items-center justify-center">
-                        <div className="absolute inset-0 border border-slate-700/50 rounded-lg transform rotate-45" />
-                        <div className="absolute inset-0 border border-cyan-500/20 rounded-lg transform rotate-45 animate-pulse" />
-                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-md flex items-center justify-center transform group hover:rotate-180 transition-transform duration-700 shadow-[0_0_20px_rgba(99,102,241,0.5)]">
+                        <div className="absolute inset-0 border border-slate-700/50 rounded-lg transform rotate-45 animate-pulse" />
+                        <div className="absolute inset-0 border border-cyan-500/20 rounded-lg transform rotate-45 animate-spin-slow" />
+                        {/* Liquid morph decoration */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-cyan-600/20 liquid-shape blur-md" />
+                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-md flex items-center justify-center transform group hover:rotate-180 transition-transform duration-700 shadow-[0_0_20px_rgba(99,102,241,0.5)] relative z-10">
                             <Brain className="text-white w-4 h-4" />
                         </div>
                     </div>
 
                     <div className="hidden lg:block">
                         <h1 className="font-display font-bold text-xl tracking-tight leading-none text-white">
-                            NEURO<span className="font-light text-cyan-400">FLOW</span>
+                            NEURO<span className="font-light text-cyan-400 neon-text">FLOW</span>
                         </h1>
                         <p className="text-[9px] text-slate-500 font-medium tracking-[0.2em] mt-1 pl-0.5">
                             COGNITIVE OS

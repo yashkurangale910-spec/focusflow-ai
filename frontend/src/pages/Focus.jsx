@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import NeuralSoundscapes from '../components/NeuralSoundscapes';
 import BrowserSentinel from '../components/BrowserSentinel';
+import { MorphingBlob, ParticleField, CosmicBackground } from '../components/UniqueEffects';
 
 const Focus = ({ activeTask }) => {
     const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes default
@@ -89,12 +90,16 @@ const Focus = ({ activeTask }) => {
                 {/* Timer Section */}
                 <div className="col-span-1 xl:col-span-8">
                     <motion.div
-                        className="p-6 md:p-10 rounded-[2rem] bg-gradient-to-br from-slate-900/80 to-slate-900/40 border border-white/5 relative overflow-hidden"
+                        className="p-6 md:p-10 rounded-[2rem] bg-gradient-to-br from-slate-900/80 to-slate-900/40 border border-white/5 relative overflow-hidden holographic-shine glass-reflection"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
-                        {/* Background Glow */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[150px]" />
+                        {/* Morphing backgrounds */}
+                        <MorphingBlob color="purple" size="large" position="top-right" />
+                        <MorphingBlob color="cyan" size="medium" position="bottom-left" />
+
+                        {/* Particle field */}
+                        <ParticleField count={20} color="cyan" />
 
                         {/* Session Type Selector */}
                         <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 relative z-10">
@@ -177,7 +182,7 @@ const Focus = ({ activeTask }) => {
                                     </defs>
                                 </svg>
 
-                                {/* Time */}
+                                {/* Time - Clean and simple */}
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                                     <span className="text-7xl font-black text-white tracking-tight">
                                         {formatTime(timeLeft)}
@@ -185,6 +190,11 @@ const Focus = ({ activeTask }) => {
                                     <span className="text-slate-500 text-sm mt-2">
                                         {sessionPresets[sessionType].label}
                                     </span>
+                                </div>
+
+                                {/* Liquid decoration around timer */}
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="w-64 h-64 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 liquid-shape blur-2xl" />
                                 </div>
                             </div>
                         </div>

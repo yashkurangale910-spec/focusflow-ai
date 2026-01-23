@@ -169,39 +169,8 @@ const NeuralLines = () => {
 };
 
 const Scene3D = () => {
-    return (
-        <div className="fixed inset-0 -z-10 pointer-events-none">
-            <Canvas
-                camera={{ position: [0, 0, 8], fov: 60 }}
-                gl={{ antialias: true, alpha: true }}
-            >
-                <Suspense fallback={null}>
-                    {/* Ambient lighting */}
-                    <ambientLight intensity={0.2} />
-
-                    {/* Colored point lights */}
-                    <pointLight position={[10, 10, 10]} intensity={0.5} color="#8b5cf6" />
-                    <pointLight position={[-10, -10, -10]} intensity={0.3} color="#06b6d4" />
-                    <pointLight position={[0, 0, 5]} intensity={0.2} color="#ffffff" />
-
-                    {/* Main glowing orbs */}
-                    <GlowingOrb position={[-4, 2, -3]} color="#8b5cf6" scale={0.8} speed={0.5} />
-                    <GlowingOrb position={[4, -1, -4]} color="#06b6d4" scale={0.6} speed={0.7} />
-                    <GlowingOrb position={[0, 3, -5]} color="#a855f7" scale={0.4} speed={0.9} />
-
-                    {/* Orbit rings */}
-                    <OrbitRing radius={3} color="#8b5cf6" rotationSpeed={0.3} />
-                    <OrbitRing radius={4.5} color="#06b6d4" rotationSpeed={-0.2} />
-
-                    {/* Particles */}
-                    <Particles />
-
-                    {/* Neural network lines */}
-                    <NeuralLines />
-                </Suspense>
-            </Canvas>
-        </div>
-    );
+    // Disabled for static design - no animations
+    return null;
 };
 
 export default Scene3D;

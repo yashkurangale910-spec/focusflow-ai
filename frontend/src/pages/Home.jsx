@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ScrollReveal } from '../components/ScrollReveal';
+import StreakDisplay from '../components/StreakDisplay';
 import {
     Zap, Activity, Clock, Brain, Sparkles, Target,
     TrendingUp, Play, ArrowRight, Flame, Timer
 } from 'lucide-react';
+import { MorphingBlob, ParticleField, CosmicBackground } from '../components/UniqueEffects';
 
 const Home = ({ onNavigate }) => {
     const handleNavigate = (page) => {
@@ -22,10 +24,16 @@ const Home = ({ onNavigate }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <div className="relative p-10 rounded-[2.5rem] bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-transparent border border-white/5 overflow-hidden min-h-[400px] flex flex-col justify-between">
-                        {/* Background Glow */}
-                        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-600/15 rounded-full blur-[100px] pointer-events-none" />
+                    <div className="relative p-10 rounded-[2.5rem] bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-transparent border border-white/5 overflow-hidden min-h-[400px] flex flex-col justify-between holographic-shine">
+                        {/* Morphing blob backgrounds */}
+                        <MorphingBlob color="purple" size="medium" position="top-right" />
+                        <MorphingBlob color="cyan" size="small" position="bottom-left" />
+
+                        {/* Particle field */}
+                        <ParticleField count={15} color="purple" />
+
+                        {/* Liquid decoration */}
+                        <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-cyan-500/20 liquid-shape blur-2xl" />
 
                         {/* Content */}
                         <div className="relative z-10">
@@ -47,61 +55,73 @@ const Home = ({ onNavigate }) => {
                             </p>
                         </div>
 
-                        {/* CTA */}
+                        {/* CTA - Enhanced */}
                         <div className="relative z-10 flex items-center gap-4 mt-8">
-                            <button
-                                onClick={() => handleNavigate('focus')}
-                                className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl text-white font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-[1.02] cursor-pointer"
-                            >
-                                <Play className="w-5 h-5" fill="currentColor" />
-                                Start Focus Session
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <span className="text-slate-500 text-sm">25 min deep work</span>
+                            <div className="relative group">
+                                {/* Animated glow ring */}
+                                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-cyan-600 to-purple-600 rounded-2xl opacity-60 group-hover:opacity-100 blur-lg group-hover:blur-xl transition-all duration-500 animate-glow-pulse-intense" />
+                                <button
+                                    onClick={() => handleNavigate('focus')}
+                                    className="relative flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl text-white font-bold text-lg shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-[1.05] active:scale-[0.98] cursor-pointer overflow-hidden group"
+                                >
+                                    {/* Shimmer overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                                    <Play className="w-5 h-5 relative z-10 group-hover:scale-110 transition-transform" fill="currentColor" />
+                                    <span className="relative z-10">Start Focus Session</span>
+                                    <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
+                                </button>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-slate-400 text-sm font-medium">25 min deep work</span>
+                                <span className="text-slate-600 text-xs">Optimized for ADHD</span>
+                            </div>
                         </div>
                     </div>
                 </motion.div>
 
                 {/* Right: Stacked Cards */}
                 <div className="col-span-12 lg:col-span-5 flex flex-col gap-4">
-                    {/* Quick Stats Card */}
+                    {/* Quick Stats Card - Enhanced */}
                     <motion.div
-                        className="p-6 rounded-3xl bg-gradient-to-br from-purple-900/40 to-slate-900/60 border border-purple-500/20 flex-1"
+                        className="p-6 rounded-3xl bg-gradient-to-br from-purple-900/40 to-slate-900/60 border border-purple-500/20 flex-1 relative overflow-hidden group hover:border-purple-500/40 transition-all duration-300 cursor-pointer hover:scale-[1.02]"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
+                        whileHover={{ y: -4 }}
                     >
-                        <div className="flex items-start justify-between mb-4">
-                            <div>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-1">Today's Progress</p>
-                                <h3 className="text-3xl font-black text-white">4.2<span className="text-lg text-slate-500 font-normal">hrs</span></h3>
+                        {/* Ambient glow */}
+                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl group-hover:bg-purple-500/30 transition-all duration-500" />
+                        <div className="relative z-10">
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-1">Today's Progress</p>
+                                    <h3 className="text-3xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-cyan-400 transition-all duration-300">4.2<span className="text-lg text-slate-500 font-normal">hrs</span></h3>
+                                </div>
+                                <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 group-hover:scale-110 transition-all duration-300">
+                                    <Timer className="w-6 h-6 text-purple-400 group-hover:rotate-12 transition-transform duration-300" />
+                                </div>
                             </div>
-                            <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
-                                <Timer className="w-6 h-6 text-purple-400" />
+                            <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 animate-pulse" />
+                                <motion.div
+                                    className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full shadow-lg shadow-purple-500/50"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: '70%' }}
+                                    transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                                />
                             </div>
+                            <p className="text-slate-500 text-xs mt-2 group-hover:text-slate-400 transition-colors">70% of daily goal achieved</p>
                         </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full w-[70%] bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
-                        </div>
-                        <p className="text-slate-500 text-xs mt-2">70% of daily goal achieved</p>
                     </motion.div>
 
-                    {/* Streak Card */}
+                    {/* Streak Card - Dynamic Data */}
                     <motion.div
-                        className="p-6 rounded-3xl bg-gradient-to-br from-amber-900/30 to-slate-900/60 border border-amber-500/20 flex-1"
+                        className="flex-1"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                                <Flame className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-1">Current Streak</p>
-                                <h3 className="text-4xl font-black text-white">12<span className="text-lg text-slate-500 font-normal ml-1">days</span></h3>
-                            </div>
-                        </div>
+                        <StreakDisplay variant="home" />
                     </motion.div>
 
                     {/* AI Suggestion */}
@@ -125,54 +145,106 @@ const Home = ({ onNavigate }) => {
             </div>
 
             {/* Protocol Grid - Bento Layout */}
-            <section className="mb-12">
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-cyan-500 rounded-full" />
+            <section className="mb-12 relative">
+                {/* Cosmic background */}
+                <CosmicBackground density="low" />
+
+                <div className="flex items-center gap-4 mb-8 relative z-10">
+                    <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-cyan-500 rounded-full glow-spread" />
                     <h2 className="text-2xl font-bold text-white">Focus Protocols</h2>
+                    <div className="flex-1 h-px bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-transparent" />
                 </div>
 
                 <div className="grid grid-cols-12 gap-4">
-                    {/* Large Featured Card - Focus */}
+                    {/* Large Featured Card - Focus - Enhanced */}
                     <motion.div
                         onClick={() => handleNavigate('focus')}
-                        className="col-span-12 md:col-span-6 lg:col-span-5 row-span-2 p-8 rounded-3xl bg-gradient-to-br from-indigo-900/60 to-slate-900/80 border border-indigo-500/30 relative overflow-hidden group cursor-pointer hover:border-indigo-400/50 transition-all min-h-[300px]"
-                        whileHover={{ scale: 1.01 }}
+                        className="col-span-12 md:col-span-6 lg:col-span-5 row-span-2 p-8 rounded-3xl bg-gradient-to-br from-indigo-900/60 to-slate-900/80 border border-indigo-500/30 relative overflow-hidden group cursor-pointer hover:border-indigo-400/60 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500 min-h-[300px]"
+                        whileHover={{ scale: 1.02, y: -8 }}
+                        transition={{ duration: 0.3 }}
                     >
-                        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/20 rounded-full blur-[60px]" />
-                        <div className="absolute top-6 right-6 w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Brain className="w-8 h-8 text-indigo-400" />
+                        {/* Animated background elements */}
+                        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/20 rounded-full blur-[60px] group-hover:bg-indigo-500/30 group-hover:scale-150 transition-all duration-700" />
+                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        <div className="absolute top-6 right-6 w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-500/30 group-hover:rotate-6 transition-all duration-300 shadow-lg shadow-indigo-500/20">
+                            <Brain className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
                         </div>
                         <div className="relative z-10 h-full flex flex-col justify-end">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-2">Recommended</span>
-                            <h3 className="text-3xl font-black text-white mb-3">Deep Work</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed mb-6 max-w-xs">Intense focus for complex engineering and architectural tasks. No distractions.</p>
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Recommended</span>
+                                <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" />
+                            </div>
+                            <h3 className="text-3xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-300 group-hover:to-cyan-300 transition-all duration-300">Deep Work</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed mb-6 max-w-xs group-hover:text-slate-300 transition-colors">Intense focus for complex engineering and architectural tasks. No distractions.</p>
                             <div className="flex items-center gap-4">
-                                <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold">45 min</span>
-                                <span className="text-slate-500 text-xs">→ Best for coding, writing</span>
+                                <span className="px-3 py-1.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/20 group-hover:bg-indigo-500/30 group-hover:border-indigo-400/30 transition-all">45 min</span>
+                                <span className="text-slate-500 text-xs group-hover:text-slate-400 transition-colors flex items-center gap-1">
+                                    <span>→</span>
+                                    <span>Best for coding, writing</span>
+                                </span>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* Tasks */}
+                    {/* Tasks - Enhanced */}
                     <motion.div
                         onClick={() => handleNavigate('tasks')}
-                        className="col-span-6 md:col-span-3 lg:col-span-4 p-6 rounded-3xl bg-gradient-to-br from-emerald-900/50 to-slate-900/80 border border-emerald-500/20 relative overflow-hidden group cursor-pointer hover:border-emerald-400/40 transition-all"
-                        whileHover={{ scale: 1.02 }}
+                        className="col-span-6 md:col-span-3 lg:col-span-4 p-7 rounded-3xl bg-gradient-to-br from-emerald-900/60 to-slate-900/80 border border-emerald-500/25 relative overflow-hidden group cursor-pointer hover:border-emerald-400/50 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500"
+                        whileHover={{ scale: 1.03, y: -4 }}
+                        transition={{ duration: 0.3 }}
                     >
-                        <Target className="w-8 h-8 text-emerald-400 mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Task Manager</h3>
-                        <p className="text-slate-500 text-sm">Manage directives</p>
+                        {/* Animated glow */}
+                        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-[50px] group-hover:bg-emerald-500/30 group-hover:scale-125 transition-all duration-700" />
+
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500/30 transition-all duration-300">
+                                    <Target className="w-6 h-6 text-emerald-400" />
+                                </div>
+                                <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500/60 px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">Organize</span>
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-emerald-300 group-hover:to-cyan-300 transition-all duration-300">Task Board</h3>
+                            <p className="text-slate-500 text-sm mb-4 group-hover:text-slate-400 transition-colors">Kanban workflow system</p>
+
+                            {/* Progress indicator */}
+                            <div className="flex items-center gap-2 text-xs">
+                                <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500"
+                                        initial={{ width: 0 }}
+                                        whileInView={{ width: '60%' }}
+                                        transition={{ duration: 1, delay: 0.2 }}
+                                    />
+                                </div>
+                                <span className="text-slate-600 font-bold tabular-nums">8/13</span>
+                            </div>
+                        </div>
                     </motion.div>
 
-                    {/* Wellness */}
+                    {/* Wellness - Enhanced */}
                     <motion.div
                         onClick={() => handleNavigate('wellness')}
-                        className="col-span-6 md:col-span-3 lg:col-span-3 p-6 rounded-3xl bg-gradient-to-br from-rose-900/50 to-slate-900/80 border border-rose-500/20 relative overflow-hidden group cursor-pointer hover:border-rose-400/40 transition-all"
-                        whileHover={{ scale: 1.02 }}
+                        className="col-span-6 md:col-span-3 lg:col-span-3 p-7 rounded-3xl bg-gradient-to-br from-rose-900/60 to-slate-900/80 border border-rose-500/25 relative overflow-hidden group cursor-pointer hover:border-rose-400/50 hover:shadow-2xl hover:shadow-rose-500/20 transition-all duration-500"
+                        whileHover={{ scale: 1.03, y: -4 }}
+                        transition={{ duration: 0.3 }}
                     >
-                        <Activity className="w-8 h-8 text-rose-400 mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Wellness</h3>
-                        <p className="text-slate-500 text-sm">Mind & body</p>
+                        {/* Animated glow */}
+                        <div className="absolute -top-10 -left-10 w-32 h-32 bg-rose-500/20 rounded-full blur-[50px] group-hover:bg-rose-500/30 group-hover:scale-125 transition-all duration-700" />
+
+                        <div className="relative z-10">
+                            <div className="w-12 h-12 rounded-2xl bg-rose-500/20 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-rose-500/30 transition-all duration-300">
+                                <Activity className="w-6 h-6 text-rose-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-rose-300 group-hover:to-pink-300 transition-all duration-300">Wellness</h3>
+                            <p className="text-slate-500 text-sm mb-4 group-hover:text-slate-400 transition-colors">Mindful break protocols</p>
+
+                            {/* Status badge */}
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+                                <span className="text-[10px] text-rose-400 font-bold uppercase tracking-wider">Next in 45m</span>
+                            </div>
+                        </div>
                     </motion.div>
 
                     {/* Insights */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
-import Scene3D from './components/Scene3D';
+// Scene3D import removed - using static design
 import Home from './pages/Home';
 import Insights from './pages/Insights';
 import Tasks from './pages/Tasks';
@@ -40,7 +40,7 @@ const AppContent = () => {
   return (
     <div className="min-h-screen text-white transition-colors duration-300 relative selection:bg-cyan-500/30 selection:text-cyan-200" style={{ backgroundColor: 'var(--color-background)' }}>
       <div className="noise-overlay" />
-      <Scene3D />
+      {/* Scene3D removed for static design */}
 
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
