@@ -48,14 +48,6 @@ body {
   line-height: 1.6;
 }
 
-/* DISABLE ALL TRANSITIONS AND ANIMATIONS GLOBALLY */
-*,
-*::before,
-*::after {
-  animation: none !important;
-  transition: none !important;
-}
-
 /* Typography Hierarchy */
 h1,
 h2,

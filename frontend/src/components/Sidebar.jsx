@@ -153,7 +153,15 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 <Section title="Settings" items={systemLinks} />
             </div>
 
-            <div className="px-4 border-t border-white/5 pt-6 relative z-10">
+            <div className="px-4 space-y-4 border-t border-white/5 pt-6 relative z-10">
+                <button
+                    onClick={() => setActiveTab('focus')}
+                    className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-sm shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all group overflow-hidden relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                    <Play className="w-4 h-4 relative z-10 fill-current" />
+                    <span className="relative z-10 uppercase tracking-widest">Start Focus</span>
+                </button>
                 <button className="w-full flex items-center gap-4 px-4 py-3 rounded-xl border border-white/5 bg-white/5 text-slate-400 hover:text-white hover:border-white/10 transition-all duration-200">
                     <HelpCircle className="w-5 h-5" />
                     <span className="text-xs font-bold uppercase tracking-widest hidden lg:block">Help & Support</span>
