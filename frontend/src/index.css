@@ -48,11 +48,12 @@ body {
   line-height: 1.6;
 }
 
-/* ANIMATIONS AND TRANSITIONS ENABLED */
+/* DISABLE ALL TRANSITIONS AND ANIMATIONS GLOBALLY */
 *,
 *::before,
 *::after {
-  /* Default behaviors restored */
+  animation: none !important;
+  transition: none !important;
 }
 
 /* Typography Hierarchy */
@@ -349,6 +350,11 @@ select:focus {
   }
 }
 
+/* === ANIMATIONS DISABLED FOR STATIC DESIGN === */
+
+/* Commenting out all animations to keep design static */
+
+/*
 .animate-soft-entry {
   animation: soft-fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -390,33 +396,18 @@ select:focus {
 .animate-bounce-subtle {
   animation: bounce-subtle 2s ease-in-out infinite;
 }
-
-@keyframes gradient-x {
-
-  0%,
-  100% {
-    background-size: 200% 200%;
-    background-position: left center;
-  }
-
-  50% {
-    background-size: 200% 200%;
-    background-position: right center;
-  }
-}
-
-.animate-gradient-x {
-  animation: gradient-x 8s ease infinite;
-}
-
+*/
 
 /* Keep only simple fade-in on page load */
 .animate-soft-entry {
   opacity: 1;
 }
 
-/* Pulse and ping animations enabled */
-
+/* DISABLE ALL PULSE AND PING ANIMATIONS */
+.animate-pulse,
+.animate-ping {
+  animation: none !important;
+}
 
 /* Badge Styles */
 .badge-success {

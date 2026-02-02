@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 // Scene3D import removed - using static design
-import NexusDashboard from './pages/NexusDashboard';
+import Home from './pages/Home';
 import Insights from './pages/Insights';
 import Tasks from './pages/Tasks';
 import Focus from './pages/Focus';
@@ -17,7 +17,6 @@ import AdminDashboard from './pages/AdminDashboard';
 import About from './pages/About';
 import Auth from './pages/Auth';
 import ZenithPath from './pages/ZenithPath';
-import LandingPage from './pages/LandingPage';
 import AIChatbot from './components/AIChatbot';
 import DataManager from './components/DataManager';
 import Gamification from './components/Gamification';
@@ -32,20 +31,11 @@ import './styles/mobile.css';
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [focusTask, setFocusTask] = useState(null);
-  const [isLandingView, setIsLandingView] = useState(true);
 
   const handleStartFocus = (task) => {
     setFocusTask(task);
     setActiveTab('focus');
   };
-
-  const handleEnterApp = () => {
-    setIsLandingView(false);
-  };
-
-  if (isLandingView) {
-    return <LandingPage onGetStarted={handleEnterApp} onLogin={handleEnterApp} />;
-  }
 
   return (
     <div className="min-h-screen text-white transition-colors duration-300 relative selection:bg-cyan-500/30 selection:text-cyan-200" style={{ backgroundColor: 'var(--color-background)' }}>
@@ -60,7 +50,7 @@ const AppContent = () => {
         <div className="p-6 sm:p-10 max-w-7xl mx-auto animate-soft-entry">
           {activeTab === 'home' && (
             <div className="space-y-8">
-              <NexusDashboard />
+              <Home onNavigate={setActiveTab} />
               <SessionTemplates />
               <Gamification />
             </div>
