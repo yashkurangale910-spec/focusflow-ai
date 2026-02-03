@@ -2,7 +2,7 @@ import React from 'react';
 import {
     LayoutDashboard, Brain, Users, BarChart3, ListChecks, Settings,
     HelpCircle, Heart, Sparkles, Zap, Gamepad2, History, Shield, Info,
-    Share2, Activity
+    Share2, Activity, Play
 } from 'lucide-react';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
