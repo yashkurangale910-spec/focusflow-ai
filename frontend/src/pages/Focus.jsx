@@ -5,6 +5,7 @@ import {
     Brain, Zap, Coffee, Clock, Target, Plus, Minus, Settings
 } from 'lucide-react';
 import NeuralSoundscapes from '../components/NeuralSoundscapes';
+import SpotifyPlayer from '../components/SpotifyPlayer';
 import BrowserSentinel from '../components/BrowserSentinel';
 import { MorphingBlob, ParticleField, CosmicBackground } from '../components/UniqueEffects';
 
@@ -241,6 +242,7 @@ const Focus = ({ activeTask }) => {
                 {/* Right Column - Tools */}
                 <div className="col-span-1 xl:col-span-4 space-y-6">
                     <NeuralSoundscapes />
+                    <SpotifyPlayer />
                     <BrowserSentinel />
                 </div>
             </div>
