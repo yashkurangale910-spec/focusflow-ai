@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
     DndContext,
     closestCorners,
@@ -124,13 +125,15 @@ const TaskBoard = ({ onStartFocus }) => {
                     <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-indigo-400 mb-1">Workflow Manager</p>
                     <h2 className="text-3xl font-extrabold font-display">Priority <span className="text-slate-500 font-light italic">Board</span></h2>
                 </div>
-                <button
+                <motion.button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-500/20"
                 >
                     <Plus size={18} />
                     <span>Create Task</span>
-                </button>
+                </motion.button>
             </div>
 
             {/* Kanban Board */}
