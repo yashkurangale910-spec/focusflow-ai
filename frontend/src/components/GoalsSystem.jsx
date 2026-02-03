@@ -1,17 +1,105 @@
-import React, { useState } from 'react';
-import { Target, TrendingUp, Calendar, CheckCircle, Shield, Activity, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { Target, TrendingUp, Calendar, CheckCircle, Shield, Activity, Zap, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const GoalsSystem = () => {
-    const [dailyGoal, setDailyGoal] = useState({ target: 4, current: 2 });
-    const [weeklyGoal, setWeeklyGoal] = useState({ target: 20, current: 12 });
+    const [dailyGoal, setDailyGoal] = useState({ target: 4, current: 0 });
+    const [weeklyGoal, setWeeklyGoal] = useState({ target: 20, current: 0 });
     const [showGoalSetter, setShowGoalSetter] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch goals data from API
+    useEffect(() => {
+        const fetchGoalsData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    setDailyGoal({ target: 4, current: 0 });
+                    setWeeklyGoal({ target: 20, current: 0 });
+                    setIsLoading(false);
+                    return;
+                }
+
+                const response = await fetch('http://localhost:5000/api/goals', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch goals data');
+                }
+
+                const data = await response.json();
+                setDailyGoal(data.daily || { target: 4, current: 0 });
+                setWeeklyGoal(data.weekly || { target: 20, current: 0 });
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching goals:', err);
+                setError(err.message);
+                // Fallback to default values
+                setDailyGoal({ target: 4, current: 0 });
+                setWeeklyGoal({ target: 20, current: 0 });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchGoalsData();
+    }, []);
 
     const dailyProgress = (dailyGoal.current / dailyGoal.target) * 100;
     const weeklyProgress = (weeklyGoal.current / weeklyGoal.target) * 100;
 
+    // Loading skeleton
+    if (isLoading) {
+        return (
+            <div className="space-y-6">
+                {[1, 2].map((i) => (
+                    <div key={i} className="surface-raised p-8 rounded-[2rem] border-slate-800/80 animate-pulse">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-slate-800/50" />
+                                <div className="space-y-2">
+                                    <div className="h-4 w-24 bg-slate-800/50 rounded" />
+                                    <div className="h-3 w-32 bg-slate-800/30 rounded" />
+                                </div>
+                            </div>
+                            <div className="h-8 w-16 bg-slate-800/50 rounded" />
+                        </div>
+                        <div className="h-2 bg-slate-900 rounded-full mb-4" />
+                        <div className="flex items-center justify-between">
+                            <div className="h-3 w-24 bg-slate-800/30 rounded" />
+                            <div className="h-3 w-20 bg-slate-800/30 rounded" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="surface-raised p-8 rounded-[2rem] border-rose-500/20"
+            >
+                <div className="flex items-center gap-4 text-rose-400">
+                    <AlertCircle size={24} />
+                    <div>
+                        <h3 className="text-sm font-bold uppercase tracking-tight">System Alert</h3>
+                        <p className="text-xs text-slate-500 mt-1">Unable to sync goal data. Using offline mode.</p>
+                    </div>
+                </div>
+            </motion.div>
+        );
+    }
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6">{/* Daily Target Acquisition */}
             {/* Daily Target Acquisition */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
