@@ -165,7 +165,8 @@ const Community = () => {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`grid grid-cols-12 items-center px-6 py-6 rounded-3xl border border-white/[0.03] transition-all hover:bg-white/[0.02] ${i === 0 ? 'bg-cyan-500/5' : ''}`}
+                                    whileHover={{ scale: 1.02, y: -2 }}
+                                    className={`grid grid-cols-12 items-center px-6 py-6 rounded-3xl border border-white/[0.03] transition-all hover:bg-white/[0.02] hover:border-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/10 cursor-pointer ${i === 0 ? 'bg-cyan-500/5' : ''}`}
                                 >
                                     <div className="col-span-1 text-xl font-black text-cyan-500/50">{node.rank}</div>
                                     <div className="col-span-6 flex items-center gap-4">
@@ -225,7 +226,12 @@ const Community = () => {
 
                         <div className="space-y-6">
                             {squadSessions.map((session) => (
-                                <div key={session.id} className="relative p-6 rounded-[1.5rem] bg-white/[0.02] border border-white/[0.05] group cursor-pointer hover:bg-white/[0.04] transition-all">
+                                <motion.div
+                                    key={session.id}
+                                    whileHover={{ scale: 1.03, y: -4 }}
+                                    transition={{ type: "spring", stiffness: 300 }}
+                                    className="relative p-6 rounded-[1.5rem] bg-white/[0.02] border border-white/[0.05] group cursor-pointer hover:bg-white/[0.04] hover:border-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/10 transition-all"
+                                >
                                     <div className="flex items-center justify-between mb-4">
                                         <h4 className="text-xs font-bold uppercase tracking-tight">{session.title}</h4>
                                         {session.status === 'LIVE' && <span className="text-[8px] font-black bg-rose-500/20 text-rose-500 px-2 py-0.5 rounded animate-pulse uppercase tracking-widest">Live</span>}
@@ -245,7 +251,7 @@ const Community = () => {
                                     <button className="w-full mt-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black text-[9px] uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-cyan-900/40">
                                         {session.status === 'LIVE' ? 'Join Party' : 'Reserve Slot'}
                                     </button>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
