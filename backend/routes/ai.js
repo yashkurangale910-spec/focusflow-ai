@@ -44,7 +44,10 @@ router.post('/chat', auth, async (req, res) => {
         const { messages } = req.body;
 
         // If no API key, use mock responses
-        if (!process.env.OPENAI_API_KEY) {
+        const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+        const apiProvider = process.env.AI_PROVIDER || 'openai';
+
+        if (!apiKey) {
             const lastUserMessage = messages.filter(m => m.role === 'user').pop();
             const mockMessage = getMockResponse(lastUserMessage?.content || '');
             return res.json({ message: `[SIMULATED NEURAL LINK]\n\n${mockMessage}` });
@@ -245,14 +248,24 @@ Remember: Your goal is to make productivity feel ACHIEVABLE, not overwhelming. M
 
         const apiMessages = [systemPrompt, ...messages];
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Choose API endpoint based on provider
+        const apiEndpoint = apiProvider === 'groq'
+            ? 'https://api.groq.com/openai/v1/chat/completions'
+            : 'https://api.openai.com/v1/chat/completions';
+
+        // Choose model based on provider
+        const model = apiProvider === 'groq'
+            ? 'llama-3.3-70b-versatile'  // Groq's best model
+            : 'gpt-4o-mini';
+
+        const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'gpt-4o-mini',
+                model: model,
                 messages: apiMessages,
                 temperature: 0.7,
                 max_tokens: 800
