@@ -18,12 +18,19 @@ export const AnalyticsProvider = ({ children }) => {
         totalHours: 0,
         avgQuality: 0,
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const { token, isAuthenticated } = useAuth();
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
     useEffect(() => {
         const fetchAnalytics = async () => {
-            if (!isAuthenticated) return;
+            if (!isAuthenticated) {
+                setIsLoading(false);
+                return;
+            }
+            setIsLoading(true);
+            setError(null);
             try {
                 // Fetch stats
                 const statsRes = await fetch(`${API_URL}/sessions/analytics`, {
@@ -32,6 +39,8 @@ export const AnalyticsProvider = ({ children }) => {
                 if (statsRes.ok) {
                     const statsData = await statsRes.json();
                     setStats(statsData);
+                } else {
+                    throw new Error(`Stats fetch failed: ${statsRes.status}`);
                 }
 
                 // Fetch session history
@@ -41,9 +50,22 @@ export const AnalyticsProvider = ({ children }) => {
                 if (sessionRes.ok) {
                     const sessionData = await sessionRes.json();
                     setSessions(sessionData);
+                } else {
+                    throw new Error(`Sessions fetch failed: ${sessionRes.status}`);
                 }
+                setError(null);
             } catch (error) {
                 console.error('Failed to fetch analytics:', error);
+                setError(error.message);
+                // Set fallback data
+                setStats({
+                    totalSessions: 0,
+                    totalHours: 0,
+                    avgQuality: 0,
+                });
+                setSessions([]);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -60,21 +82,28 @@ export const AnalyticsProvider = ({ children }) => {
                 },
                 body: JSON.stringify(sessionData)
             });
-            if (response.ok) {
-                const newSession = await response.json();
-                setSessions(prev => [newSession, ...prev]);
 
-                // Refresh stats
-                const statsRes = await fetch(`${API_URL}/sessions/analytics`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (statsRes.ok) {
-                    const statsData = await statsRes.json();
-                    setStats(statsData);
-                }
+            if (!response.ok) {
+                throw new Error(`Failed to add session: ${response.status}`);
             }
+
+            const newSession = await response.json();
+            setSessions(prev => [newSession, ...prev]);
+
+            // Refresh stats
+            const statsRes = await fetch(`${API_URL}/sessions/analytics`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (statsRes.ok) {
+                const statsData = await statsRes.json();
+                setStats(statsData);
+            }
+
+            return { success: true, session: newSession };
         } catch (error) {
             console.error('Failed to add session:', error);
+            setError(error.message);
+            return { success: false, error: error.message };
         }
     };
 
