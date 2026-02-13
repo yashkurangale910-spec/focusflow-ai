@@ -159,6 +159,14 @@ export const TaskProvider = ({ children }) => {
         }
     };
 
+    const reorderTasks = (newOrder) => {
+        setTasks(newOrder);
+        // Sync with local storage immediately
+        localStorage.setItem('focusflow_tasks', JSON.stringify(newOrder));
+        // Backend sync would require a bulk update route, 
+        // but for now local persistence is sufficient for the demo.
+    };
+
     const getTasksByStatus = (status) => {
         return tasks.filter(t => t.status === status);
     };
@@ -170,6 +178,7 @@ export const TaskProvider = ({ children }) => {
         updateTask,
         deleteTask,
         moveTask,
+        reorderTasks,
         getTasksByStatus,
     };
 

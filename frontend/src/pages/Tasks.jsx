@@ -6,10 +6,13 @@ import {
     Grid, Calendar, BarChart3, Circle
 } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
+import { triageTasks } from '../services/aiService';
+import { Sparkles, Loader2 } from 'lucide-react';
 
 const Tasks = ({ onStartFocus }) => {
-    const { tasks, addTask, updateTask, deleteTask, getTasksByStatus } = useTasks();
+    const { tasks, addTask, updateTask, deleteTask, getTasksByStatus, reorderTasks } = useTasks();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTriaging, setIsTriaging] = useState(false);
 
     const queueTasks = getTasksByStatus('todo');
     const activeTasks = getTasksByStatus('in-progress');
@@ -34,13 +37,13 @@ const Tasks = ({ onStartFocus }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`bg-slate-900 border rounded-lg p-4 shadow-sm hover:border-slate-700 transition-all duration-200 ${isActive ? 'border-cyan-500/30 bg-slate-900 shadow-lg' :
-                    isCompleted ? 'opacity-60 grayscale-[0.5] hover:opacity-90 hover:grayscale-0' :
-                        'border-slate-800/80'
+                isCompleted ? 'opacity-60 grayscale-[0.5] hover:opacity-90 hover:grayscale-0' :
+                    'border-slate-800/80'
                 }`}
         >
             <div className="flex justify-between items-start mb-3">
                 <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${isCompleted ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                        getPriorityStyle(task.priority)
+                    getPriorityStyle(task.priority)
                     }`}>
                     {isCompleted ? 'Completed' : `${task.priority || 'medium'} Priority`}
                 </span>
@@ -131,6 +134,40 @@ const Tasks = ({ onStartFocus }) => {
         </motion.div>
     );
 
+    const handleNeuralTriage = async () => {
+        if (queueTasks.length < 2) return;
+
+        setIsTriaging(true);
+        try {
+            const sortedTitles = await triageTasks(queueTasks);
+
+            // Map titles back to original tasks
+            const sortedQueue = [];
+            const remaining = [...queueTasks];
+
+            sortedTitles.forEach(title => {
+                const index = remaining.findIndex(t => t.title.toLowerCase() === title.toLowerCase());
+                if (index !== -1) {
+                    sortedQueue.push(remaining[index]);
+                    remaining.splice(index, 1);
+                }
+            });
+
+            // Add any that weren't matched at the end
+            const finalQueue = [...sortedQueue, ...remaining];
+
+            // Construct the complete new task list (keeping In Progress and Done at the end/positions)
+            const otherTasks = tasks.filter(t => t.status !== 'todo');
+            reorderTasks([...finalQueue, ...otherTasks]);
+
+            // Play a digital success sound or notification (optional)
+        } catch (error) {
+            console.error('Neural Triage failed:', error);
+        } finally {
+            setIsTriaging(false);
+        }
+    };
+
     const Column = ({ title, count, children, isActive = false, isCompleted = false, icon: Icon }) => (
         <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between px-2">
@@ -140,8 +177,8 @@ const Tasks = ({ onStartFocus }) => {
                         {title}
                     </h3>
                     <span className={`px-2 py-0.5 text-[10px] font-mono rounded ${isActive ? 'bg-cyan-500 text-white shadow-sm shadow-cyan-500/20' :
-                            isCompleted ? 'bg-slate-800/50 text-slate-600 border border-slate-800' :
-                                'bg-slate-800 text-slate-400 border border-slate-700'
+                        isCompleted ? 'bg-slate-800/50 text-slate-600 border border-slate-800' :
+                            'bg-slate-800 text-slate-400 border border-slate-700'
                         }`}>
                         {String(count).padStart(2, '0')}
                     </span>
@@ -152,8 +189,8 @@ const Tasks = ({ onStartFocus }) => {
             </div>
 
             <div className={`flex flex-col gap-4 rounded-xl p-3 min-h-[calc(100vh-280px)] border ${isActive ? 'bg-cyan-500/5 border-cyan-500/20' :
-                    isCompleted ? 'bg-slate-950/20 border-slate-800 border-dashed' :
-                        'bg-slate-900/40 border-slate-800/50'
+                isCompleted ? 'bg-slate-950/20 border-slate-800 border-dashed' :
+                    'bg-slate-900/40 border-slate-800/50'
                 }`}>
                 {children}
             </div>
@@ -168,16 +205,33 @@ const Tasks = ({ onStartFocus }) => {
                     <h2 className="text-2xl font-bold text-white tracking-tight">Mission Control Board</h2>
                     <p className="text-sm text-slate-500 mt-1">Manage your neural workflows and task execution state.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-3">
+                    <button
+                        onClick={handleNeuralTriage}
+                        disabled={isTriaging || queueTasks.length < 2}
+                        className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all border ${isTriaging
+                                ? 'bg-purple-600/20 border-purple-500/50 text-purple-400 animate-pulse'
+                                : 'bg-white/5 border-white/10 text-slate-300 hover:border-purple-500/50 hover:text-purple-400 hover:bg-purple-500/10'
+                            } disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-tighter`}
+                    >
+                        {isTriaging ? (
+                            <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                Processing Neural Order...
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                                Neural Triage
+                            </>
+                        )}
+                    </button>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-cyan-600/20 transition-all border border-cyan-400/20"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-cyan-600/20 transition-all border border-cyan-400/20 uppercase tracking-tighter"
                     >
                         <Plus className="w-5 h-5" />
                         New Mission
-                    </button>
-                    <button className="p-2.5 border border-slate-800 rounded-lg bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-850 transition-colors">
-                        <Grid className="w-5 h-5" />
                     </button>
                 </div>
             </header>
@@ -186,19 +240,19 @@ const Tasks = ({ onStartFocus }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Column title="Neural Queue" count={queueTasks.length} icon={Clock}>
                     {queueTasks.map(task => (
-                        <TaskCard key={task.id} task={task} />
+                        <TaskCard key={task.id || task._id} task={task} />
                     ))}
                 </Column>
 
                 <Column title="Live Mission" count={activeTasks.length} isActive icon={Target}>
                     {activeTasks.map(task => (
-                        <TaskCard key={task.id} task={task} isActive />
+                        <TaskCard key={task.id || task._id} task={task} isActive />
                     ))}
                 </Column>
 
                 <Column title="Archived Logs" count={completedTasks.length} isCompleted icon={CheckCircle}>
                     {completedTasks.map(task => (
-                        <TaskCard key={task.id} task={task} isCompleted />
+                        <TaskCard key={task.id || task._id} task={task} isCompleted />
                     ))}
                 </Column>
             </div>
@@ -206,7 +260,7 @@ const Tasks = ({ onStartFocus }) => {
             {/* Floating Action Button */}
             <button
                 onClick={() => setIsModalOpen(true)}
-                className="fixed bottom-8 right-8 size-14 bg-cyan-600 text-white rounded-full shadow-2xl shadow-cyan-600/20 border border-cyan-500/50 hover:bg-cyan-500 active:scale-95 transition-all flex items-center justify-center z-50"
+                className="fixed bottom-8 right-8 size-14 bg-cyan-600 text-white rounded-full shadow-2xl shadow-cyan-600/20 border border-cyan-500/50 hover:bg-cyan-500 active:scale-95 transition-all flex items-center justify-center z-50 shadow-[0_0_30px_rgba(8,145,178,0.3)]"
             >
                 <Plus className="w-6 h-6" />
             </button>
