@@ -180,6 +180,23 @@ export const AnalyticsProvider = ({ children }) => {
         setMood(newMood);
     };
 
+    const getProductivityInsights = () => {
+        if (sessions.length < 3) return "Insufficient data for neural analysis.";
+
+        const lowQualitySessions = sessions.filter(s => s.quality < 6).length;
+        const avgDuration = sessions.reduce((a, b) => a + (b.duration || 0), 0) / sessions.length;
+
+        let insights = [];
+        if (lowQualitySessions > sessions.length / 2) {
+            insights.push("High frequency of low-quality sessions detected. Consider shorter 15-minute 'Micro-Sprints'.");
+        }
+        if (avgDuration < 20) {
+            insights.push("Short session average detected. Try 'Body Doubling' to increase focus stamina.");
+        }
+
+        return insights.length > 0 ? insights.join(' ') : "System stable. Focus flow is optimal.";
+    };
+
     const value = {
         sessions,
         addSession,
@@ -187,7 +204,8 @@ export const AnalyticsProvider = ({ children }) => {
         getWeeklyData,
         getMonthlyTrend,
         mood,
-        updateMood
+        updateMood,
+        getProductivityInsights
     };
 
     return (

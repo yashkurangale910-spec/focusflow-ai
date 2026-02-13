@@ -8,6 +8,7 @@ import NeuralSoundscapes from '../components/NeuralSoundscapes';
 import SpotifyPlayer from '../components/SpotifyPlayer';
 import BrowserSentinel from '../components/BrowserSentinel';
 import { MorphingBlob, ParticleField, CosmicBackground } from '../components/UniqueEffects';
+import { notifySessionComplete, notifyBreakTime, requestNotificationPermission } from '../services/notificationService';
 
 const Focus = ({ activeTask }) => {
     const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes default
@@ -16,6 +17,20 @@ const Focus = ({ activeTask }) => {
     const [completedSessions, setCompletedSessions] = useState(0);
     const [customMinutes, setCustomMinutes] = useState(30);
     const intervalRef = useRef(null);
+
+    useEffect(() => {
+        requestNotificationPermission();
+    }, []);
+
+    // Tab Title Timer
+    useEffect(() => {
+        if (isRunning && timeLeft > 0) {
+            document.title = `(${formatTime(timeLeft)}) FocusFlow`;
+        } else {
+            document.title = 'FocusFlow AI';
+        }
+        return () => { document.title = 'FocusFlow AI'; };
+    }, [isRunning, timeLeft]);
 
     const sessionPresets = {
         focus: { time: 25 * 60, label: 'Deep Focus', icon: Brain, color: 'purple' },
@@ -46,7 +61,12 @@ const Focus = ({ activeTask }) => {
     const handleSessionComplete = () => {
         setIsRunning(false);
         setCompletedSessions(prev => prev + 1);
-        // Play notification sound or show alert
+
+        if (sessionType === 'focus') {
+            notifySessionComplete(sessionPresets.focus.time / 60);
+        } else {
+            notifyBreakTime();
+        }
     };
 
     const formatTime = (seconds) => {
