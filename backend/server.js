@@ -6,14 +6,57 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const xss = require('xss-clean');
+const morgan = require('morgan');
 
 const app = express();
+
+// Log requests (Dev Mode)
+app.use(morgan('dev'));
+
+// Security Middleware (Glow up for Safety)
+app.use(helmet()); // Sets various security HTTP headers
+app.use(xss());    // Data sanitization against XSS
+app.use(hpp());    // Prevent HTTP Parameter Pollution
+
+// Rate Limiting (Prevent Brute Force)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: { error: 'Too many requests from this IP, please try again after 15 minutes' }
+});
+app.use('/api/', limiter);
+
+// Stricter Rate Limit for AI (Cost & Abuse Protection)
+const aiLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20, // 20 requests per hour
+    message: { error: 'Neural link capacity reached. Please wait an hour to cool down.' }
+});
+app.use('/api/ai', aiLimiter);
+
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/focusflow')
-    .then(() => console.log('✅ MongoDB Connected'))
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+// Connect to MongoDB with timeout and non-blocking fallback
+const connectDB = async () => {
+    try {
+        console.log('🔄 Attempting Neural Link to Database...');
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/focusflow', {
+            serverSelectionTimeoutMS: 5000, // 5 seconds timeout
+            connectTimeoutMS: 10000,
+        });
+        console.log('✅ MongoDB Connected: Neural Grid Online');
+        process.env.DB_STATUS = 'connected';
+    } catch (err) {
+        console.error('⚠️ Database Connection Failed. Activating Neural Backup Mode (Offline Storage).');
+        process.env.DB_STATUS = 'offline';
+    }
+};
+
+connectDB();
 
 // Middleware
 app.use(cors({
@@ -44,14 +87,26 @@ app.use('/api/admin', require('./routes/admin'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Something went wrong!' });
+    console.error(`❌ [ERROR] ${err.name}: ${err.message}`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.error(err.stack);
+    }
+
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        error: err.message || 'Interal Server Error',
+        status: 'error',
+        code: err.name || 'INTERNAL_ERROR'
+    });
 });
 
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`✅ FocusFlow API running on http://localhost:${PORT}`);
-    });
-}
+const server = app.listen(PORT, () => {
+    console.log(`✅ FocusFlow API running on http://localhost:${PORT}`);
+});
+
+process.on('unhandledRejection', (err) => {
+    console.log(`Error: ${err.message}`);
+    server.close(() => process.exit(1));
+});
 
 module.exports = app;
