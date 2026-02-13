@@ -76,7 +76,7 @@ const AppContent = () => {
         </div>
       </main>
 
-      <AIChatbot />
+      <AIChatbot setActiveTab={setActiveTab} setFocusTask={setFocusTask} />
 
       {/* Accessibility Features */}
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
