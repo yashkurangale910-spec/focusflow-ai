@@ -1,26 +1,77 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Loader2, Terminal, Cpu, Sparkles } from 'lucide-react';
 import { chatWithAI } from '../services/aiService';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useAuth } from '../context/AuthContext';
+import { useTasks } from '../context/TaskContext';
+import { sendNotification } from '../services/notificationService';
+import {
+    Terminal, Send, X, Cpu, Loader2, Sparkles, Zap, Brain, Rocket,
+    Coffee, Target, Clock, MessageSquare
+} from 'lucide-react';
 
-const AIChatbot = () => {
+const AIChatbot = ({ setActiveTab, setFocusTask }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState([
-        {
-            role: 'assistant',
-            content: "Neural link established. I am your cognitive performance assistant. How can I optimize your current session?",
-            timestamp: Date.now(),
-        }
-    ]);
+    const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem('neural_chat_history');
+        return saved ? JSON.parse(saved) : [
+            {
+                role: 'assistant',
+                content: "Neural Link Active. I am your Neural Coach. How can I optimize your performance today?",
+                timestamp: Date.now(),
+            }
+        ];
+    });
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('Processing Query...');
-    const { getTotalStats, mood } = useAnalytics();
+    const { getTotalStats, mood, sessions, getProductivityInsights } = useAnalytics();
     const { user } = useAuth();
+    const { addTask } = useTasks();
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+
+    // Neural Nudge State
+    const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
+    const nudgeCooldown = 15 * 60 * 1000; // 15 minutes
+
+    // Idle Detection for Neural Nudges
+    useEffect(() => {
+        const checkIdle = setInterval(() => {
+            const idleTime = Date.now() - lastInteractionTime;
+
+            if (idleTime > 10 * 60 * 1000 && idleTime < nudgeCooldown) {
+                // Proactive Nudge
+                const nudges = [
+                    "Neural activity detected as stagnant. Ready for a quick Focus Sprint?",
+                    "Cognitive baseline reached. Should we break down your next big task?",
+                    "Your brain is in idle mode. High-performance protocols are ready for launch."
+                ];
+
+                const randomNudge = nudges[Math.floor(Math.random() * nudges.length)];
+
+                // Only nudge if most recent message is not already a nudge
+                setMessages(prev => {
+                    if (prev[prev.length - 1].content === randomNudge) return prev;
+                    return [...prev, {
+                        role: 'assistant',
+                        content: randomNudge,
+                        timestamp: Date.now(),
+                        isNudge: true
+                    }];
+                });
+                setLastInteractionTime(Date.now() + nudgeCooldown); // Reset timer with cooldown
+                playSFX('message');
+            }
+        }, 60000); // Check every minute
+
+        return () => clearInterval(checkIdle);
+    }, [lastInteractionTime]);
+
+    // Persist messages
+    useEffect(() => {
+        localStorage.setItem('neural_chat_history', JSON.stringify(messages));
+    }, [messages]);
 
     const loaderMessages = [
         "Synthesizing neural pathways...",
@@ -87,36 +138,59 @@ const AIChatbot = () => {
         return tips[Math.floor(Math.random() * tips.length)];
     };
 
-    const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+    const quickActions = [
+        { id: 'plan', label: 'Plan My Day', icon: <Sparkles size={14} />, prompt: 'I want to plan my day. Can you help me prioritize my tasks based on my energy levels?' },
+        { id: 'train', label: 'Train Focus', icon: <Sparkles size={14} />, prompt: 'I want to train my focus. What focus technique should I use for a high-intensity coding session?' },
+        { id: 'breakdown', label: 'Break Down Task', icon: <Sparkles size={14} />, prompt: 'Help me break down a complex task into tiny, manageable micro-steps.' },
+        { id: 'reset', label: 'Rapid Reset', icon: <Sparkles size={14} />, prompt: 'I feel scattered. Can you lead me through a 5-minute Rapid Re-Alignment protocol to reset my focus?' }
+    ];
+
+    const handleSend = async (customInput = null) => {
+        const messageText = customInput || input.trim();
+        if (!messageText || isLoading) return;
 
         const userMessage = {
             role: 'user',
-            content: input.trim(),
+            content: messageText,
             timestamp: Date.now(),
         };
 
         setMessages(prev => [...prev, userMessage]);
-        setInput('');
+        if (!customInput) setInput('');
         setIsLoading(true);
+        setLastInteractionTime(Date.now()); // Reset idle timer
 
         try {
             const stats = getTotalStats();
-            const context = `Context: User ${user?.name || 'Unknown'} is currently in a ${mood} mood with a ${stats.currentStreak}-day streak and ${stats.totalHours.toFixed(1)} total focus hours.`;
+            const insights = getProductivityInsights();
+
+            // Streamlined Training Packet (Developer/System view)
+            const sessionSummary = sessions?.slice(0, 3).map(s =>
+                `${s.duration}m(${s.quality}/10)`
+            ).join(', ') || 'None';
+
+            const trainingPacket = `[CURRENT_COGNITIVE_SNAPSHOT] Mood:${mood}, Streak:${stats.currentStreak}d, Hrs:${stats.totalHours.toFixed(1)}, Analysis:${insights}, History:[${sessionSummary}]`;
 
             const chatHistory = messages.map(msg => ({
                 role: msg.role,
                 content: msg.content,
             }));
 
-            // Inject context as a hidden message for the AI
-            chatHistory.unshift({ role: 'user', content: context });
+            // Optimization: Add the training context just before the newest user query
+            // for maximum influence on the model's next response.
+            chatHistory.splice(chatHistory.length - 1, 0, { role: 'system', content: trainingPacket });
+
+            // Note: userMessage.content is already in chatHistory as the last element 
+            // from the initial messages.map if messages included it, but wait...
+            // messages state isn't updated with userMessage yet!
+            // Let's check handleSend line 107: setMessages(prev => [...prev, userMessage]);
+            // So messages does NOT include userMessage yet.
             chatHistory.push({ role: 'user', content: userMessage.content });
 
             const response = await chatWithAI(chatHistory);
 
-            // If response looks like an error, use fallback
-            const isError = response.includes('went wrong') || response.includes('error') || !response;
+            // Robust error/fallback handling
+            const isError = !response || response.includes('went wrong') || response.includes('error');
 
             const assistantMessage = {
                 role: 'assistant',
@@ -125,17 +199,107 @@ const AIChatbot = () => {
             };
 
             setMessages(prev => [...prev, assistantMessage]);
+            playSFX('message');
+
+            // Background notification
+            if (document.hidden) {
+                sendNotification('Neural Link Update', {
+                    body: assistantMessage.content.slice(0, 100) + '...',
+                    tag: 'ai-response'
+                });
+            }
         } catch (error) {
-            console.error('Chat error:', error);
-            const assistantMessage = {
+            console.error('Neural Bridge Error:', error);
+            const fallback = {
                 role: 'assistant',
                 content: getFallbackResponse(userMessage.content),
                 timestamp: Date.now(),
             };
-            setMessages(prev => [...prev, assistantMessage]);
+            setMessages(prev => [...prev, fallback]);
+            playSFX('message');
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const parseTasksFromMessage = (text) => {
+        const lines = text.split('\n');
+        const discoveredTasks = [];
+        // Match numbered lists (1. task) or bullet points (-, *, •)
+        const taskRegex = /^(\d+\.|\*|-|•)\s*(.+)$/;
+
+        lines.forEach(line => {
+            const match = line.trim().match(taskRegex);
+            if (match) {
+                const taskText = match[2].trim();
+                // Avoid tiny fragments or single words
+                if (taskText && taskText.length > 3) {
+                    discoveredTasks.push(taskText);
+                }
+            }
+        });
+        return discoveredTasks;
+    };
+
+    const parseProtocolFromMessage = (text) => {
+        const lowerText = text.toLowerCase();
+        const protocols = [
+            { name: 'Pomodoro Sprint', keywords: ['pomodoro', 'sprint'], type: 'focus', duration: 25 },
+            { name: 'Deep Work Protocol', keywords: ['deep work'], type: 'focus', duration: 60 },
+            { name: 'Rapid Re-Alignment', keywords: ['realignment', 're-alignment', 'reset'], type: 'shortBreak', duration: 5 },
+            { name: 'Neural Recovery', keywords: ['recovery', 'theta'], type: 'longBreak', duration: 20 }
+        ];
+
+        return protocols.find(p => p.keywords.some(k => lowerText.includes(k)));
+    };
+
+    const playSFX = (type) => {
+        const sfx = {
+            message: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', // Subtle chirp
+            sync: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3' // Digital success
+        };
+        const audio = new Audio(sfx[type]);
+        audio.volume = 0.2;
+        audio.play().catch(() => { }); // Ignore autoplay blocks
+    };
+
+    const handleSyncToTasks = async (messageContent) => {
+        const discovered = parseTasksFromMessage(messageContent);
+        if (discovered.length === 0) return;
+
+        setIsLoading(true);
+        setLoadingMessage('Syncing to Neural Board...');
+
+        try {
+            for (const taskName of discovered) {
+                await addTask({
+                    title: taskName,
+                    description: 'Suggested by Neural Coach',
+                    priority: 'medium'
+                });
+            }
+            // Add a confirmation message
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: `✅ Successfully synced ${discovered.length} micro-steps to your Task Board!`,
+                timestamp: Date.now()
+            }]);
+        } catch (error) {
+            console.error('Sync error:', error);
+        } finally {
+            setIsLoading(false);
+            playSFX('sync');
+        }
+    };
+
+    const handleLaunchProtocol = (protocol) => {
+        if (setFocusTask) setFocusTask({ title: protocol.name, description: 'AI-Guided Session' });
+        if (setActiveTab) setActiveTab('focus');
+        playSFX('message');
+    };
+
+    const handleQuickAction = (prompt) => {
+        handleSend(prompt);
     };
 
     const handleKeyPress = (e) => {
@@ -214,6 +378,25 @@ const AIChatbot = () => {
 
                         {/* Message Stream */}
                         <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-slate-800">
+                            {/* Neural Quick Actions Grid */}
+                            <div className="grid grid-cols-2 gap-3 mb-8">
+                                {quickActions.map((action) => (
+                                    <motion.button
+                                        key={action.id}
+                                        onClick={() => handleQuickAction(action.prompt)}
+                                        disabled={isLoading}
+                                        whileHover={{ scale: 1.02, backgroundColor: 'rgba(99, 102, 241, 0.15)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all text-left group"
+                                    >
+                                        <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                                            {action.icon}
+                                        </div>
+                                        <span className="text-[11px] font-bold text-slate-400 group-hover:text-slate-200 tracking-wide uppercase">{action.label}</span>
+                                    </motion.button>
+                                ))}
+                            </div>
+
                             {messages.map((message, index) => (
                                 <motion.div
                                     key={index}
@@ -228,6 +411,30 @@ const AIChatbot = () => {
                                             }`}
                                     >
                                         <p className="whitespace-pre-wrap">{message.content}</p>
+
+                                        {message.role === 'assistant' && parseTasksFromMessage(message.content).length > 0 && !message.content.includes('Successfully synced') && (
+                                            <motion.button
+                                                onClick={() => handleSyncToTasks(message.content)}
+                                                className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-[10px] font-bold text-indigo-400 hover:bg-indigo-500/20 transition-all uppercase tracking-wider group"
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                <Sparkles size={12} className="group-hover:rotate-12 transition-transform" />
+                                                Sync to Board
+                                            </motion.button>
+                                        )}
+
+                                        {message.role === 'assistant' && parseProtocolFromMessage(message.content) && (
+                                            <motion.button
+                                                onClick={() => handleLaunchProtocol(parseProtocolFromMessage(message.content))}
+                                                className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-[10px] font-bold text-purple-400 hover:bg-purple-500/20 transition-all uppercase tracking-wider group w-full justify-center"
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                <Zap size={12} className="group-hover:animate-pulse" />
+                                                Launch {parseProtocolFromMessage(message.content).name}
+                                            </motion.button>
+                                        )}
                                     </div>
                                 </motion.div>
                             ))}
@@ -272,8 +479,8 @@ const AIChatbot = () => {
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
                                     className={`absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-xl transition-all duration-300 disabled:opacity-50 group/send ${input.trim() && !isLoading
-                                            ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/50'
-                                            : 'bg-transparent'
+                                        ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/50'
+                                        : 'bg-transparent'
                                         }`}
                                 >
                                     <Send size={18} className={input.trim() && !isLoading ? 'text-white group-hover/send:translate-x-0.5 transition-transform' : 'text-slate-600'} />

@@ -125,3 +125,30 @@ Keep it brief and actionable!`;
 
     return await chatWithAI([{ role: 'user', content: prompt }]);
 };
+export const triageTasks = async (tasks) => {
+    if (!tasks || tasks.length === 0) return [];
+
+    const taskList = tasks.map((t, i) => `${i + 1}. ${t.title} (${t.priority} priority)`).join('\n');
+    const prompt = `As a Neural Coach for ADHD users, reorder these tasks based on the "INCUP" model (Interest, Novelty, Challenge, Urgency, Proximity).
+    
+    Current Tasks:
+    ${taskList}
+
+    Return a JSON array of the task TITLES ONLY, sorted from most engaging/critical to least.
+    Example format: ["Task A", "Task B", "Task C"]
+    
+    IMPORTANT: Return ONLY the JSON array.`;
+
+    try {
+        const response = await chatWithAI([{ role: 'user', content: prompt }], "You are a specialized ADHD task prioritization engine. Respond ONLY with valid JSON.");
+        // Try to find the JSON array in the response
+        const jsonMatch = response.match(/\[.*\]/s);
+        if (jsonMatch) {
+            return JSON.parse(jsonMatch[0]);
+        }
+        return tasks.map(t => t.title); // Fallback to original order
+    } catch (error) {
+        console.error('Triage failed:', error);
+        return tasks.map(t => t.title);
+    }
+};
