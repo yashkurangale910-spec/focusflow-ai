@@ -1,9 +1,7 @@
-// AI service with built-in fallback for demo mode
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { apiClient } from './apiClient';
 
-const getAuthToken = () => {
-    return localStorage.getItem('focusflow_token') || 'mock-token';
-};
+// Fuzzy matching helper - checks if input is similar to target (handles typos)
+// ... (rest of the functions remain the same, but imports change)
 
 // Fuzzy matching helper - checks if input is similar to target (handles typos)
 const fuzzyMatch = (input, target) => {
@@ -65,19 +63,14 @@ const getFallbackResponse = (message) => {
 };
 
 export const chatWithAI = async (messages, systemPrompt = null) => {
-    const token = getAuthToken();
     const lastUserMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
 
     const defaultSystemPrompt = `You are a friendly, supportive productivity coach for FocusFlow AI.
 Keep responses concise, warm, and encouraging. Use emojis occasionally.`;
 
     try {
-        const response = await fetch(`${API_URL}/ai/chat`, {
+        const data = await apiClient('/ai/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
             body: JSON.stringify({
                 messages: [
                     { role: 'system', content: systemPrompt || defaultSystemPrompt },
@@ -86,12 +79,6 @@ Keep responses concise, warm, and encouraging. Use emojis occasionally.`;
             }),
         });
 
-        if (!response.ok) {
-            console.warn('Backend AI failed, using fallback');
-            return getFallbackResponse(lastUserMessage);
-        }
-
-        const data = await response.json();
         return data.message || getFallbackResponse(lastUserMessage);
     } catch (error) {
         console.warn('AI API Error, using fallback:', error.message);
