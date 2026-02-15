@@ -12,9 +12,13 @@ async function testBackendAI() {
         });
 
         const data = await response.json();
-        console.log('Backend AI Response:', data);
+        if (response.ok) {
+            console.log('✅ Backend AI Response Success:', data);
+        } else {
+            console.error('❌ Backend AI Response Error:', JSON.stringify(data, null, 2));
+        }
     } catch (error) {
-        console.error('Test failed:', error.message);
+        console.error('🚨 Test failed to execute:', error.message);
     }
 }
 

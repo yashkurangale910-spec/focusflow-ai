@@ -28,7 +28,7 @@ const getMockResponse = (message) => {
     // Deep Intent Recognition for common ADHD/Executive Function struggles
     const intentMap = [
         {
-            keywords: ['start', 'stuck', 'begin', 'how', 'procrastinat', 'cant do', 'brain no', 'slove'],
+            keywords: ['start', 'stuck', 'begin', 'how', 'procrastinat', 'cant do', 'brain no', 'solve'],
             response: "Starting is the hardest part for our brains. Let's use the 🎯 **'Tiny First Step'** rule:\n\n1. What is the smallest, easiest part of this task? (e.g., 'Open the file')\n2. Do that for just 2 minutes.\n3. The goal isn't the task; it's just the 2 minutes.\n\nWhat's that tiny step for you right now?"
         },
         {
@@ -132,25 +132,33 @@ TRAINING MODES & KNOWLEDGE:
             })
         });
 
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.error('Failed to parse AI API response:', parseError);
+            throw new Error('Neural Link Malfunction: Invalid response format');
+        }
 
-        if (!response.ok) {
-            // Fallback to mock if API fails
-            const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+        if (!response.ok || !data || !data.choices || !data.choices[0] || !data.choices[0].message) {
+            console.error('AI API Failure:', data);
+            // Fallback to mock on API error
+            const messages = req.body?.messages;
+            const lastUserMessage = Array.isArray(messages) ? messages.filter(m => m.role === 'user').pop() : null;
             const mockMessage = getMockResponse(lastUserMessage?.content || '');
-            return res.json({ message: mockMessage });
+            return res.json({ message: `[NEURAL BACKUP MODE]\n\n${mockMessage}` });
         }
 
         res.json({
             message: data.choices[0].message.content
         });
     } catch (error) {
-        console.error('AI API Error:', error);
-        // Fallback to mock on error
-        const { messages } = req.body;
-        const lastUserMessage = messages?.filter(m => m.role === 'user').pop();
+        console.error('AI Route Internal Error:', error.message);
+        // Fallback to mock on any internal error
+        const messages = req.body?.messages;
+        const lastUserMessage = Array.isArray(messages) ? messages.filter(m => m.role === 'user').pop() : null;
         const mockMessage = getMockResponse(lastUserMessage?.content || '');
-        res.json({ message: mockMessage });
+        res.json({ message: `[NEURAL BACKUP MODE]\n\n${mockMessage}` });
     }
 });
 
