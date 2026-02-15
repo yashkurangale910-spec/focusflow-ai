@@ -42,3 +42,10 @@ Thumbs.db
 .next
 .nuxt
 .vercel
+
+# Project Specific
+changes.txt
+changes_list.txt
+commit_log.txt
+design_video.mp4
+frames/
