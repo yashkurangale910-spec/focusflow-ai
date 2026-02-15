@@ -125,6 +125,8 @@ Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
 - [x] 3D immersive home environment
 - [x] Gamification system with Neural Rank
 - [x] Habit tracking and productivity heatmaps
+- [x] **Backend Security & Error Handling** - Helmet, CORS, and Rate Limiting
+- [x] **Centralized Service Architecture** - Refactored frontend API client
 
 ### 🚀 In Progress
 - [ ] **Study Together Mode** - Collaborate with friends in real-time
@@ -140,7 +142,7 @@ Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
 - [ ] Advanced analytics and insights
 - [ ] Voice-controlled interface
 - [ ] Calendar integration (Google, Outlook)
-- [ ] Spotify/Music integration for focus playlists
+- [ ] Spotify/Music integration for focus playlist
 
 ---
 
