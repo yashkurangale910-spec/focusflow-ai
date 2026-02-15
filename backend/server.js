@@ -5,6 +5,15 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
+// Environment Validation
+const requiredEnv = ['MONGODB_URI', 'JWT_SECRET'];
+const missingEnv = requiredEnv.filter(env => !process.env[env]);
+if (missingEnv.length > 0) {
+    console.error(`❌ CRITICAL ERROR: Missing environment variables: ${missingEnv.join(', ')}`);
+    console.error('Please check your .env file.');
+    process.exit(1);
+}
+
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -59,8 +68,20 @@ const connectDB = async () => {
 connectDB();
 
 // Middleware
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:5173', 'http://localhost:5174'];
+
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
     credentials: true
 }));
 app.use(express.json());
@@ -86,27 +107,34 @@ app.use('/api/ai', require('./routes/ai'));
 app.use('/api/admin', require('./routes/admin'));
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(`❌ [ERROR] ${err.name}: ${err.message}`);
-    if (process.env.NODE_ENV !== 'production') {
-        console.error(err.stack);
-    }
-
-    const statusCode = err.statusCode || 500;
-    res.status(statusCode).json({
-        error: err.message || 'Interal Server Error',
-        status: 'error',
-        code: err.name || 'INTERNAL_ERROR'
-    });
-});
+app.use(require('./middleware/errorMiddleware'));
 
 const server = app.listen(PORT, () => {
     console.log(`✅ FocusFlow API running on http://localhost:${PORT}`);
 });
 
 process.on('unhandledRejection', (err) => {
-    console.log(`Error: ${err.message}`);
+    console.log(`❌ Unhandled Rejection: ${err.message}`);
     server.close(() => process.exit(1));
 });
+
+// Graceful Shutdown
+const shutdown = async (signal) => {
+    console.log(`\n🔄 ${signal} received. Shutting down gracefully...`);
+    server.close(async () => {
+        console.log('🛑 HTTP Server closed.');
+        try {
+            await mongoose.connection.close();
+            console.log('📦 Database connection closed.');
+            process.exit(0);
+        } catch (err) {
+            console.error('❌ Error during database closure:', err);
+            process.exit(1);
+        }
+    });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 module.exports = app;
