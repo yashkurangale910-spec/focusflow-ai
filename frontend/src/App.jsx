@@ -43,6 +43,7 @@ const AppContent = () => {
       {/* Scene3D removed for static design */}
 
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <CommandPalette onNavigate={setActiveTab} />
 
       <main className="lg:ml-64 min-h-screen transition-all duration-300 relative z-10">
         <Navbar />
