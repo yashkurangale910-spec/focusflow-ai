@@ -146,7 +146,7 @@ const AIChatbot = ({ setActiveTab, setFocusTask }) => {
         const cleanText = text.replace(/[*#_\\`]/g, '').replace(/\[|\]/g, '');
 
         const utterance = new window.SpeechSynthesisUtterance(cleanText);
-        utterance.rate = 1.05; // Slightly faster for ADHD brains
+        utterance.rate = 0.92; // Slightly slower for better cognitive processing and clarity
         utterance.pitch = 1.0;
 
         const voices = window.speechSynthesis.getVoices();
