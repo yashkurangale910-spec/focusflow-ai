@@ -10,7 +10,7 @@ const AIFocusCoach = () => {
     const [messages, setMessages] = useState([
         {
             type: 'coach',
-            text: "Neural Link Established. I am your specialized advisor. Specify your current cognitive objective or report deployment friction.",
+            text: "Neural Link Established. I am your specialized advisor. Specify your cognitive objective or report deployment friction.",
             timestamp: new Date(),
         }
     ]);
@@ -39,7 +39,7 @@ const AIFocusCoach = () => {
 
     const personalities = {
         supportive: {
-            icon: '🤗',
+            icon: '🛡️',
             name: 'Vanguard',
             color: 'emerald',
             systemPrompt: 'You are a warm, encouraging coach who celebrates every small win and provides gentle motivation. Use soft language.'
@@ -47,17 +47,17 @@ const AIFocusCoach = () => {
         energetic: {
             icon: '⚡',
             name: 'Catalyst',
-            color: 'amber',
+            color: 'cyan',
             systemPrompt: 'You are a high-energy, enthusiastic coach who pumps people up! Use bold language and high-energy encouragement.'
         },
         calm: {
             icon: '🧘',
             name: 'Zenith',
-            color: 'blue',
+            color: 'indigo',
             systemPrompt: 'You are a zen, mindful coach who focuses on breathing and presence. Use calm, minimalist language.'
         },
         strict: {
-            icon: '💪',
+            icon: '⚔️',
             name: 'Overlord',
             color: 'rose',
             systemPrompt: 'You are a high-performance coach. Use technical, precise language. Hold the user to elite standards.'
@@ -113,73 +113,77 @@ const AIFocusCoach = () => {
     };
 
     return (
-        <div className="surface-raised p-8 rounded-[2.5rem] border-slate-800/80 flex flex-col h-[650px] relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-32 bg-purple-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-purple-500/10 transition-colors" />
+        <div className="surface-glass p-8 rounded-[2rem] border-white/5 flex flex-col h-[700px] relative overflow-hidden shadow-2xl">
+            {/* Ambient Neural Shimmer */}
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-8 relative z-10">
-                <div className="flex items-center gap-4">
-                    <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 shadow-inner">
-                        <Brain size={20} className="text-purple-400" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10 relative z-10">
+                <div className="flex items-center gap-5">
+                    <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-lg shadow-indigo-500/10">
+                        <Brain size={24} className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-white uppercase tracking-tight">Neural Advisor</h3>
-                        <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Intelligence Active</p>
+                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Neural <span className="text-indigo-400 not-italic">Advisor</span></h3>
+                        <div className="flex items-center gap-2 mt-0.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none">Guidance Stream Active</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Personality Selector */}
-                <div className="flex gap-1.5 p-1 rounded-xl bg-slate-950/50 border border-slate-900">
+                {/* Cognitive Mode Switcher */}
+                <div className="flex gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/5 backdrop-blur-xl">
                     {Object.entries(personalities).map(([key, personality]) => (
                         <button
                             key={key}
                             onClick={() => setCoachPersonality(key)}
-                            className={`p-2 rounded-lg transition-all relative group/p ${coachPersonality === key
-                                ? 'bg-slate-900 text-white shadow-lg'
-                                : 'text-slate-500 hover:text-slate-300'
+                            className={`p-2.5 rounded-xl transition-all relative group/p ${coachPersonality === key
+                                ? 'bg-white/10 text-white shadow-lg'
+                                : 'text-slate-600 hover:text-slate-400'
                                 }`}
+                            title={personality.name}
                         >
-                            <span className="text-lg grayscale group-hover/p:grayscale-0 transition-all">{personality.icon}</span>
+                            <span className="text-sm font-bold">{personality.icon}</span>
                             {coachPersonality === key && (
-                                <motion.div layoutId="p-dot" className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-${personality.color}-500`} />
+                                <motion.div layoutId="p-dot" className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]`} />
                             )}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* Terminal Feed */}
+            {/* Intelligence Stream */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto space-y-4 mb-6 pr-2 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent custom-scrollbar"
+                className="flex-1 overflow-y-auto space-y-6 mb-8 pr-4 custom-scrollbar no-scrollbar"
             >
                 {messages.map((message, index) => (
                     <motion.div
                         key={index}
-                        initial={{ opacity: 0, x: message.type === 'user' ? 10 : -10 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
                         className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div
-                            className={`max-w-[85%] p-4 rounded-3xl border ${message.type === 'user'
-                                ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-100 rounded-tr-none'
-                                : 'bg-slate-950/50 border-slate-800 text-slate-300 rounded-tl-none'
-                                }`}
+                            className={`max-w-[85%] p-5 rounded-[1.8rem] border relative overflow-hidden ${message.type === 'user'
+                                ? 'bg-indigo-600/10 border-indigo-500/20 text-white rounded-tr-none'
+                                : 'bg-white/[0.03] border-white/5 text-slate-200 rounded-tl-none'
+                                } shadow-xl`}
                         >
                             {message.type === 'coach' && (
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className={`p-1 rounded-md bg-${personalities[coachPersonality].color}-500/10`}>
-                                        <Sparkles size={10} className={`text-${personalities[coachPersonality].color}-400`} />
+                                <div className="flex items-center gap-3 mb-3 border-b border-white/5 pb-2">
+                                    <div className="p-1 px-2 rounded-lg bg-black/40 border border-white/10">
+                                        <Sparkles size={10} className="text-cyan-400" />
                                     </div>
-                                    <span className="text-[9px] font-black uppercase tracking-[0.2em]" style={{ color: `var(--color-${personalities[coachPersonality].color}-400)` }}>
-                                        {personalities[coachPersonality].name} Module
+                                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-cyan-400/80">
+                                        {personalities[coachPersonality].name} v1.02
                                     </span>
                                 </div>
                             )}
-                            <p className="text-[11px] font-medium leading-relaxed tracking-wide">{message.text}</p>
+                            <p className="text-[12px] font-medium leading-[1.6] tracking-wide first-letter:text-sm first-letter:font-black">
+                                {message.text}
+                            </p>
                         </div>
                     </motion.div>
                 ))}
@@ -190,62 +194,62 @@ const AIFocusCoach = () => {
                         animate={{ opacity: 1 }}
                         className="flex justify-start"
                     >
-                        <div className="bg-slate-950/50 border border-slate-800 p-4 rounded-3xl rounded-tl-none">
-                            <div className="flex gap-1.5">
-                                <div className="w-1.5 h-1.5 bg-indigo-500/50 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                <div className="w-1.5 h-1.5 bg-indigo-500/50 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                <div className="w-1.5 h-1.5 bg-indigo-500/50 rounded-full animate-bounce" />
+                        <div className="bg-white/[0.03] border border-white/5 p-5 rounded-[1.5rem] rounded-tl-none">
+                            <div className="flex gap-2">
+                                <div className="w-1.5 h-1.5 bg-cyan-500/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                <div className="w-1.5 h-1.5 bg-cyan-500/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                <div className="w-1.5 h-1.5 bg-cyan-500/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                             </div>
                         </div>
                     </motion.div>
                 )}
             </div>
 
-            {/* Functional Hub */}
-            <div className="relative z-10">
-                <div className="grid grid-cols-2 gap-2 mb-4">
+            {/* Operative Hub */}
+            <div className="relative z-10 pt-4 mt-auto">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
                     {quickActions.map((action, index) => (
                         <button
                             key={index}
                             onClick={() => action.type === 'post-mortem' ? runPostMortem() : sendMessage(action.prompt)}
-                            className="p-3 rounded-xl bg-slate-950/40 border border-slate-900 hover:border-slate-800 hover:bg-slate-900/60 transition-all text-left group/action"
+                            className="p-3.5 rounded-2xl bg-black/20 border border-white/5 hover:border-cyan-500/30 hover:bg-black/40 transition-all text-left group/action shadow-lg"
                         >
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs group-hover/action:scale-110 transition-transform">{action.icon}</span>
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-tight group-hover/action:text-slate-300">{action.text}</span>
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm group-hover/action:scale-125 transition-transform duration-500 grayscale group-hover/action:grayscale-0">{action.icon}</span>
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest group-hover/action:text-cyan-400 transition-colors">{action.text}</span>
                             </div>
                         </button>
                     ))}
                 </div>
 
-                {/* Command Input */}
-                <div className="flex gap-2 p-1.5 rounded-2xl bg-slate-950 border border-slate-800 shadow-inner group/input focus-within:border-indigo-500/30 transition-all">
+                {/* Direct Command Interface */}
+                <div className="flex gap-3 p-2 rounded-[1.5rem] bg-black border border-white/10 shadow-2xl group focus-within:border-cyan-500/30 transition-all duration-500">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage(input)}
-                        placeholder="Specify operative constraints..."
-                        className="flex-1 bg-transparent px-4 py-3 text-[11px] font-medium text-white placeholder-slate-700 focus:outline-none"
+                        placeholder="Uplink with Neural Advisor..."
+                        className="flex-1 bg-transparent px-5 py-4 text-[12px] font-medium text-white placeholder-slate-700 focus:outline-none uppercase tracking-widest"
                     />
                     <button
                         onClick={() => sendMessage(input)}
                         disabled={!input.trim() || isTyping}
-                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-400 active:scale-95 transition-all disabled:opacity-20 disabled:grayscale"
+                        className="h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-cyan-600 text-white shadow-2xl shadow-cyan-900/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:grayscale group/send"
                     >
-                        <Send size={16} />
+                        <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                     </button>
                 </div>
 
-                <div className="mt-4 flex items-center justify-center gap-4 opacity-50">
-                    <div className="flex items-center gap-1.5">
-                        <Shield size={10} className="text-slate-500" />
-                        <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">End-to-End Encrypted</span>
+                <div className="mt-8 flex items-center justify-center gap-6 opacity-30">
+                    <div className="flex items-center gap-2">
+                        <Shield size={12} className="text-cyan-500" />
+                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">End-to-End Secure Matrix</span>
                     </div>
-                    <div className="w-px h-3 bg-slate-800" />
-                    <div className="flex items-center gap-1.5">
-                        <Activity size={10} className="text-slate-500" />
-                        <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Contextual Memory Active</span>
+                    <div className="w-1.5 h-1.5 bg-white/10 rounded-full" />
+                    <div className="flex items-center gap-2">
+                        <Activity size={12} className="text-cyan-500" />
+                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">Deep Context Retention</span>
                     </div>
                 </div>
             </div>
