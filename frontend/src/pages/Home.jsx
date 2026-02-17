@@ -187,7 +187,7 @@ const Home = ({ onNavigate }) => {
                             <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-xs uppercase font-medium tracking-widest">High-intensity cognitive focus protocol</p>
                             <div className="flex items-center gap-4">
                                 <span className="px-4 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">45 Minutes</span>
-                                <span className="text-slate-600 text-[9px] font-black uppercase tracking-[0.2em] italic">-> Code / Research</span>
+                                <span className="text-slate-600 text-[9px] font-black uppercase tracking-[0.2em] italic">→ Code / Research</span>
                             </div>
                         </div>
                     </motion.div>
@@ -261,7 +261,7 @@ const Home = ({ onNavigate }) => {
                         <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-indigo-500 rounded-full" />
                         <h2 className="text-2xl font-bold text-white uppercase italic tracking-tighter">System Telemetry</h2>
                     </div>
-                    <button className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-[0.3em] transition-all italic">Access Full Metadata -> </button>
+                    <button className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-[0.3em] transition-all italic">Access Full Metadata → </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
