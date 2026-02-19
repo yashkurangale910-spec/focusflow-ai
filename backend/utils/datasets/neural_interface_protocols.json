@@ -1,0 +1,43 @@
+{
+    "voice_interaction": {
+        "principles": [
+            "Keep voice-out responses concise and rhythmic for easy listening.",
+            "Every voice response is accompanied by a 'Neural Pulse' visual in the UI for clarity.",
+            "Advice is automatically speed-optimized (1.05x) for high-performance cognitive consumption.",
+            "Markdown formatting (like **) is automatically stripped from the audio stream for a seamless voice experience."
+        ],
+        "audio_cues": {
+            "success": "Play sync sfx for successful command execution.",
+            "thinking": "Use rhythmic loading messages for visual feedback during synthesis."
+        }
+    },
+    "system_commands": {
+        "mappings": [
+            {
+                "keywords": [
+                    "timer",
+                    "sprint",
+                    "pomodoro"
+                ],
+                "action": "Focus Session Initiation"
+            },
+            {
+                "keywords": [
+                    "stats",
+                    "analytics",
+                    "productivity"
+                ],
+                "action": "Navigation: Efficiency Tab"
+            },
+            {
+                "keywords": [
+                    "community",
+                    "squad",
+                    "pioneers"
+                ],
+                "action": "Navigation: Community Tab"
+            }
+        ],
+        "feedback": "Always confirm the action in a neural-OS style: 'Grid engaged', 'Rerouting...', 'Session data linked'."
+    }
+}

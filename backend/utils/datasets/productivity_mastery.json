@@ -1,0 +1,37 @@
+{
+    "frameworks": {
+        "GTD_Getting_Things_Done": {
+            "phases": [
+                "Capture",
+                "Clarify",
+                "Organize",
+                "Reflect",
+                "Engage"
+            ],
+            "adhd_adjustment": "Don't let 'Clarify' become a trap. Spend max 5 mins clarify a single item."
+        },
+        "Eat_The_Frog": {
+            "principle": "Do the hardest, most anxiety-inducing task first thing in the morning.",
+            "adhd_adjustment": "If the frog is too big, eat a 'tadpole' first to build momentum."
+        },
+        "Time_Blocking": {
+            "principle": "Assign every minute of your day to a specific task block.",
+            "adhd_adjustment": "Use 'Day-Theming' instead of minute-blocking to reduce decision fatigue."
+        }
+    },
+    "states": {
+        "Flow_State": {
+            "triggers": [
+                "Challenge-Skill Balance",
+                "Clear Goals",
+                "Immediate Feedback",
+                "High Risk/Consequence"
+            ],
+            "neurochemistry": "Norepinephrine, Dopamine, Endorphins, Anandamide, Serotonin."
+        },
+        "Hyperfocus": {
+            "description": "ADHD trait of being absorbed in a task for hours, losing track of time.",
+            "risk": "Neglecting physical needs (food, hydration) and other priorities."
+        }
+    }
+}
