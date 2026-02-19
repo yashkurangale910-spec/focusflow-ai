@@ -36,7 +36,7 @@ const Tasks = ({ onStartFocus }) => {
             layout
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`bg-slate-900 border rounded-lg p-4 shadow-sm hover:border-slate-700 transition-all duration-200 ${isActive ? 'border-cyan-500/30 bg-slate-900 shadow-lg' :
+            className={`bg-black border rounded-lg p-4 shadow-sm hover:border-slate-700 transition-all duration-200 ${isActive ? 'border-cyan-500/30 bg-black shadow-lg' :
                 isCompleted ? 'opacity-60 grayscale-[0.5] hover:opacity-90 hover:grayscale-0' :
                     'border-slate-800/80'
                 }`}
@@ -188,9 +188,9 @@ const Tasks = ({ onStartFocus }) => {
                 </button>
             </div>
 
-            <div className={`flex flex-col gap-4 rounded-xl p-3 min-h-[calc(100vh-280px)] border ${isActive ? 'bg-cyan-500/5 border-cyan-500/20' :
-                isCompleted ? 'bg-slate-950/20 border-slate-800 border-dashed' :
-                    'bg-slate-900/40 border-slate-800/50'
+            <div className={`flex flex-col gap-4 rounded-xl p-3 min-h-[calc(100vh-280px)] border ${isActive ? 'bg-black border-cyan-500/20' :
+                isCompleted ? 'bg-black border-slate-800 border-dashed' :
+                    'bg-black border-slate-800/50'
                 }`}>
                 {children}
             </div>
@@ -210,8 +210,8 @@ const Tasks = ({ onStartFocus }) => {
                         onClick={handleNeuralTriage}
                         disabled={isTriaging || queueTasks.length < 2}
                         className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all border ${isTriaging
-                                ? 'bg-purple-600/20 border-purple-500/50 text-purple-400 animate-pulse'
-                                : 'bg-white/5 border-white/10 text-slate-300 hover:border-purple-500/50 hover:text-purple-400 hover:bg-purple-500/10'
+                            ? 'bg-purple-600/20 border-purple-500/50 text-purple-400 animate-pulse'
+                            : 'bg-white/5 border-white/10 text-slate-300 hover:border-purple-500/50 hover:text-purple-400 hover:bg-purple-500/10'
                             } disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-tighter`}
                     >
                         {isTriaging ? (

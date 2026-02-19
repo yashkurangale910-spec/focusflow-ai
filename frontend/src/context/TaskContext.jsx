@@ -16,9 +16,18 @@ export const TaskProvider = ({ children }) => {
     const getSavedTasks = () => {
         try {
             const saved = localStorage.getItem('focusflow_tasks');
-            if (!saved) return [];
-            const parsed = JSON.parse(saved);
-            return Array.isArray(parsed) ? parsed : [];
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            }
+
+            // Demo data for Wow factor
+            return [
+                { id: '1', title: '🚀 Initialize Neural OS', description: 'Explore the FocusFlow dashboard and customize your theme', status: 'done', priority: 'high', createdAt: new Date() },
+                { id: '2', title: '🧠 Train Neural Assistant', description: 'Ask the AI coach for a personalized focus protocol', status: 'todo', priority: 'medium', createdAt: new Date() },
+                { id: '3', title: '⏱️ Complete First Focus Sprint', description: 'Use the Pomodoro timer for 25 minutes of deep work', status: 'todo', priority: 'high', createdAt: new Date() },
+                { id: '4', title: '👥 Join a Global Study Squad', description: 'Check the Community tab and find a study partner', status: 'todo', priority: 'low', createdAt: new Date() },
+            ];
         } catch (e) {
             console.error('Local storage corruption detected, resetting tasks:', e);
             return [];

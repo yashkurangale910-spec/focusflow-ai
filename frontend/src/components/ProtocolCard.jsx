@@ -19,12 +19,12 @@ const ProtocolCard = ({ title, subtitle, tag, delay = 0, onClick, gradient }) =>
             <div
                 className="absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-110"
                 style={{
-                    background: gradient || 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                    background: gradient || '#000000'
                 }}
             />
 
             {/* Overlay Gradient for Readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent opacity-80 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 z-10" />
 
             {/* Noise Texture */}
             <div className="absolute inset-0 opacity-[0.03] z-10 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />

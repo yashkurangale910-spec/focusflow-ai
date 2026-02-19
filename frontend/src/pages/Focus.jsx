@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Play, Pause, RotateCcw, Volume2, VolumeX,
     Brain, Zap, Coffee, Clock, Target, Plus, Minus, Settings
