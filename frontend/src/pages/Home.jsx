@@ -1,12 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ScrollReveal } from '../components/ScrollReveal';
-import StreakDisplay from '../components/StreakDisplay';
 import {
     Zap, Activity, Clock, Brain, Sparkles, Target,
     TrendingUp, Play, ArrowRight, Flame, Timer
 } from 'lucide-react';
-import { MorphingBlob, ParticleField, CosmicBackground } from '../components/UniqueEffects';
 
 const Home = ({ onNavigate }) => {
     const handleNavigate = (page) => {
@@ -15,148 +13,111 @@ const Home = ({ onNavigate }) => {
 
     return (
         <div className="min-h-screen">
-            {/* Hero Section - Neural Command Dashboard */}
-            <div className="grid grid-cols-12 gap-8 mb-16">
-                {/* Left: Strategic Directive Matrix */}
+            {/* Hero Section - Asymmetric Split Layout */}
+            <div className="grid grid-cols-12 gap-6 mb-12">
+                {/* Left: Main Hero */}
                 <motion.div
-                    className="col-span-12 lg:col-span-8 relative"
+                    className="col-span-12 lg:col-span-7 relative"
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <div className="relative p-12 rounded-[3rem] bg-black border border-white/5 overflow-hidden min-h-[500px] flex flex-col justify-between shadow-2xl">
-                        {/* Neural Matrix Background */}
-                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
-                            <motion.div
-                                className="absolute inset-0 bg-gradient-to-b from-cyan-500/20 via-transparent to-transparent h-1/2 w-full"
-                                animate={{ y: ['-100%', '200%'] }}
-                                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            />
-                        </div>
+                    <div className="relative p-10 rounded-[2.5rem] bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-transparent border border-white/5 overflow-hidden min-h-[400px] flex flex-col justify-between">
+                        {/* Background Glow */}
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-600/15 rounded-full blur-[100px] pointer-events-none" />
 
-                        {/* Particle Field for depth */}
-                        <ParticleField count={25} color="cyan" />
-
-                        {/* Content Layer */}
+                        {/* Content */}
                         <div className="relative z-10">
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-md">
-                                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 italic">Neural Link: Optimal</span>
-                                </div>
-                                <div className="h-[1px] w-20 bg-gradient-to-r from-cyan-500/40 to-transparent" />
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+                                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Neural Link Active</span>
                             </div>
 
-                            <h1 className="text-6xl lg:text-8xl font-black tracking-tighter mb-6 leading-[0.85] uppercase italic">
-                                <span className="block text-white opacity-90">DEPLOY</span>
-                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 drop-shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                            <h1 className="text-5xl lg:text-7xl font-black tracking-tight mb-4 leading-[0.9]">
+                                <span className="block text-white">UNLOCK</span>
+                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400">
                                     HYPERFOCUS
                                 </span>
                             </h1>
 
-                            <div className="flex items-start gap-6 mt-10 p-6 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-sm max-w-xl">
-                                <div className="w-1 h-full bg-cyan-500/30 rounded-full" />
-                                <p className="text-slate-500 text-lg leading-relaxed font-medium">
-                                    Strategic cognitive protocols engineered for
-                                    <span className="text-white font-black italic"> pioneer minds</span>.
-                                    Maximize neural efficiency through structured divergence.
-                                </p>
-                            </div>
+                            <p className="text-slate-400 text-lg max-w-md leading-relaxed mt-6">
+                                Deploy cognitive protocols designed for
+                                <span className="text-cyan-400 font-semibold"> neurodivergent minds</span>.
+                            </p>
                         </div>
 
-                        {/* CTA Cluster */}
-                        <div className="relative z-10 flex flex-wrap items-center gap-8 mt-12">
-                            <div className="relative group">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 via-cyan-600 to-indigo-600 rounded-2xl opacity-40 group-hover:opacity-100 blur-xl transition-all duration-700" />
-                                <button
-                                    onClick={() => handleNavigate('focus')}
-                                    className="relative flex items-center gap-4 px-10 py-5 bg-black border border-white/10 rounded-2xl text-white font-black text-xl shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden group/btn italic uppercase tracking-tighter"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
-                                    <Play className="w-6 h-6 relative z-10 fill-current" />
-                                    <span className="relative z-10">Initiate Protocol</span>
-                                    <ArrowRight className="w-6 h-6 relative z-10 group-hover/btn:translate-x-2 transition-transform duration-300" />
-                                </button>
-                            </div>
-
-                            <div className="flex gap-8">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-cyan-400 uppercase tracking-widest italic">// Current Iteration</p>
-                                    <p className="text-white font-bold text-lg">25:00 <span className="text-slate-600 text-sm font-medium not-italic">Session</span></p>
-                                </div>
-                                <div className="w-[1px] h-10 bg-white/5" />
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest italic">// Neural Load</p>
-                                    <p className="text-white font-bold text-lg">Optimal <span className="text-slate-600 text-sm font-medium not-italic">State</span></p>
-                                </div>
-                            </div>
+                        {/* CTA */}
+                        <div className="relative z-10 flex items-center gap-4 mt-8">
+                            <button
+                                onClick={() => handleNavigate('focus')}
+                                className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl text-white font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-[1.02] cursor-pointer"
+                            >
+                                <Play className="w-5 h-5" fill="currentColor" />
+                                Start Focus Session
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                            <span className="text-slate-500 text-sm">25 min deep work</span>
                         </div>
                     </div>
                 </motion.div>
 
-                {/* Right: Telemetry Stack */}
-                <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    {/* Performance Monitor */}
+                {/* Right: Stacked Cards */}
+                <div className="col-span-12 lg:col-span-5 flex flex-col gap-4">
+                    {/* Quick Stats Card */}
                     <motion.div
-                        className="p-8 rounded-[2.5rem] bg-black border border-white/5 flex-1 relative overflow-hidden group hover:border-indigo-500/30 transition-all duration-500 cursor-pointer shadow-xl"
+                        className="p-6 rounded-3xl bg-gradient-to-br from-purple-900/40 to-slate-900/60 border border-purple-500/20 flex-1"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        whileHover={{ y: -5 }}
                     >
-                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
-                            <Activity size={80} className="text-indigo-400" />
-                        </div>
-                        <div className="relative z-10">
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 mb-2 italic">Performance Pulse</p>
-                            <div className="flex items-baseline gap-2 mb-6">
-                                <h3 className="text-5xl font-black text-white italic tracking-tighter transition-all duration-500">4.2</h3>
-                                <span className="text-sm font-black text-slate-600 uppercase italic">Operational Hours</span>
+                        <div className="flex items-start justify-between mb-4">
+                            <div>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-1">Today's Progress</p>
+                                <h3 className="text-3xl font-black text-white">4.2<span className="text-lg text-slate-500 font-normal">hrs</span></h3>
                             </div>
-
-                            <div className="relative h-1.5 bg-white/5 rounded-full overflow-hidden mb-4">
-                                <motion.div
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-                                    initial={{ width: 0 }}
-                                    animate={{ width: '70%' }}
-                                    transition={{ duration: 1.5, delay: 0.5 }}
-                                />
-                            </div>
-                            <div className="flex justify-between text-[9px] font-black text-slate-500 uppercase tracking-widest italic">
-                                <span>Efficiency Index</span>
-                                <span className="text-indigo-400">70% Stability</span>
+                            <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
+                                <Timer className="w-6 h-6 text-purple-400" />
                             </div>
                         </div>
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full w-[70%] bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
+                        </div>
+                        <p className="text-slate-500 text-xs mt-2">70% of daily goal achieved</p>
                     </motion.div>
 
-                    {/* Streak Matrix */}
+                    {/* Streak Card */}
                     <motion.div
-                        className="flex-none"
+                        className="p-6 rounded-3xl bg-gradient-to-br from-amber-900/30 to-slate-900/60 border border-amber-500/20 flex-1"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <StreakDisplay variant="home" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                                <Flame className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-1">Current Streak</p>
+                                <h3 className="text-4xl font-black text-white">12<span className="text-lg text-slate-500 font-normal ml-1">days</span></h3>
+                            </div>
+                        </div>
                     </motion.div>
 
-                    {/* Cognitive Intelligence Feed */}
+                    {/* AI Suggestion */}
                     <motion.div
-                        className="p-8 rounded-[2.5rem] bg-black border border-cyan-500/20 flex-initial relative overflow-hidden group shadow-xl"
+                        className="p-6 rounded-3xl bg-gradient-to-br from-cyan-900/30 to-slate-900/60 border border-cyan-500/20 flex-1"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <div className="flex items-start gap-5">
-                            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0 animate-pulse">
-                                <Brain className="w-6 h-6 text-cyan-400" />
+                        <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                                <Sparkles className="w-5 h-5 text-cyan-400" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400 mb-2 italic">Neural Insight</p>
-                                <p className="text-slate-300 text-sm leading-relaxed font-medium">
-                                    Peak metabolic resonance in <span className="text-white font-black italic">23 min</span>.
-                                    Prepare terminal for intensive protocol.
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 mb-2">AI Suggestion</p>
+                                <p className="text-slate-300 text-sm leading-relaxed">Your peak focus window is in <span className="text-cyan-400 font-bold">23 min</span>. Consider preparing your workspace now.</p>
                             </div>
                         </div>
                     </motion.div>
@@ -164,125 +125,113 @@ const Home = ({ onNavigate }) => {
             </div>
 
             {/* Protocol Grid - Bento Layout */}
-            <section className="mb-12 relative">
-                <div className="flex items-center gap-4 mb-8 relative z-10">
-                    <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-cyan-500 rounded-full glow-spread" />
-                    <h2 className="text-2xl font-bold text-white uppercase italic tracking-tighter">Focus Protocols</h2>
-                    <div className="flex-1 h-px bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-transparent" />
+            <section className="mb-12">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-cyan-500 rounded-full" />
+                    <h2 className="text-2xl font-bold text-white">Focus Protocols</h2>
                 </div>
 
-                <div className="grid grid-cols-12 gap-6 text-left">
-                    {/* Deep Work */}
+                <div className="grid grid-cols-12 gap-4">
+                    {/* Large Featured Card - Focus */}
                     <motion.div
                         onClick={() => handleNavigate('focus')}
-                        className="col-span-12 md:col-span-6 lg:col-span-5 row-span-2 p-10 rounded-[2.5rem] bg-black border border-indigo-500/30 relative overflow-hidden group cursor-pointer hover:border-indigo-400/60 shadow-2xl transition-all duration-500 min-h-[350px]"
-                        whileHover={{ scale: 1.02, y: -8 }}
+                        className="col-span-12 md:col-span-6 lg:col-span-5 row-span-2 p-8 rounded-3xl bg-gradient-to-br from-indigo-900/60 to-slate-900/80 border border-indigo-500/30 relative overflow-hidden group cursor-pointer hover:border-indigo-400/50 transition-all min-h-[300px]"
+                        whileHover={{ scale: 1.01 }}
                     >
-                        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] group-hover:bg-indigo-500/20 transition-all duration-700" />
+                        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/20 rounded-full blur-[60px]" />
+                        <div className="absolute top-6 right-6 w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Brain className="w-8 h-8 text-indigo-400" />
+                        </div>
                         <div className="relative z-10 h-full flex flex-col justify-end">
-                            <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 w-fit mb-6">
-                                <Brain className="w-8 h-8 text-indigo-400" />
-                            </div>
-                            <h3 className="text-4xl font-black text-white mb-4 uppercase italic tracking-tighter">Deep Work</h3>
-                            <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-xs uppercase font-medium tracking-widest">High-intensity cognitive focus protocol</p>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-2">Recommended</span>
+                            <h3 className="text-3xl font-black text-white mb-3">Deep Work</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed mb-6 max-w-xs">Intense focus for complex engineering and architectural tasks. No distractions.</p>
                             <div className="flex items-center gap-4">
-                                <span className="px-4 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">45 Minutes</span>
-                                <span className="text-slate-600 text-[9px] font-black uppercase tracking-[0.2em] italic">→ Code / Research</span>
+                                <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold">45 min</span>
+                                <span className="text-slate-500 text-xs">→ Best for coding, writing</span>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* Task Matrix */}
+                    {/* Tasks */}
                     <motion.div
                         onClick={() => handleNavigate('tasks')}
-                        className="col-span-6 md:col-span-3 lg:col-span-4 p-8 rounded-[2rem] bg-black border border-emerald-500/20 relative overflow-hidden group cursor-pointer hover:border-emerald-400/40 transition-all duration-500"
-                        whileHover={{ y: -5 }}
+                        className="col-span-6 md:col-span-3 lg:col-span-4 p-6 rounded-3xl bg-gradient-to-br from-emerald-900/50 to-slate-900/80 border border-emerald-500/20 relative overflow-hidden group cursor-pointer hover:border-emerald-400/40 transition-all"
+                        whileHover={{ scale: 1.02 }}
                     >
-                        <div className="relative z-10 text-left">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6">
-                                <Target className="w-6 h-6 text-emerald-400" />
-                            </div>
-                            <h3 className="text-xl font-black text-white mb-2 uppercase italic tracking-tighter">Task Matrix</h3>
-                            <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Directive management system</p>
-                            <div className="flex items-center gap-3">
-                                <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
-                                    <motion.div className="h-full bg-emerald-500" initial={{ width: 0 }} whileInView={{ width: '60%' }} />
-                                </div>
-                                <span className="text-[10px] font-black text-slate-500 tracking-tighter italic">8/13 ACTIVE</span>
-                            </div>
-                        </div>
+                        <Target className="w-8 h-8 text-emerald-400 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">Task Manager</h3>
+                        <p className="text-slate-500 text-sm">Manage directives</p>
                     </motion.div>
 
                     {/* Wellness */}
                     <motion.div
                         onClick={() => handleNavigate('wellness')}
-                        className="col-span-6 md:col-span-3 lg:col-span-3 p-8 rounded-[2rem] bg-black border border-rose-500/20 relative overflow-hidden group cursor-pointer hover:border-rose-400/40 transition-all duration-500"
-                        whileHover={{ y: -5 }}
+                        className="col-span-6 md:col-span-3 lg:col-span-3 p-6 rounded-3xl bg-gradient-to-br from-rose-900/50 to-slate-900/80 border border-rose-500/20 relative overflow-hidden group cursor-pointer hover:border-rose-400/40 transition-all"
+                        whileHover={{ scale: 1.02 }}
                     >
-                        <div className="relative z-10 text-left">
-                            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-6">
-                                <Activity className="w-6 h-6 text-rose-400" />
-                            </div>
-                            <h3 className="text-xl font-black text-white mb-2 uppercase italic tracking-tighter">Wellness</h3>
-                            <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest mb-6">Metabolic recharge link</p>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20">
-                                <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
-                                <span className="text-[8px] font-black text-rose-400 uppercase tracking-widest">Next Break: 45m</span>
-                            </div>
-                        </div>
+                        <Activity className="w-8 h-8 text-rose-400 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">Wellness</h3>
+                        <p className="text-slate-500 text-sm">Mind & body</p>
                     </motion.div>
 
-                    {/* Strategic Insights */}
+                    {/* Insights */}
                     <motion.div
                         onClick={() => handleNavigate('insights')}
-                        className="col-span-6 md:col-span-6 lg:col-span-4 p-8 rounded-[2rem] bg-black border border-amber-500/20 relative overflow-hidden group cursor-pointer hover:border-amber-400/40 transition-all duration-500"
+                        className="col-span-6 md:col-span-4 lg:col-span-4 p-6 rounded-3xl bg-gradient-to-br from-amber-900/50 to-slate-900/80 border border-amber-500/20 relative overflow-hidden group cursor-pointer hover:border-amber-400/40 transition-all"
+                        whileHover={{ scale: 1.02 }}
                     >
-                        <Zap size={24} className="text-amber-400 mb-6" />
-                        <h3 className="text-xl font-black text-white mb-2 uppercase italic tracking-tighter">Strategic Insights</h3>
-                        <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest italic">Performance telemetry analysis</p>
+                        <Zap className="w-8 h-8 text-amber-400 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">Insights</h3>
+                        <p className="text-slate-500 text-sm">Performance data</p>
                     </motion.div>
 
                     {/* Zenith Path */}
                     <motion.div
                         onClick={() => handleNavigate('zenith')}
-                        className="col-span-6 md:col-span-6 lg:col-span-3 p-8 rounded-[2rem] bg-black border border-cyan-500/20 relative overflow-hidden group cursor-pointer hover:border-cyan-400/40 transition-all duration-500"
+                        className="col-span-6 md:col-span-4 lg:col-span-3 p-6 rounded-3xl bg-gradient-to-br from-cyan-900/50 to-slate-900/80 border border-cyan-500/20 relative overflow-hidden group cursor-pointer hover:border-cyan-400/40 transition-all"
+                        whileHover={{ scale: 1.02 }}
                     >
-                        <TrendingUp size={24} className="text-cyan-400 mb-6" />
-                        <h3 className="text-xl font-black text-white mb-2 uppercase italic tracking-tighter">Zenith Path</h3>
-                        <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest italic">Growth trajectory mapping</p>
+                        <TrendingUp className="w-8 h-8 text-cyan-400 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">Zenith Path</h3>
+                        <p className="text-slate-500 text-sm">Growth journey</p>
                     </motion.div>
                 </div>
             </section>
 
-            {/* Performance Insights Row */}
-            <section className="mt-16">
-                <div className="flex items-center justify-between mb-8">
+            {/* Insights Row */}
+            <section>
+                <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-4">
-                        <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-indigo-500 rounded-full" />
-                        <h2 className="text-2xl font-bold text-white uppercase italic tracking-tighter">System Telemetry</h2>
+                        <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-purple-500 rounded-full" />
+                        <h2 className="text-2xl font-bold text-white">Performance Insights</h2>
                     </div>
-                    <button className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-[0.3em] transition-all italic">Access Full Metadata → </button>
+                    <button className="text-sm text-slate-500 hover:text-white transition-colors">View All →</button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                        { label: 'Peak Resonance', value: '10:45 AM', desc: 'Max focus recorded', icon: Zap, color: 'text-amber-400' },
-                        { label: 'Cumulative Load', value: '5.2 hrs', desc: '+12.4% vs baseline', icon: TrendingUp, color: 'text-emerald-400' },
-                        { label: 'Cooldown Phase', value: '23 min', desc: 'Strategic rest period', icon: Clock, color: 'text-purple-400' },
+                        { label: 'Peak Performance', value: '10:45 AM', desc: 'Highest focus recorded', icon: Zap, gradient: 'from-amber-500 to-orange-500' },
+                        { label: 'Weekly Average', value: '5.2 hrs', desc: '+12% from last week', icon: TrendingUp, gradient: 'from-emerald-500 to-cyan-500' },
+                        { label: 'Next Break', value: '23 min', desc: 'Scheduled rest period', icon: Clock, gradient: 'from-purple-500 to-pink-500' },
                     ].map((stat, i) => (
                         <motion.div
                             key={i}
-                            className="p-8 rounded-[2rem] bg-black border border-white/5 hover:border-white/10 transition-all group overflow-hidden relative shadow-xl"
+                            className="p-6 rounded-3xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition-all group"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 + i * 0.1 }}
                         >
-                            <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
-                                <stat.icon size={40} className={stat.color} />
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <p className="text-slate-500 text-xs uppercase tracking-widest mb-2">{stat.label}</p>
+                                    <h3 className="text-3xl font-black text-white mb-1">{stat.value}</h3>
+                                    <p className="text-slate-500 text-sm">{stat.desc}</p>
+                                </div>
+                                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg`}>
+                                    <stat.icon className="w-6 h-6 text-white" />
+                                </div>
                             </div>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 italic">{stat.label}</p>
-                            <h3 className="text-4xl font-black text-white italic tracking-tighter mb-2">{stat.value}</h3>
-                            <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest">{stat.desc}</p>
                         </motion.div>
                     ))}
                 </div>

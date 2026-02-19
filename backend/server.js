@@ -18,7 +18,8 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
-const xss = require('xss-clean');
+// xss-clean removed: incompatible with Express 5 (req.query is read-only)
+// XSS protection is handled by input sanitization in routes + helmet CSP headers
 const morgan = require('morgan');
 
 const app = express();
@@ -28,7 +29,7 @@ app.use(morgan('dev'));
 
 // Security Middleware (Glow up for Safety)
 app.use(helmet()); // Sets various security HTTP headers
-app.use(xss());    // Data sanitization against XSS
+// XSS protection via helmet CSP + mongo-sanitize in auth routes
 app.use(hpp());    // Prevent HTTP Parameter Pollution
 
 // Rate Limiting (Prevent Brute Force)
@@ -112,6 +113,10 @@ app.use(require('./middleware/errorMiddleware'));
 const server = app.listen(PORT, () => {
     console.log(`✅ FocusFlow API running on http://localhost:${PORT}`);
 });
+
+// Initialize Socket.io (Study Together Mode)
+const socketHandler = require('./socketHandler');
+socketHandler(server, allowedOrigins);
 
 process.on('unhandledRejection', (err) => {
     console.log(`❌ Unhandled Rejection: ${err.message}`);
