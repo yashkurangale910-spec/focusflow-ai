@@ -18,6 +18,7 @@ import About from './pages/About';
 import Auth from './pages/Auth';
 import ZenithPath from './pages/ZenithPath';
 import AIChatbot from './components/AIChatbot';
+import CommandPalette from './components/CommandPalette';
 import DataManager from './components/DataManager';
 import Gamification from './components/Gamification';
 import SessionTemplates from './components/SessionTemplates';

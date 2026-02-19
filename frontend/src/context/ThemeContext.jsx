@@ -12,7 +12,7 @@ export const useTheme = () => {
 
 const themes = {
     dark: {
-        background: '#0a0a0f',
+        background: '#000000',
         accent: '#00d1ff',
         text: '#ffffff',
     },
@@ -22,12 +22,12 @@ const themes = {
         text: '#1d1d1f',
     },
     cyberpunk: {
-        background: '#0f0f23',
+        background: '#0a0a0a',
         accent: '#ff2a6d',
         text: '#d1f7ff',
     },
     forest: {
-        background: '#0d1b0e',
+        background: '#000000',
         accent: '#52de97',
         text: '#e8f5e9',
     },
