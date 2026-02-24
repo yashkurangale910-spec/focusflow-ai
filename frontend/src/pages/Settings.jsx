@@ -34,9 +34,9 @@ const Settings = () => {
     );
 
     return (
-        <div className="min-h-[80vh] flex bg-[#02040a] rounded-[2rem] overflow-hidden border border-slate-800/50 shadow-2xl">
+        <div className="min-h-[80vh] flex bg-black rounded-[2rem] overflow-hidden border border-slate-800/50 shadow-2xl">
             {/* Local Nav Sidebar */}
-            <aside className="w-64 bg-[#0a0c10] border-r border-slate-800/50 p-8 flex flex-col">
+            <aside className="w-64 bg-black border-r border-slate-800/50 p-8 flex flex-col">
                 <div className="flex items-center gap-3 mb-12 px-2">
                     <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
                         <Activity className="text-cyan-400 w-5 h-5" />
@@ -210,10 +210,10 @@ const Settings = () => {
                                     <section className="settings-card">
                                         <h3 className="text-lg font-bold text-white mb-6">Theme</h3>
                                         <div className="flex items-end justify-between gap-6">
-                                            <div className="flex bg-slate-900 rounded-xl p-1 shrink-0">
+                                            <div className="flex bg-black rounded-xl p-1 shrink-0">
                                                 <button
                                                     onClick={() => setTheme('dark')}
-                                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${theme === 'dark' ? 'bg-slate-800 text-cyan-400 shadow-lg border border-slate-700' : 'text-slate-500'}`}
+                                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${theme === 'dark' ? 'bg-black text-cyan-400 shadow-lg border border-slate-700' : 'text-slate-500'}`}
                                                 >
                                                     <Moon size={14} />
                                                     Dark

@@ -19,7 +19,7 @@ const Wellness = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-2 mb-4">
-                        <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                        <div className="p-2 rounded-lg bg-black border border-white/10">
                             <Activity size={16} className="text-emerald-400" />
                         </div>
                         <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] animate-pulse">Live Vitality Feed</span>
@@ -30,12 +30,12 @@ const Wellness = () => {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-950/50 border border-slate-900 shadow-inner">
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-black border border-white/5 shadow-inner">
                     <div className="text-right">
                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Stability</p>
                         <p className="text-sm font-bold text-emerald-400">98.4% Nominal</p>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-black border border-white/10 flex items-center justify-center">
                         <Heart size={20} className="text-emerald-500 animate-pulse" />
                     </div>
                 </div>

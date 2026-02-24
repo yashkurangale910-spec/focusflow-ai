@@ -12,11 +12,18 @@ export const useAnalytics = () => {
 };
 
 export const AnalyticsProvider = ({ children }) => {
-    const [sessions, setSessions] = useState([]);
+    const [sessions, setSessions] = useState([
+        { _id: 'd1', duration: 45, quality: 9, mood: 'focused', category: 'Deep Work', createdAt: new Date(Date.now() - 86400000 * 2).toISOString(), tasksCompleted: 4 },
+        { _id: 'd2', duration: 25, quality: 7, mood: 'neutral', category: 'Coding', createdAt: new Date(Date.now() - 86400000).toISOString(), tasksCompleted: 2 },
+        { _id: 'd3', duration: 60, quality: 10, mood: 'flow', category: 'Design', createdAt: new Date().toISOString(), tasksCompleted: 5 }
+    ]);
     const [stats, setStats] = useState({
-        totalSessions: 0,
-        totalHours: 0,
-        avgQuality: 0,
+        totalHours: 12.5,
+        totalSessions: 18,
+        avgQuality: 8.5,
+        currentStreak: 5,
+        bestStreak: 12,
+        todayFocusTime: 130
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);

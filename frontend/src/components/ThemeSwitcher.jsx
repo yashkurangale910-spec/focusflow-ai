@@ -7,10 +7,10 @@ const ThemeSwitcher = () => {
     const { currentTheme, themes, changeTheme, changeAccent, customAccent } = useTheme();
 
     const themePresets = [
-        { id: 'dark', name: 'Dark', gradient: 'linear-gradient(135deg, #0a0a0f, #1a1a2e)' },
+        { id: 'dark', name: 'Dark', gradient: 'linear-gradient(135deg, #000000, #050505)' },
         { id: 'light', name: 'Light', gradient: 'linear-gradient(135deg, #f5f5f7, #ffffff)' },
-        { id: 'cyberpunk', name: 'Cyberpunk', gradient: 'linear-gradient(135deg, #0f0f23, #ff2a6d)' },
-        { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #0d1b0e, #52de97)' },
+        { id: 'cyberpunk', name: 'Cyberpunk', gradient: 'linear-gradient(135deg, #0a0a0a, #ff2a6d)' },
+        { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #000000, #52de97)' },
     ];
 
     const accentColors = [
@@ -33,8 +33,8 @@ const ThemeSwitcher = () => {
                             key={theme.id}
                             onClick={() => changeTheme(theme.id)}
                             className={`relative p-4 rounded-xl border-2 transition-all ${currentTheme === theme.id
-                                    ? 'border-accent'
-                                    : 'border-white/10 hover:border-white/30'
+                                ? 'border-accent'
+                                : 'border-white/10 hover:border-white/30'
                                 }`}
                             style={{ background: theme.gradient }}
                         >
@@ -60,8 +60,8 @@ const ThemeSwitcher = () => {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             className={`w-10 h-10 rounded-full border-2 ${(customAccent === color) || (!customAccent && themes[currentTheme].accent === color)
-                                    ? 'border-white'
-                                    : 'border-white/20'
+                                ? 'border-white'
+                                : 'border-white/20'
                                 }`}
                             style={{ backgroundColor: color }}
                         >

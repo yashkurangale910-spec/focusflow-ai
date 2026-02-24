@@ -174,7 +174,7 @@ export const NeonBorder = ({ children, color = "purple", animated = true, classN
             )}
 
             {/* Content */}
-            <div className={`relative border ${colorMap[color].border} shadow-lg ${colorMap[color].shadow} rounded-[inherit] bg-slate-900`}>
+            <div className={`relative border ${colorMap[color].border} shadow-lg ${colorMap[color].shadow} rounded-[inherit] bg-black`}>
                 {children}
             </div>
         </div>

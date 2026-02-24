@@ -53,7 +53,7 @@ const Insights = () => {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="surface-raised p-4 border border-slate-700/50 backdrop-blur-xl shadow-2xl">
+                <div className="bg-black p-4 border border-white/10 backdrop-blur-xl shadow-2xl">
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{label}</p>
                     <p className="text-lg font-bold text-white">
                         {payload[0].value} <span className="text-xs text-indigo-400">minutes</span>
@@ -171,7 +171,7 @@ const Insights = () => {
                                 key={index}
                                 className={`p-4 rounded-2xl text-center border transition-all duration-300 ${day.isToday
                                     ? 'bg-indigo-500/10 border-indigo-500/30 ring-1 ring-indigo-500/20'
-                                    : 'bg-slate-900/40 border-slate-800'
+                                    : 'bg-black border-white/5'
                                     }`}
                             >
                                 <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-2">{day.day}</p>
@@ -242,7 +242,7 @@ const Insights = () => {
                     viewport={{ once: true }}
                     className="p-10 rounded-[2.5rem] relative overflow-hidden border border-indigo-500/20"
                     style={{
-                        background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(15,23,42,0.6) 100%)',
+                        background: 'black',
                     }}
                 >
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] -mr-32 -mt-32" />
@@ -258,7 +258,7 @@ const Insights = () => {
                                 Your neural pathways are adapting to this high-performance cycle.
                             </p>
                         </div>
-                        <div className="px-8 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-indigo-400 text-sm font-bold uppercase tracking-widest shadow-xl">
+                        <div className="px-8 py-4 rounded-2xl bg-black border border-white/10 text-indigo-400 text-sm font-bold uppercase tracking-widest shadow-xl">
                             Keep the flow
                         </div>
                     </div>
