@@ -1,0 +1,59 @@
+package com.focusflow.backend.domain;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.Instant;
+
+@Document(collection = "sessions")
+public class Session {
+
+    @Id
+    private String id;
+
+    private String userId;
+
+    private int duration; // in minutes
+
+    private int quality; // 1-5 rating
+
+    private String notes;
+
+    private String type = "focus"; // 'focus', 'break', etc.
+
+    private Instant createdAt = Instant.now();
+
+    public Session() {}
+
+    public Session(String userId, int duration, int quality, String notes, String type) {
+        this.userId = userId;
+        this.duration = duration;
+        this.quality = quality;
+        this.notes = notes;
+        this.type = type;
+        this.createdAt = Instant.now();
+    }
+
+    // --- Getters & Setters ---
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
+    public int getDuration() { return duration; }
+    public void setDuration(int duration) { this.duration = duration; }
+
+    public int getQuality() { return quality; }
+    public void setQuality(int quality) { this.quality = quality; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+}
