@@ -42,20 +42,22 @@ public class AdminController {
 
     /**
      * DELETE /api/admin/users/{id}
-     * Delete a user by ID. Admin only. Cannot delete yourself.
+     * Delete a user by ID and all their data. Admin only. Cannot delete yourself.
      */
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id, Authentication authentication) {
         String requestingUserId = (String) authentication.getPrincipal();
-        try {
-            boolean deleted = adminService.deleteUser(id, requestingUserId);
-            if (!deleted) {
-                return ResponseEntity.status(404).body(Map.of("error", "User not found"));
-            }
-            return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+        adminService.deleteUser(id, requestingUserId);
+        return ResponseEntity.ok(Map.of("message", "User and all associated data deleted successfully"));
+    }
+
+    /**
+     * PUT /api/admin/users/{id}/promote
+     * Promote a user to admin role. Admin only.
+     */
+    @PutMapping("/users/{id}/promote")
+    public ResponseEntity<?> promoteUser(@PathVariable String id) {
+        return ResponseEntity.ok(adminService.promoteToAdmin(id));
     }
 
     /**

@@ -1,5 +1,9 @@
 package com.focusflow.backend.controller;
 
+import com.focusflow.backend.dto.SquadChatMessage;
+import com.focusflow.backend.dto.SquadTimerAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Controller
 public class SquadController {
 
+    private static final Logger log = LoggerFactory.getLogger(SquadController.class);
     private final SimpMessagingTemplate messagingTemplate;
 
     // In-memory state storage (squadId -> SquadState)
@@ -29,6 +34,8 @@ public class SquadController {
         
         SquadState state = squadStates.computeIfAbsent(squadId, k -> new SquadState());
         state.getPioneers().add(sessionId);
+
+        log.info("Pioneer {} joined squad {}", sessionId, squadId);
 
         // Notify room
         Map<String, Object> joinPayload = new HashMap<>();
@@ -63,21 +70,24 @@ public class SquadController {
     }
 
     @MessageMapping("/squad/{squadId}/timer")
-    public void handleTimer(@DestinationVariable String squadId, @Payload Map<String, Object> actionData) {
+    public void handleTimer(@DestinationVariable String squadId, @Payload SquadTimerAction timerAction) {
         SquadState state = squadStates.get(squadId);
         if (state != null) {
-            String action = (String) actionData.get("action");
+            String action = timerAction.getAction();
             TimerState timer = state.getTimer();
             
             if ("start".equals(action)) {
                 timer.setStatus("running");
-                timer.setDuration((Integer) actionData.get("duration"));
+                timer.setDuration(timerAction.getDuration());
                 timer.setTimeLeft(timer.getDuration());
+                log.debug("Squad {} timer started for {}s", squadId, timer.getDuration());
             } else if ("pause".equals(action)) {
                 timer.setStatus("paused");
+                log.debug("Squad {} timer paused", squadId);
             } else if ("reset".equals(action)) {
                 timer.setStatus("idle");
                 timer.setTimeLeft(0);
+                log.debug("Squad {} timer reset", squadId);
             }
 
             messagingTemplate.convertAndSend("/topic/squad/" + squadId + "/timer_updated", timer);
@@ -85,19 +95,18 @@ public class SquadController {
     }
 
     @MessageMapping("/squad/{squadId}/chat")
-    public void handleChat(@DestinationVariable String squadId, @Payload Map<String, Object> chatData) {
-        Map<String, Object> message = new HashMap<>(chatData);
-        message.put("id", UUID.randomUUID().toString());
-        message.put("timestamp", Instant.now().toString());
-        messagingTemplate.convertAndSend("/topic/squad/" + squadId + "/new_message", message);
+    public void handleChat(@DestinationVariable String squadId, @Payload SquadChatMessage chatData) {
+        chatData.setId(UUID.randomUUID().toString());
+        chatData.setTimestamp(Instant.now().toString());
+        messagingTemplate.convertAndSend("/topic/squad/" + squadId + "/new_message", chatData);
     }
 
     // --- State Classes ---
 
     public static class SquadState {
-        private Set<String> pioneers = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        private TimerState timer = new TimerState();
-        private List<Map<String, Object>> canvasData = Collections.synchronizedList(new ArrayList<>());
+        private final Set<String> pioneers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        private final TimerState timer = new TimerState();
+        private final List<Map<String, Object>> canvasData = Collections.synchronizedList(new ArrayList<>());
 
         public Set<String> getPioneers() { return pioneers; }
         public TimerState getTimer() { return timer; }

@@ -107,8 +107,7 @@ public class AIService {
      * 2. If Groq fails, try OpenAI
      * 3. If both fail, return a mock response
      */
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> chat(String userId, List<Map<String, String>> messages) {
+    public ChatResponse chat(String userId, List<Map<String, String>> messages) {
         // Retrieve cognitive archive (recent memories)
         String archivedContext = "";
         try {
@@ -151,8 +150,8 @@ public class AIService {
         // Try Groq first
         if (groqApiKey != null && !groqApiKey.isBlank()) {
             try {
-                Map<String, Object> result = callAiApi(groqBaseUrl, groqApiKey, groqModel, apiMessages);
-                if (result != null) return result;
+                String result = callAiApi(groqBaseUrl, groqApiKey, groqModel, apiMessages);
+                if (result != null) return new ChatResponse(result);
             } catch (Exception e) {
                 log.warn("Groq API failed: {}", e.getMessage());
             }
@@ -161,8 +160,8 @@ public class AIService {
         // Fallback to OpenAI
         if (openaiApiKey != null && !openaiApiKey.isBlank()) {
             try {
-                Map<String, Object> result = callAiApi(openaiBaseUrl, openaiApiKey, openaiModel, apiMessages);
-                if (result != null) return result;
+                String result = callAiApi(openaiBaseUrl, openaiApiKey, openaiModel, apiMessages);
+                if (result != null) return new ChatResponse(result);
             } catch (Exception e) {
                 log.warn("OpenAI API failed: {}", e.getMessage());
             }
@@ -175,7 +174,7 @@ public class AIService {
                 .map(m -> m.get("content"))
                 .orElse("");
 
-        return Map.of("message", getMockResponse(lastUserMessage));
+        return new ChatResponse(getMockResponse(lastUserMessage));
     }
 
     /**
@@ -189,8 +188,8 @@ public class AIService {
     // ---- Private helpers ----
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> callAiApi(String baseUrl, String apiKey,
-                                           String model, List<Map<String, String>> messages) {
+    private String callAiApi(String baseUrl, String apiKey,
+                                            String model, List<Map<String, String>> messages) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", model);
         requestBody.put("messages", messages);
@@ -213,7 +212,7 @@ public class AIService {
                     Map<String, Object> firstChoice = choices.get(0);
                     Map<String, Object> msg = (Map<String, Object>) firstChoice.get("message");
                     if (msg != null && msg.containsKey("content")) {
-                        return Map.of("message", msg.get("content"));
+                        return (String) msg.get("content");
                     }
                 }
             }

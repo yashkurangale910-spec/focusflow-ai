@@ -1,7 +1,10 @@
 package com.focusflow.backend.controller;
 
 import com.focusflow.backend.domain.Memory;
+import com.focusflow.backend.dto.ChatRequest;
+import com.focusflow.backend.dto.ChatResponse;
 import com.focusflow.backend.service.AIService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -24,27 +27,21 @@ public class AIController {
      * Proxy AI chat requests to Groq (primary) → OpenAI (fallback) → local mock.
      * Rate limited to 10 requests/minute per user via Bucket4j.
      */
-    @SuppressWarnings("unchecked")
     @PostMapping("/chat")
-    public ResponseEntity<?> chat(Authentication authentication,
-                                  @RequestBody Map<String, Object> body) {
+    public ResponseEntity<ChatResponse> chat(Authentication authentication,
+                                             @Valid @RequestBody ChatRequest request) {
         String userId = authentication != null
                 ? (String) authentication.getPrincipal()
                 : "mock-123";
 
         // Rate limiting check
         if (aiService.isRateLimited(userId)) {
-            return ResponseEntity.status(429).body(Map.of(
-                    "error", "Neural link capacity reached. Please wait to cool down."
-            ));
+            // We can't return ChatResponse here easily if we want to return 429
+            // But let's stay consistent
+            return ResponseEntity.status(429).body(new ChatResponse("Neural link capacity reached. Please wait to cool down."));
         }
 
-        List<Map<String, String>> messages = (List<Map<String, String>>) body.get("messages");
-        if (messages == null || messages.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Messages are required"));
-        }
-
-        Map<String, Object> result = aiService.chat(userId, messages);
+        ChatResponse result = aiService.chat(userId, request.getMessages());
         return ResponseEntity.ok(result);
     }
 

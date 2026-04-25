@@ -1,16 +1,23 @@
 package com.focusflow.backend.domain;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
 @Document(collection = "tasks")
+@CompoundIndex(name = "user_status_idx", def = "{'userId': 1, 'status': 1}")
+@CompoundIndex(name = "user_created_idx", def = "{'userId': 1, 'createdAt': -1}")
 public class Task {
 
     @Id
     private String id;
 
+    @Indexed
     private String userId;
 
     private String title;
@@ -19,8 +26,20 @@ public class Task {
 
     private Status status = Status.TODO;
 
-    private Instant createdAt = Instant.now();
+    private int priority = 3; // 1 (low) → 5 (critical)
 
+    private String category; // "study", "work", "personal", "health"
+
+    private Instant dueDate; // nullable — tasks without deadlines
+
+    private int estimatedMinutes; // estimated time to complete
+
+    private int actualMinutes; // time actually spent
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
     private Instant updatedAt;
 
     public enum Status {
@@ -51,7 +70,6 @@ public class Task {
         this.title = title;
         this.description = description;
         this.status = status;
-        this.createdAt = Instant.now();
     }
 
     // --- Getters & Setters ---
@@ -70,6 +88,21 @@ public class Task {
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    public int getPriority() { return priority; }
+    public void setPriority(int priority) { this.priority = priority; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public Instant getDueDate() { return dueDate; }
+    public void setDueDate(Instant dueDate) { this.dueDate = dueDate; }
+
+    public int getEstimatedMinutes() { return estimatedMinutes; }
+    public void setEstimatedMinutes(int estimatedMinutes) { this.estimatedMinutes = estimatedMinutes; }
+
+    public int getActualMinutes() { return actualMinutes; }
+    public void setActualMinutes(int actualMinutes) { this.actualMinutes = actualMinutes; }
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

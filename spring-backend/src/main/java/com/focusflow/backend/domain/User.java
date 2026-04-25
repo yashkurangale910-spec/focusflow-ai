@@ -1,7 +1,9 @@
 package com.focusflow.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -30,7 +32,25 @@ public class User {
 
     private LocalDate lastActiveDate;
 
-    private Instant createdAt = Instant.now();
+    // --- Profile / Settings fields ---
+
+    private String avatar; // URL or base64 string
+
+    private String timezone = "UTC";
+
+    private String preferredProtocol; // e.g., "deep-work", "creative-synthesis"
+
+    private int dailyGoalMinutes = 120; // daily focus target in minutes
+
+    private int totalXp = 0; // gamification XP
+
+    private String neuralRank = "Initiate"; // rank title
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 
     public enum Role {
         USER, ADMIN;
@@ -62,7 +82,6 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.createdAt = Instant.now();
     }
 
     // --- Getters & Setters ---
@@ -91,6 +110,27 @@ public class User {
     public LocalDate getLastActiveDate() { return lastActiveDate; }
     public void setLastActiveDate(LocalDate lastActiveDate) { this.lastActiveDate = lastActiveDate; }
 
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getTimezone() { return timezone; }
+    public void setTimezone(String timezone) { this.timezone = timezone; }
+
+    public String getPreferredProtocol() { return preferredProtocol; }
+    public void setPreferredProtocol(String preferredProtocol) { this.preferredProtocol = preferredProtocol; }
+
+    public int getDailyGoalMinutes() { return dailyGoalMinutes; }
+    public void setDailyGoalMinutes(int dailyGoalMinutes) { this.dailyGoalMinutes = dailyGoalMinutes; }
+
+    public int getTotalXp() { return totalXp; }
+    public void setTotalXp(int totalXp) { this.totalXp = totalXp; }
+
+    public String getNeuralRank() { return neuralRank; }
+    public void setNeuralRank(String neuralRank) { this.neuralRank = neuralRank; }
+
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

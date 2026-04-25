@@ -1,9 +1,13 @@
 package com.focusflow.backend.service;
 
 import com.focusflow.backend.domain.User;
+import com.focusflow.backend.exception.ForbiddenOperationException;
+import com.focusflow.backend.exception.ResourceNotFoundException;
 import com.focusflow.backend.repository.SessionRepository;
 import com.focusflow.backend.repository.TaskRepository;
 import com.focusflow.backend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminService.class);
 
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
@@ -50,6 +56,8 @@ public class AdminService {
             u.put("role", user.getRole().toMongoValue());
             u.put("currentStreak", user.getCurrentStreak());
             u.put("longestStreak", user.getLongestStreak());
+            u.put("totalXp", user.getTotalXp());
+            u.put("neuralRank", user.getNeuralRank());
             u.put("createdAt", user.getCreatedAt());
             return u;
         }).collect(Collectors.toList());
@@ -63,24 +71,47 @@ public class AdminService {
     }
 
     /**
-     * Delete a user and their sessions.
+     * Delete a user and all their data (sessions + tasks).
      */
-    public boolean deleteUser(String userId, String requestingUserId) {
+    public void deleteUser(String userId, String requestingUserId) {
         if (userId.equals(requestingUserId)) {
-            throw new RuntimeException("Cannot delete your own account");
+            throw new ForbiddenOperationException("Cannot delete your own account");
         }
 
         if (!userRepository.existsById(userId)) {
-            return false;
+            throw new ResourceNotFoundException("User", "id", userId);
         }
 
-        // Delete user's sessions (matching Node behavior)
+        // Delete user's sessions
         List<com.focusflow.backend.domain.Session> sessions =
                 sessionRepository.findByUserIdOrderByCreatedAtDesc(userId);
         sessionRepository.deleteAll(sessions);
 
+        // Delete user's tasks
+        List<com.focusflow.backend.domain.Task> tasks =
+                taskRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        taskRepository.deleteAll(tasks);
+
         userRepository.deleteById(userId);
-        return true;
+        log.info("Admin deleted user {} and all associated data", userId);
+    }
+
+    /**
+     * Promote a user to admin role.
+     */
+    public Map<String, Object> promoteToAdmin(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        user.setRole(User.Role.ADMIN);
+        userRepository.save(user);
+        log.info("User {} promoted to ADMIN", user.getEmail());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "User promoted to admin");
+        result.put("userId", userId);
+        result.put("role", "admin");
+        return result;
     }
 
     /**
@@ -101,6 +132,11 @@ public class AdminService {
                 .mapToLong(com.focusflow.backend.domain.Session::getDuration)
                 .sum();
 
+        // Total XP earned across platform
+        long totalXp = allSessions.stream()
+                .mapToLong(com.focusflow.backend.domain.Session::getXpEarned)
+                .sum();
+
         // Active users (distinct users with sessions in last 7 days)
         List<com.focusflow.backend.domain.Session> recentSessions =
                 sessionRepository.findByCreatedAtAfter(weekAgo);
@@ -109,6 +145,12 @@ public class AdminService {
                 .distinct()
                 .count();
 
+        // Average quality across all sessions
+        double avgQuality = allSessions.stream()
+                .mapToInt(com.focusflow.backend.domain.Session::getQuality)
+                .average()
+                .orElse(0.0);
+
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalUsers", totalUsers);
         stats.put("totalSessions", totalSessions);
@@ -116,6 +158,8 @@ public class AdminService {
         stats.put("newUsersThisWeek", newUsersThisWeek);
         stats.put("activeUsers", activeUsers);
         stats.put("totalFocusHours", totalMinutes / 60);
+        stats.put("totalPlatformXp", totalXp);
+        stats.put("avgQuality", String.format("%.1f", avgQuality));
         stats.put("avgSessionsPerUser", totalUsers > 0
                 ? String.format("%.1f", (double) totalSessions / totalUsers) : "0");
         return stats;

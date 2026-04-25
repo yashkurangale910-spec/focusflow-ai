@@ -2,6 +2,7 @@ package com.focusflow.backend.controller;
 
 import com.focusflow.backend.domain.Task;
 import com.focusflow.backend.service.TaskService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,39 @@ public class TaskController {
     /**
      * GET /api/tasks
      * Return all tasks for the authenticated user.
+     * Optional query param: ?status=todo|in_progress|done
      */
     @GetMapping
-    public ResponseEntity<List<Task>> getTasks(Authentication authentication) {
+    public ResponseEntity<List<Task>> getTasks(Authentication authentication,
+                                                @RequestParam(required = false) String status) {
         String userId = (String) authentication.getPrincipal();
-        return ResponseEntity.ok(taskService.getTasksByUserId(userId));
+        List<Task> tasks;
+        if (status != null && !status.isBlank()) {
+            tasks = taskService.getTasksByStatus(userId, status);
+        } else {
+            tasks = taskService.getTasksByUserId(userId);
+        }
+        return ResponseEntity.ok(tasks);
+    }
+
+    /**
+     * GET /api/tasks/overdue
+     * Return all overdue tasks for the authenticated user.
+     */
+    @GetMapping("/overdue")
+    public ResponseEntity<List<Task>> getOverdueTasks(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        return ResponseEntity.ok(taskService.getOverdueTasks(userId));
+    }
+
+    /**
+     * GET /api/tasks/stats
+     * Return task completion statistics.
+     */
+    @GetMapping("/stats")
+    public ResponseEntity<?> getTaskStats(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        return ResponseEntity.ok(taskService.getTaskStats(userId));
     }
 
     /**
@@ -38,41 +67,31 @@ public class TaskController {
                                            @RequestBody Map<String, Object> body) {
         String userId = (String) authentication.getPrincipal();
         Task task = taskService.createTask(userId, body);
-        return ResponseEntity.ok(task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(task);
     }
 
     /**
      * PUT /api/tasks/{id}
-     * Update an existing task. Returns 403 if the task doesn't belong to the user.
+     * Update an existing task. Returns 404 if not found.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTask(@PathVariable String id,
-                                        Authentication authentication,
-                                        @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<Task> updateTask(@PathVariable String id,
+                                            Authentication authentication,
+                                            @RequestBody Map<String, Object> updates) {
         String userId = (String) authentication.getPrincipal();
         Task task = taskService.updateTask(id, userId, updates);
-
-        if (task == null) {
-            return ResponseEntity.status(403)
-                    .body(Map.of("error", "Task not found or access denied"));
-        }
         return ResponseEntity.ok(task);
     }
 
     /**
      * DELETE /api/tasks/{id}
-     * Delete a task. Returns 403 if the task doesn't belong to the user.
+     * Delete a task. Returns 404 if not found.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable String id,
                                         Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        boolean deleted = taskService.deleteTask(id, userId);
-
-        if (!deleted) {
-            return ResponseEntity.status(403)
-                    .body(Map.of("error", "Task not found or access denied"));
-        }
+        taskService.deleteTask(id, userId);
         return ResponseEntity.ok(Map.of("message", "Task deleted"));
     }
 }
