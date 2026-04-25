@@ -59,7 +59,7 @@ public class Task {
         }
 
         public String toMongoValue() {
-            return this.name().toLowerCase();
+            return this.name().toLowerCase().replace("_", "-");
         }
     }
 

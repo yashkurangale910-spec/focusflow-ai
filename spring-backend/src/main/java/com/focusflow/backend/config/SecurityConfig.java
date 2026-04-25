@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/actuator/health/**").permitAll()
+                .requestMatchers("/ws-neural-grid/**").permitAll() // Allow WebSocket handshake
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )

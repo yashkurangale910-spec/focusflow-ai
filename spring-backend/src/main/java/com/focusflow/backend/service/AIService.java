@@ -108,6 +108,13 @@ public class AIService {
      * 3. If both fail, return a mock response
      */
     public ChatResponse chat(String userId, List<Map<String, String>> messages) {
+        // Cache lookup based on last 3 messages to save tokens/time
+        String cacheKey = userId + "_" + Objects.hash(messages.subList(Math.max(0, messages.size() - 3), messages.size()));
+        if (responseCache.containsKey(cacheKey)) {
+            log.debug("Cache hit for user {} chat", userId);
+            return new ChatResponse(responseCache.get(cacheKey));
+        }
+
         // Retrieve cognitive archive (recent memories)
         String archivedContext = "";
         try {
@@ -147,11 +154,16 @@ public class AIService {
         apiMessages.add(systemMessage);
         apiMessages.addAll(messages);
 
+        ChatResponse response;
         // Try Groq first
         if (groqApiKey != null && !groqApiKey.isBlank()) {
             try {
                 String result = callAiApi(groqBaseUrl, groqApiKey, groqModel, apiMessages);
-                if (result != null) return new ChatResponse(result);
+                if (result != null) {
+                    response = new ChatResponse(result);
+                    responseCache.put(cacheKey, result);
+                    return response;
+                }
             } catch (Exception e) {
                 log.warn("Groq API failed: {}", e.getMessage());
             }
@@ -161,7 +173,11 @@ public class AIService {
         if (openaiApiKey != null && !openaiApiKey.isBlank()) {
             try {
                 String result = callAiApi(openaiBaseUrl, openaiApiKey, openaiModel, apiMessages);
-                if (result != null) return new ChatResponse(result);
+                if (result != null) {
+                    response = new ChatResponse(result);
+                    responseCache.put(cacheKey, result);
+                    return response;
+                }
             } catch (Exception e) {
                 log.warn("OpenAI API failed: {}", e.getMessage());
             }
@@ -174,7 +190,9 @@ public class AIService {
                 .map(m -> m.get("content"))
                 .orElse("");
 
-        return new ChatResponse(getMockResponse(lastUserMessage));
+        String mockResult = getMockResponse(lastUserMessage);
+        responseCache.put(cacheKey, mockResult);
+        return new ChatResponse(mockResult);
     }
 
     /**

@@ -22,6 +22,7 @@ import CommandPalette from './components/CommandPalette';
 import DataManager from './components/DataManager';
 import Gamification from './components/Gamification';
 import SessionTemplates from './components/SessionTemplates';
+import NeuralBackground from './components/NeuralBackground';
 import { TaskProvider } from './context/TaskContext';
 import { AnalyticsProvider } from './context/AnalyticsContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -40,6 +41,7 @@ const AppContent = () => {
 
   return (
     <div className="min-h-screen text-white transition-colors duration-300 relative selection:bg-cyan-500/30 selection:text-cyan-200" style={{ backgroundColor: 'var(--color-background)' }}>
+      <NeuralBackground />
       <div className="noise-overlay" />
       {/* Scene3D removed for static design */}
 

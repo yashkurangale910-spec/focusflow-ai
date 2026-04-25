@@ -1,6 +1,8 @@
 package com.focusflow.backend.controller;
 
+import com.focusflow.backend.dto.SessionRequest;
 import com.focusflow.backend.service.SessionService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +35,9 @@ public class SessionController {
      */
     @PostMapping
     public ResponseEntity<?> createSession(Authentication authentication,
-                                           @RequestBody Map<String, Object> body) {
+                                           @Valid @RequestBody SessionRequest request) {
         String userId = (String) authentication.getPrincipal();
-        Map<String, Object> result = sessionService.createSession(userId, body);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(201).body(sessionService.createSession(userId, request));
     }
 
     /**

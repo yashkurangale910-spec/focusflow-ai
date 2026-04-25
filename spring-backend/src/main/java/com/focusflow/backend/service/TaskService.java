@@ -5,6 +5,7 @@ import com.focusflow.backend.dto.TaskRequest;
 import com.focusflow.backend.exception.ForbiddenOperationException;
 import com.focusflow.backend.exception.ResourceNotFoundException;
 import com.focusflow.backend.repository.TaskRepository;
+import com.focusflow.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,11 @@ public class TaskService {
     private static final Logger log = LoggerFactory.getLogger(TaskService.class);
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -113,7 +116,12 @@ public class TaskService {
             task.setDescription((String) updates.get("description"));
         }
         if (updates.containsKey("status")) {
-            task.setStatus(Task.Status.fromString((String) updates.get("status")));
+            Task.Status newStatus = Task.Status.fromString((String) updates.get("status"));
+            // Award XP if changing to DONE
+            if (newStatus == Task.Status.DONE && task.getStatus() != Task.Status.DONE) {
+                awardTaskXp(userId, task.getPriority());
+            }
+            task.setStatus(newStatus);
         }
         if (updates.containsKey("priority")) {
             task.setPriority(((Number) updates.get("priority")).intValue());
@@ -135,6 +143,15 @@ public class TaskService {
         task = taskRepository.save(task);
         log.debug("Task updated: '{}' ({})", task.getTitle(), taskId);
         return task;
+    }
+
+    private void awardTaskXp(String userId, int priority) {
+        int xp = 50 + (priority * 10); // Base 50 + 10 per priority level
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setTotalXp(user.getTotalXp() + xp);
+            userRepository.save(user);
+            log.info("Awarded {} XP to user {} for task completion", xp, userId);
+        });
     }
 
     /**

@@ -567,10 +567,13 @@ const AIChatbot = ({ setActiveTab, setFocusTask }) => {
                                                         <motion.button
                                                             onClick={async () => {
                                                                 try {
-                                                                    await fetch('http://localhost:5000/api/ai/memory', {
+                                                                    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/ai/memory`, {
                                                                         method: 'POST',
-                                                                        headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ context: message.content, userId: 'mock-123' })
+                                                                        headers: { 
+                                                                            'Content-Type': 'application/json',
+                                                                            'Authorization': `Bearer ${localStorage.getItem('focusflow_token')}`
+                                                                        },
+                                                                        body: JSON.stringify({ context: message.content })
                                                                     });
                                                                     playSFX('sync');
                                                                 } catch (e) { console.error(e); }

@@ -51,8 +51,9 @@ public class AIController {
      */
     @SuppressWarnings("unchecked")
     @PostMapping("/memory")
-    public ResponseEntity<?> saveMemory(@RequestBody Map<String, Object> body) {
-        String userId = (String) body.getOrDefault("userId", "mock-123");
+    public ResponseEntity<?> saveMemory(Authentication authentication,
+                                        @RequestBody Map<String, Object> body) {
+        String userId = (authentication != null) ? (String) authentication.getPrincipal() : "mock-123";
         String context = (String) body.get("context");
         Map<String, Object> metadata = (Map<String, Object>) body.getOrDefault("metadata", Map.of());
 
@@ -60,7 +61,7 @@ public class AIController {
             return ResponseEntity.badRequest().body(Map.of("error", "Context is required"));
         }
 
-        Memory memory = aiService.saveMemory(userId, context, metadata);
+        aiService.saveMemory(userId, context, metadata);
         return ResponseEntity.ok(Map.of(
                 "status", "success",
                 "message", "Insight archived to long-term memory"
