@@ -23,6 +23,7 @@ const Community = () => {
     const [showWhiteboard, setShowWhiteboard] = useState(false);
     const [remoteTyping, setRemoteTyping] = useState(null);
     const [remoteDrawing, setRemoteDrawing] = useState(null);
+    const [showVideo, setShowVideo] = useState(false);
 
     // Chat Auto-scroll logic
     const chatEndRef = useRef(null);
@@ -452,10 +453,17 @@ const Community = () => {
                                                 </div>
                                                 <button
                                                     onClick={() => setShowWhiteboard(!showWhiteboard)}
-                                                    className={`w-full py-3 ${showWhiteboard ? 'bg-indigo-600' : 'bg-white/5 hover:bg-white/10'} text-white font-black text-[9px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border border-white/5`}
+                                                    className={`w-full py-3 ${showWhiteboard ? 'bg-indigo-600' : 'bg-white/5 hover:bg-white/10'} text-white font-black text-[9px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border border-white/5 mt-2`}
                                                 >
                                                     <Palette size={12} className={showWhiteboard ? 'animate-bounce' : ''} />
                                                     {showWhiteboard ? 'Close Blueprint' : 'Project Blueprint'}
+                                                </button>
+                                                <button
+                                                    onClick={() => setShowVideo(!showVideo)}
+                                                    className={`w-full py-3 ${showVideo ? 'bg-green-600' : 'bg-white/5 hover:bg-white/10'} text-white font-black text-[9px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border border-white/5 mt-2`}
+                                                >
+                                                    <Play size={12} className={showVideo ? 'animate-pulse' : ''} />
+                                                    {showVideo ? 'Disable Camera' : 'Enable Video Feed'}
                                                 </button>
                                             </div>
                                         ) : (
@@ -470,6 +478,36 @@ const Community = () => {
                                 ))}
                             </div>
                         </div>
+
+                        <AnimatePresence>
+                            {showVideo && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                                    exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.4 }}
+                                    className="bg-black border border-white/5 rounded-[2rem] p-6 shadow-2xl overflow-hidden mb-8"
+                                >
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                            <Play className="w-4 h-4 text-green-400" /> Live Video Feed
+                                        </h3>
+                                        <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase font-bold animate-pulse">Recording</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {/* Mock Video Feeds */}
+                                        <div className="relative bg-slate-900 rounded-2xl aspect-video overflow-hidden border border-white/10 group">
+                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600" alt="Self" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                            <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-[10px] font-bold">@alex_pioneer (You)</div>
+                                        </div>
+                                        <div className="relative bg-slate-900 rounded-2xl aspect-video overflow-hidden border border-white/10 group">
+                                            <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=600" alt="Collaborator" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                            <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-[10px] font-bold">@neural_ghost</div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <AnimatePresence>
                             {showWhiteboard && (

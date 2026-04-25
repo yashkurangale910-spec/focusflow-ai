@@ -49,3 +49,12 @@ changes_list.txt
 commit_log.txt
 design_video.mp4
 frames/
+apache-maven-3.9.6/
+
+# Spring Boot / Java
+spring-backend/target/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
