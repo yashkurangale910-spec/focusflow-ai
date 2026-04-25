@@ -1,7 +1,8 @@
 # 🧠 FocusFlow AI: The Neural Productivity Platform
 
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/)
-[![Node](https://img.shields.io/badge/Node-20-green?logo=node.js)](https://nodejs.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)](https://openjdk.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)](https://www.mongodb.com/)
 [![Three.js](https://img.shields.io/badge/Three.js-r160-black?logo=three.js)](https://threejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -53,17 +54,19 @@
 | :--- | :--- |
 | **Frontend** | React 19, Vite, Tailwind CSS |
 | **3D Engine** | Three.js, React Three Fiber, Framer Motion |
-| **Backend** | Node.js, Express.js |
-| **Database** | MongoDB Atlas |
+| **Backend** | Java 17, Spring Boot 3.2, Maven |
+| **Database** | MongoDB Atlas (Spring Data MongoDB) |
 | **Intelligence** | Neural Cognitive API |
-| **Security** | JWT, bcrypt, Environment Secrets |
+| **Security** | Spring Security, JWT (jjwt), Bucket4j Rate Limiting |
 
 ---
 
 ## 📦 Installation & Setup
 
-### 1. Prerequisite
-- Node.js installed
+### 1. Prerequisites
+- Java 17+ (JDK) installed
+- Maven 3.8+ installed (or use the bundled wrapper)
+- Node.js 18+ installed (for the frontend)
 - MongoDB Atlas account
 - Neural Engine API Key
 
@@ -73,16 +76,20 @@ git clone https://github.com/yashkurangale910-spec/focusflow-ai.git
 cd focusflow-ai
 ```
 
-### 3. Backend Setup
+### 3. Backend Setup (Spring Boot)
 ```bash
-cd backend
-npm install
-# Create a .env file with:
-# MONGODB_URI=your_mongodb_connection_string
-# NEURAL_ENGINE_KEY=your_key
-# JWT_SECRET=random_secure_string
-npm run dev
+cd spring-backend
+
+# Configure application.yml (src/main/resources/application.yml) with:
+#   spring.data.mongodb.uri: your_mongodb_connection_string
+#   app.jwt-secret: random_secure_string
+#   app.neural-engine-key: your_key
+
+# Build and run
+mvn spring-boot:run
 ```
+
+> The backend runs on **port 5000** by default.
 
 ### 4. Frontend Setup
 ```bash
@@ -90,6 +97,8 @@ cd ../frontend
 npm install
 npm run dev
 ```
+
+> The frontend dev server runs on **port 5173** by default.
 
 ---
 
