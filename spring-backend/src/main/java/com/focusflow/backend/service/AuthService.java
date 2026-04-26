@@ -8,6 +8,7 @@ import com.focusflow.backend.dto.ProfileUpdateRequest;
 import com.focusflow.backend.dto.RegisterRequest;
 import com.focusflow.backend.exception.DuplicateResourceException;
 import com.focusflow.backend.exception.ResourceNotFoundException;
+import com.focusflow.backend.exception.ThrottledException;
 import com.focusflow.backend.exception.UnauthorizedException;
 import com.focusflow.backend.repository.UserRepository;
 import com.focusflow.backend.security.BruteForceProtectionService;
@@ -41,33 +42,33 @@ public class AuthService {
     }
 
     @AuditAction("User Registration")
-    public Map<String, Object> register(RegisterRequest request) {
+    public Map<String, Object> register(RegisterRequest request, String clientIp) {
+        if (!bruteForceProtection.isAllowed(clientIp)) {
+            throw new ThrottledException("Registration throttled. Too many attempts from your IP.");
+        }
+
         if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
             throw new DuplicateResourceException("A user with email '" + request.getEmail() + "' already exists");
         }
 
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-
         User user = new User(
                 request.getName(),
                 request.getEmail().toLowerCase().trim(),
-                hashedPassword
+                passwordEncoder.encode(request.getPassword())
         );
         user = userRepository.save(user);
 
         log.info("New user registered: {} ({})", user.getName(), user.getEmail());
-
-        String token = jwtTokenProvider.generateToken(
-                user.getId(),
-                user.getEmail(),
-                user.getRole().toMongoValue()
-        );
-
+        String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail(), user.getRole().toMongoValue());
         return buildAuthResponse(token, user);
     }
 
     @AuditAction("User Login")
-    public Map<String, Object> login(LoginRequest request) {
+    public Map<String, Object> login(LoginRequest request, String clientIp) {
+        if (!bruteForceProtection.isAllowed(clientIp)) {
+            throw new ThrottledException("Login throttled. Try again in 60 seconds.");
+        }
+
         User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
@@ -76,20 +77,12 @@ public class AuthService {
         }
 
         log.info("User logged in: {}", user.getEmail());
-
-        String token = jwtTokenProvider.generateToken(
-                user.getId(),
-                user.getEmail(),
-                user.getRole().toMongoValue()
-        );
-
+        String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail(), user.getRole().toMongoValue());
         return buildAuthResponse(token, user);
     }
 
     public Map<String, Object> getProfile(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         Map<String, Object> profile = new HashMap<>();
         profile.put("id", user.getId());
         profile.put("email", user.getEmail());
@@ -109,29 +102,22 @@ public class AuthService {
 
     @AuditAction("Update Profile")
     public Map<String, Object> updateProfile(String userId, ProfileUpdateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         user.setName(request.getName());
-
         if (request.getAvatar() != null) user.setAvatar(request.getAvatar());
         if (request.getTimezone() != null) user.setTimezone(request.getTimezone());
         if (request.getPreferredProtocol() != null) user.setPreferredProtocol(request.getPreferredProtocol());
         if (request.getDailyGoalMinutes() != null) user.setDailyGoalMinutes(request.getDailyGoalMinutes());
-
         userRepository.save(user);
         return getProfile(userId);
     }
 
     @AuditAction("Change Password")
     public void changePassword(String userId, ChangePasswordRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new UnauthorizedException("Current password is incorrect");
         }
-
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
@@ -146,7 +132,6 @@ public class AuthService {
         userObj.put("longestStreak", user.getLongestStreak());
         userObj.put("totalXp", user.getTotalXp());
         userObj.put("neuralRank", user.getNeuralRank());
-
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("user", userObj);
