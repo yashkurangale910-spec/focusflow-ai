@@ -53,3 +53,25 @@ info:
     version: 1.1.0
     framework: Spring Boot 3.2.5
     java: 17
+
+# --- Resilience4j ---
+resilience4j:
+  circuitbreaker:
+    instances:
+      aiService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      aiService:
+        maxAttempts: 3
+        waitDuration: 2s
+        retryExceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+          - java.io.IOException

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,7 +16,6 @@ import java.io.IOException;
 
 /**
  * Logs every incoming HTTP request with method, URI, status, and duration.
- * Runs as the outermost filter so it captures the full request lifecycle.
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -24,9 +24,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(RequestLoggingFilter.class);
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         long startTime = System.currentTimeMillis();
         String method = request.getMethod();
         String uri = request.getRequestURI();

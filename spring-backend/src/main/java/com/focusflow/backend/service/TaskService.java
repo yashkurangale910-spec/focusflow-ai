@@ -2,7 +2,6 @@ package com.focusflow.backend.service;
 
 import com.focusflow.backend.domain.Task;
 import com.focusflow.backend.dto.TaskRequest;
-import com.focusflow.backend.exception.ForbiddenOperationException;
 import com.focusflow.backend.exception.ResourceNotFoundException;
 import com.focusflow.backend.repository.TaskRepository;
 import com.focusflow.backend.repository.UserRepository;

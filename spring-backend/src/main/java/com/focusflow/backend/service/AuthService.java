@@ -1,5 +1,6 @@
 package com.focusflow.backend.service;
 
+import com.focusflow.backend.annotation.AuditAction;
 import com.focusflow.backend.domain.User;
 import com.focusflow.backend.dto.ChangePasswordRequest;
 import com.focusflow.backend.dto.LoginRequest;
@@ -9,6 +10,7 @@ import com.focusflow.backend.exception.DuplicateResourceException;
 import com.focusflow.backend.exception.ResourceNotFoundException;
 import com.focusflow.backend.exception.UnauthorizedException;
 import com.focusflow.backend.repository.UserRepository;
+import com.focusflow.backend.security.BruteForceProtectionService;
 import com.focusflow.backend.security.JwtTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,28 +28,26 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BruteForceProtectionService bruteForceProtection;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider,
+                       BruteForceProtectionService bruteForceProtection) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.bruteForceProtection = bruteForceProtection;
     }
 
-    /**
-     * Register a new user and return JWT + user object.
-     */
+    @AuditAction("User Registration")
     public Map<String, Object> register(RegisterRequest request) {
-        // Check if user already exists
         if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
             throw new DuplicateResourceException("A user with email '" + request.getEmail() + "' already exists");
         }
 
-        // Hash the password
         String hashedPassword = passwordEncoder.encode(request.getPassword());
 
-        // Create user
         User user = new User(
                 request.getName(),
                 request.getEmail().toLowerCase().trim(),
@@ -57,7 +57,6 @@ public class AuthService {
 
         log.info("New user registered: {} ({})", user.getName(), user.getEmail());
 
-        // Generate JWT (matches Node payload: userId, email)
         String token = jwtTokenProvider.generateToken(
                 user.getId(),
                 user.getEmail(),
@@ -67,22 +66,17 @@ public class AuthService {
         return buildAuthResponse(token, user);
     }
 
-    /**
-     * Authenticate user and return JWT + user object.
-     */
+    @AuditAction("User Login")
     public Map<String, Object> login(LoginRequest request) {
-        // Find user
         User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
-        // Verify password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new UnauthorizedException("Invalid credentials");
         }
 
         log.info("User logged in: {}", user.getEmail());
 
-        // Generate JWT
         String token = jwtTokenProvider.generateToken(
                 user.getId(),
                 user.getEmail(),
@@ -92,9 +86,6 @@ public class AuthService {
         return buildAuthResponse(token, user);
     }
 
-    /**
-     * Get user profile by ID.
-     */
     public Map<String, Object> getProfile(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
@@ -116,37 +107,23 @@ public class AuthService {
         return profile;
     }
 
-    /**
-     * Update user profile (name, avatar, timezone, preferences).
-     */
+    @AuditAction("Update Profile")
     public Map<String, Object> updateProfile(String userId, ProfileUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         user.setName(request.getName());
 
-        if (request.getAvatar() != null) {
-            user.setAvatar(request.getAvatar());
-        }
-        if (request.getTimezone() != null) {
-            user.setTimezone(request.getTimezone());
-        }
-        if (request.getPreferredProtocol() != null) {
-            user.setPreferredProtocol(request.getPreferredProtocol());
-        }
-        if (request.getDailyGoalMinutes() != null) {
-            user.setDailyGoalMinutes(request.getDailyGoalMinutes());
-        }
+        if (request.getAvatar() != null) user.setAvatar(request.getAvatar());
+        if (request.getTimezone() != null) user.setTimezone(request.getTimezone());
+        if (request.getPreferredProtocol() != null) user.setPreferredProtocol(request.getPreferredProtocol());
+        if (request.getDailyGoalMinutes() != null) user.setDailyGoalMinutes(request.getDailyGoalMinutes());
 
         userRepository.save(user);
-        log.info("Profile updated for user: {}", user.getEmail());
-
         return getProfile(userId);
     }
 
-    /**
-     * Change user password.
-     */
+    @AuditAction("Change Password")
     public void changePassword(String userId, ChangePasswordRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
@@ -157,12 +134,8 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
-        log.info("Password changed for user: {}", user.getEmail());
     }
 
-    /**
-     * Build the standard auth response shape the frontend expects.
-     */
     private Map<String, Object> buildAuthResponse(String token, User user) {
         Map<String, Object> userObj = new HashMap<>();
         userObj.put("id", user.getId());

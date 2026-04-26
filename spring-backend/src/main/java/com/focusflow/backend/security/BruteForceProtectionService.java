@@ -2,7 +2,6 @@ package com.focusflow.backend.security;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,10 @@ public class BruteForceProtectionService {
     public boolean isAllowed(String clientIp) {
         Bucket bucket = loginAttemptCache.get(clientIp, k -> 
             Bucket.builder()
-                .addLimit(Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1))))
+                .addLimit(Bandwidth.builder()
+                        .capacity(5)
+                        .refillGreedy(5, Duration.ofMinutes(1))
+                        .build())
                 .build()
         );
         return bucket.tryConsume(1);
